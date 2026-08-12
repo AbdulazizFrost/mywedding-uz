@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -83,18 +85,29 @@ export default function Navbar() {
           </div>
           
           <div className="flex items-center gap-4 border-l border-champagne-light pl-6">
-            <Link 
-              to="/login" 
-              className="text-sm text-charcoal hover:text-champagne transition-colors font-medium"
-            >
-              Войти
-            </Link>
-            <Link 
-              to="/register" 
-              className="px-5 py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all hover:shadow-lg hover:shadow-charcoal/20"
-            >
-              Создать приглашение
-            </Link>
+            {user ? (
+              <Link 
+                to="/dashboard" 
+                className="px-5 py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all hover:shadow-lg hover:shadow-charcoal/20"
+              >
+                Личный кабинет
+              </Link>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="text-sm text-charcoal hover:text-champagne transition-colors font-medium"
+                >
+                  Войти
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="px-5 py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all hover:shadow-lg hover:shadow-charcoal/20"
+                >
+                  Создать приглашение
+                </Link>
+              </>
+            )}
           </div>
         </nav>
 
@@ -126,15 +139,27 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
-            <Link to="/login" className="text-base text-charcoal py-2 border-b border-sand">
-              Войти
-            </Link>
-            <Link 
-              to="/register" 
-              className="mt-2 text-center px-5 py-3 bg-charcoal text-ivory text-base font-medium rounded-full"
-            >
-              Создать приглашение
-            </Link>
+            
+            {user ? (
+              <Link 
+                to="/dashboard" 
+                className="mt-2 text-center px-5 py-3 bg-charcoal text-ivory text-base font-medium rounded-full"
+              >
+                Личный кабинет
+              </Link>
+            ) : (
+              <>
+                <Link to="/login" className="text-base text-charcoal py-2 border-b border-sand">
+                  Войти
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="mt-2 text-center px-5 py-3 bg-charcoal text-ivory text-base font-medium rounded-full"
+                >
+                  Создать приглашение
+                </Link>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

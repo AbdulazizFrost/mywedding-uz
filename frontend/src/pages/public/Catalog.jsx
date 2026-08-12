@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Catalog() {
   const [templates, setTemplates] = useState([]);
@@ -9,6 +10,9 @@ export default function Catalog() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
+    
     const fetchTemplates = async () => {
       try {
         const response = await fetch(API_URL + '/templates');
@@ -27,58 +31,104 @@ export default function Catalog() {
     fetchTemplates();
   }, []);
 
-  if (loading) return <div className="min-h-screen p-8 text-center text-gray-500">Loading catalog...</div>;
-  if (error) return <div className="min-h-screen p-8 text-center text-red-500">{error}</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 pb-16 px-6 flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="font-serif text-charcoal-light italic text-xl">Подготавливаем коллекцию...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 pb-16 px-6 flex flex-col items-center justify-center">
+        <p className="text-red-800 font-serif text-xl">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-ivory pt-32 pb-24 px-4 sm:px-6 lg:px-12 font-sans selection:bg-champagne selection:text-white">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-gray-900 text-center mb-12">
-          Свадебные шаблоны
-        </h1>
+        
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center mb-16 lg:mb-24"
+        >
+          <span className="inline-block px-4 py-1 border border-champagne/50 text-xs font-semibold tracking-[0.2em] text-champagne uppercase rounded-full mb-6">
+            Wedding Design Gallery
+          </span>
+          <h1 className="text-5xl lg:text-6xl font-serif text-charcoal mb-6">
+            Выберите стиль <br className="hidden sm:block" />
+            <span className="italic font-light">вашей истории</span>
+          </h1>
+          <p className="text-charcoal-light max-w-2xl mx-auto text-lg leading-relaxed">
+            От минимализма до вечной классики. Каждый шаблон создан с любовью к деталям и легко настраивается под вашу свадьбу.
+          </p>
+        </motion.div>
         
         {templates.length === 0 ? (
-          <div className="text-center text-gray-500">Нет доступных шаблонов</div>
+          <div className="text-center text-charcoal-light font-serif italic text-xl">
+            Коллекция в данный момент пополняется...
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {templates.map((template) => (
-              <div key={template.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col">
-                <div className="aspect-w-16 aspect-h-9 bg-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+            {templates.map((template, idx) => (
+              <motion.div 
+                key={template.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeOut" }}
+                className="group flex flex-col"
+              >
+                {/* Image Container with Hover Effect */}
+                <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-6 shadow-md group-hover:shadow-2xl transition-all duration-700 bg-sand">
                   {template.thumbnail || template.preview_image ? (
                     <img
                       src={template.thumbnail || template.preview_image}
                       alt={template.name}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-48 flex items-center justify-center bg-indigo-50 text-indigo-200">
-                      <span className="text-sm font-medium">Нет превью</span>
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-sand text-charcoal/30">
+                      <span className="font-serif italic text-lg">Нет превью</span>
                     </div>
                   )}
-                </div>
-                <div className="p-6 flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className="inline-block px-2 py-1 text-xs font-semibold tracking-wide text-indigo-600 bg-indigo-50 rounded-full mb-3">
-                      {template.category || 'Standard'}
-                    </span>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{template.name}</h3>
-                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">
-                      {template.description}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                    <span className="text-lg font-bold text-gray-900">
-                      {Number(template.price).toLocaleString('ru-RU')} {template.currency}
-                    </span>
+                  
+                  {/* Elegant Overlay */}
+                  <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/30 transition-colors duration-500 backdrop-blur-[0px] group-hover:backdrop-blur-[2px]" />
+                  
+                  {/* CTA Button that appears on hover */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
                     <Link
                       to={`/templates/${template.slug}`}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="px-8 py-3 bg-ivory text-charcoal rounded-full font-medium tracking-wide hover:bg-champagne hover:text-white hover:shadow-lg transition-all"
                     >
-                      Посмотреть
+                      Смотреть детали
                     </Link>
                   </div>
                 </div>
-              </div>
+
+                {/* Text Content */}
+                <div className="flex flex-col items-center text-center px-4">
+                  <span className="text-[10px] font-semibold tracking-[0.2em] text-champagne uppercase mb-2">
+                    {template.category || 'Элегантный'}
+                  </span>
+                  <h3 className="text-2xl font-serif text-charcoal mb-2">{template.name}</h3>
+                  <p className="text-charcoal-light text-sm line-clamp-2 leading-relaxed mb-4">
+                    {template.description || 'Идеальный выбор для вашего особенного дня.'}
+                  </p>
+                  <div className="mt-auto">
+                    <span className="text-sm font-medium text-charcoal">
+                      {Number(template.price) === 0 ? 'Бесплатно' : `${Number(template.price).toLocaleString('ru-RU')} ${template.currency}`}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         )}

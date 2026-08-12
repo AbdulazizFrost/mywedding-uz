@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Check, Sparkles, Smartphone, Paintbrush, Globe } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function TemplateDetail() {
   const { slug } = useParams();
@@ -13,14 +15,16 @@ export default function TemplateDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [buying, setBuying] = useState(false);
-  const [order, setOrder] = useState(null);
 
   useEffect(() => {
+    // Scroll to top on load
+    window.scrollTo(0, 0);
+    
     const fetchTemplate = async () => {
       try {
         const response = await fetch(`${API_URL}/templates/${slug}`);
         if (!response.ok) {
-          if (response.status === 404) throw new Error('Template not found');
+          if (response.status === 404) throw new Error('Шаблон не найден');
           throw new Error('Failed to fetch template');
         }
         const data = await response.json();
@@ -37,7 +41,6 @@ export default function TemplateDetail() {
 
   const handleBuy = async () => {
     if (!user) {
-      // Redirect to login with returnUrl
       navigate(`/login?returnUrl=/templates/${slug}`);
       return;
     }
@@ -48,7 +51,7 @@ export default function TemplateDetail() {
       const response = await fetch(API_URL + '/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ template_id: template.id }), // amount is explicitly omitted
+        body: JSON.stringify({ template_id: template.id }),
         credentials: 'include',
       });
 
@@ -57,7 +60,6 @@ export default function TemplateDetail() {
         throw new Error(data.error || 'Failed to create order');
       }
 
-      // Instead of setting local order state, redirect to checkout
       navigate(`/checkout/${data.order.id}`);
     } catch (err) {
       setError(err.message);
@@ -66,60 +68,137 @@ export default function TemplateDetail() {
     }
   };
 
-  if (loading || authLoading) return <div className="min-h-screen p-8 text-center text-gray-500">Loading...</div>;
-  if (error) return <div className="min-h-screen p-8 text-center text-red-500">{error}</div>;
-  if (!template) return <div className="min-h-screen p-8 text-center text-gray-500">Template not found</div>;
+  if (loading || authLoading) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
+      </div>
+    );
+  }
+  
+  if (error || !template) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center text-center px-4">
+        <h2 className="text-4xl font-serif text-charcoal mb-4">Упс, что-то пошло не так</h2>
+        <p className="text-charcoal-light mb-8">{error || 'Шаблон не найден'}</p>
+        <Link to="/catalog" className="px-8 py-3 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all">
+          Вернуться в каталог
+        </Link>
+      </div>
+    );
+  }
+
+  const features = [
+    { icon: Smartphone, title: 'Адаптивный дизайн', desc: 'Идеально смотрится на любых смартфонах' },
+    { icon: Paintbrush, title: 'Полная кастомизация', desc: 'Настраивайте тексты, цвета и шрифты' },
+    { icon: Globe, title: 'Личный домен', desc: 'Уникальная ссылка-приглашение для гостей' },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto bg-white shadow rounded-lg overflow-hidden flex flex-col md:flex-row">
+    <div className="min-h-screen bg-ivory font-sans pt-24 pb-24 selection:bg-champagne selection:text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="md:w-3/5 bg-gray-200">
-          {template.preview_image ? (
-            <img
-              src={template.preview_image}
-              alt={template.name}
-              className="w-full h-full object-cover min-h-[400px]"
-            />
-          ) : (
-            <div className="w-full h-full min-h-[400px] flex items-center justify-center bg-indigo-50 text-indigo-300">
-              <span className="text-lg font-medium">Нет полноразмерного превью</span>
-            </div>
-          )}
-        </div>
+        {/* Back navigation */}
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
+          <Link to="/catalog" className="inline-flex items-center gap-2 text-charcoal-light hover:text-champagne transition-colors font-medium text-sm">
+            <ArrowLeft size={16} /> Назад в каталог
+          </Link>
+        </motion.div>
 
-        <div className="md:w-2/5 p-8 flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wide text-indigo-600 bg-indigo-50 rounded-full mb-3">
-                  {template.category || 'Standard'}
-                </span>
-                <h1 className="text-3xl font-bold text-gray-900">{template.name}</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+          
+          {/* Left Column: Image / Preview Mockup */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="relative"
+          >
+            {/* Soft decorative background element */}
+            <div className="absolute -inset-4 bg-sand/30 rounded-[3rem] -z-10 rotate-3 transform-gpu" />
+            
+            <div className="relative w-full max-w-[400px] mx-auto aspect-[9/19.5] bg-white rounded-[2.5rem] p-3 shadow-2xl border border-sand">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-ivory rounded-b-xl z-20" />
+              <div className="w-full h-full rounded-[2rem] overflow-hidden bg-sand relative">
+                {template.preview_image ? (
+                  <img
+                    src={template.preview_image}
+                    alt={template.name}
+                    className="w-full h-full object-cover object-top"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-ivory text-charcoal-light p-6 text-center">
+                    <Sparkles className="w-12 h-12 mb-4 text-champagne opacity-50" />
+                    <span className="font-serif italic text-lg">Превью формируется</span>
+                  </div>
+                )}
+                {/* Gradient overlay for premium feel */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
               </div>
             </div>
-            
-            <p className="text-gray-600 text-base leading-relaxed mb-8">
-              {template.description || 'Описание отсутствует.'}
-            </p>
-            
-            <div className="py-4 border-t border-b border-gray-100 mb-8">
-              <p className="text-sm text-gray-500 mb-1">Стоимость шаблона</p>
-              <p className="text-3xl font-extrabold text-gray-900">
-                {Number(template.price).toLocaleString('ru-RU')} {template.currency}
+          </motion.div>
+
+          {/* Right Column: Template Details */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col"
+          >
+            <div className="mb-8">
+              <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold rounded-full border border-champagne text-champagne mb-6">
+                {template.category || 'Premium Design'}
+              </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-charcoal mb-6 leading-tight">
+                {template.name}
+              </h1>
+              <p className="text-lg text-charcoal-light font-light leading-relaxed max-w-lg">
+                {template.description || 'Элегантный и современный дизайн, созданный для того, чтобы запечатлеть ваши самые теплые моменты.'}
               </p>
             </div>
-          </div>
 
-          <button
-            onClick={handleBuy}
-            disabled={buying}
-            className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white ${
-              buying ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200`}
-          >
-            {buying ? 'Создание заказа...' : (user ? 'Купить' : 'Войти и купить')}
-          </button>
+            {/* Price & Action */}
+            <div className="bg-white p-8 rounded-3xl border border-sand shadow-sm mb-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-champagne/10 rounded-bl-full -mr-16 -mt-16" />
+              
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-charcoal-light font-semibold mb-2">Стоимость шаблона</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-serif text-charcoal">{Number(template.price).toLocaleString('ru-RU')}</span>
+                    <span className="text-lg text-charcoal-light font-medium">{template.currency}</span>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleBuy}
+                  disabled={buying}
+                  className="px-8 py-4 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300 disabled:opacity-70 disabled:hover:translate-y-0 whitespace-nowrap"
+                >
+                  {buying ? 'Оформление...' : (user ? 'Создать приглашение' : 'Войти и Создать')}
+                </button>
+              </div>
+            </div>
+
+            {/* Features List */}
+            <div>
+              <h3 className="text-sm uppercase tracking-widest text-charcoal font-semibold mb-6">В стоимость включено:</h3>
+              <ul className="space-y-4">
+                {features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-sand flex items-center justify-center shrink-0 text-charcoal">
+                      <feature.icon size={18} />
+                    </div>
+                    <div>
+                      <h4 className="text-charcoal font-medium">{feature.title}</h4>
+                      <p className="text-sm text-charcoal-light">{feature.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+          </motion.div>
         </div>
       </div>
     </div>
