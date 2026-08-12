@@ -11,6 +11,14 @@ import PreviewPage from '../pages/dashboard/PreviewPage.jsx';
 import PublicInvitation from '../pages/public/PublicInvitation.jsx';
 import RsvpDashboard from '../pages/dashboard/RsvpDashboard.jsx';
 
+// Admin imports
+import AdminLayout from '../pages/admin/AdminLayout.jsx';
+import AdminDashboard from '../pages/admin/AdminDashboard.jsx';
+import AdminUsers from '../pages/admin/AdminUsers.jsx';
+import AdminOrders from '../pages/admin/AdminOrders.jsx';
+import AdminTemplates from '../pages/admin/AdminTemplates.jsx';
+import AdminInvitations from '../pages/admin/AdminInvitations.jsx';
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -20,11 +28,22 @@ export default function AppRouter() {
       <Route path="/w/:slug" element={<PublicInvitation />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      
+      {/* User Dashboard Routes */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/checkout/:orderId" element={<CheckoutPage />} />
       <Route path="/editor/:id" element={<EditorPage />} />
       <Route path="/preview/:id" element={<PreviewPage />} />
       <Route path="/dashboard/rsvp/:id" element={<RsvpDashboard />} />
+
+      {/* Admin Panel Routes */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="templates" element={<AdminTemplates />} />
+        <Route path="invitations" element={<AdminInvitations />} />
+      </Route>
     </Routes>
   );
 }

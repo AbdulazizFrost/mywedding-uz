@@ -86,12 +86,22 @@ export default function Navbar() {
           
           <div className="flex items-center gap-4 border-l border-champagne-light pl-6">
             {user ? (
-              <Link 
-                to="/dashboard" 
-                className="px-5 py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all hover:shadow-lg hover:shadow-charcoal/20"
-              >
-                Личный кабинет
-              </Link>
+              <div className="flex items-center gap-4">
+                {user.role === 'admin' && (
+                  <Link 
+                    to="/admin" 
+                    className="text-sm font-semibold text-champagne hover:text-charcoal transition-colors uppercase tracking-widest"
+                  >
+                    Админ-панель
+                  </Link>
+                )}
+                <Link 
+                  to="/dashboard" 
+                  className="px-5 py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all hover:shadow-lg hover:shadow-charcoal/20"
+                >
+                  Личный кабинет
+                </Link>
+              </div>
             ) : (
               <>
                 <Link 
@@ -141,12 +151,22 @@ export default function Navbar() {
             ))}
             
             {user ? (
-              <Link 
-                to="/dashboard" 
-                className="mt-2 text-center px-5 py-3 bg-charcoal text-ivory text-base font-medium rounded-full"
-              >
-                Личный кабинет
-              </Link>
+              <div className="flex flex-col gap-2 mt-2">
+                {user.role === 'admin' && (
+                  <Link 
+                    to="/admin" 
+                    className="text-center px-5 py-3 border border-champagne text-champagne text-base font-semibold uppercase tracking-widest rounded-full"
+                  >
+                    Админ-панель
+                  </Link>
+                )}
+                <Link 
+                  to="/dashboard" 
+                  className="text-center px-5 py-3 bg-charcoal text-ivory text-base font-medium rounded-full"
+                >
+                  Личный кабинет
+                </Link>
+              </div>
             ) : (
               <>
                 <Link to="/login" className="text-base text-charcoal py-2 border-b border-sand">

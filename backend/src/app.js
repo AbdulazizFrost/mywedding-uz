@@ -12,6 +12,7 @@ import { devRouter } from './modules/dev/dev.routes.js';
 import { invitationsRouter } from './modules/invitations/invitations.routes.js';
 import { publicRouter } from './modules/public/public.routes.js';
 import { paymentsRouter } from './modules/payments/payments.routes.js';
+import { adminRouter } from './modules/admin/admin.routes.js';
 
 export function createApp() {
   const app = express();
@@ -45,6 +46,7 @@ export function createApp() {
   app.use('/api/invitations', invitationsRouter);
   app.use('/api/public', publicRouter);
   app.use('/api/payments', paymentsRouter);
+  app.use('/api/admin', adminRouter);
 
   if (process.env.NODE_ENV === 'development') {
     app.use('/api/dev', devRouter);
