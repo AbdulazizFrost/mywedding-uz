@@ -1,0 +1,37 @@
+{
+  "name": "mywedding-backend",
+  "version": "0.1.0",
+  "description": "MyWedding.uz — backend API",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1108.0",
+    "@prisma/client": "^6.19.3",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.6.2",
+    "helmet": "^8.3.0",
+    "multer": "^2.2.0",
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "jest-mock-extended": "^4.0.1",
+    "prisma": "^6.19.3",
+    "supertest": "^7.2.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}
