@@ -134,9 +134,9 @@ export const publishInvitation = async (req, res, next) => {
       ? JSON.parse(invitation.data) 
       : (invitation.data || {});
 
-    if (!data.groom_name || !data.bride_name || !data.wedding_date || !data.location) {
+    if (!data.groom_name || !data.bride_name || !data.wedding_date || !data.venue_name) {
       return res.status(400).json({ 
-        error: 'Missing required fields for publication: groom_name, bride_name, wedding_date, location' 
+        error: 'Missing required fields for publication: groom_name, bride_name, wedding_date, venue_name' 
       });
     }
 
