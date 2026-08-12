@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export default function EditorPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ export default function EditorPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/invitations/${id}`, { credentials: 'include' });
+        const res = await fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to fetch invitation');
         const resData = await res.json();
         const inv = resData.invitation;
@@ -42,7 +44,7 @@ export default function EditorPage() {
         setData(parsedData);
 
         // Fetch media
-        const mediaRes = await fetch(`http://localhost:5000/api/invitations/${id}/media`, { credentials: 'include' });
+        const mediaRes = await fetch(`${API_URL}/invitations/${id}/media`, { credentials: 'include' });
         if (mediaRes.ok) {
           const mediaData = await mediaRes.json();
           setMedia(mediaData.media || []);
@@ -61,7 +63,7 @@ export default function EditorPage() {
     if (isManual) setSaving(true);
     
     try {
-      const res = await fetch(`http://localhost:5000/api/invitations/${id}`, {
+      const res = await fetch(`${API_URL}/invitations/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -122,7 +124,7 @@ export default function EditorPage() {
     formData.append('type', 'gallery_item');
 
     try {
-      const res = await fetch(`http://localhost:5000/api/invitations/${id}/media`, {
+      const res = await fetch(`${API_URL}/invitations/${id}/media`, {
         method: 'POST',
         credentials: 'include',
         body: formData
@@ -137,7 +139,7 @@ export default function EditorPage() {
 
   const handleMediaDelete = async (mediaId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/invitations/${id}/media/${mediaId}`, {
+      const res = await fetch(`${API_URL}/invitations/${id}/media/${mediaId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -150,7 +152,7 @@ export default function EditorPage() {
 
   const handlePublish = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/invitations/${id}/publish`, {
+      const res = await fetch(`${API_URL}/invitations/${id}/publish`, {
         method: 'POST', credentials: 'include'
       });
       const resData = await res.json();

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export default function PreviewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ export default function PreviewPage() {
   useEffect(() => {
     const fetchInvitation = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/invitations/${id}`, { credentials: 'include' });
+        const res = await fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to fetch invitation');
         const resData = await res.json();
         const parsedData = typeof resData.invitation.data === 'string' 
