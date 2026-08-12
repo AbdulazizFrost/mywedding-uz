@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { normalizeApiError } from '../../utils/apiUtils.js';
 
 const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
 
@@ -25,9 +26,15 @@ export default function LoginPage() {
         credentials: 'include',
       });
       
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        data = null;
+      }
+      
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to login');
+        throw new Error(normalizeApiError(response.status, data));
       }
       
       await fetchMe();

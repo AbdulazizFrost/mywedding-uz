@@ -13,13 +13,19 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(API_URL + '/auth/me', {
         credentials: 'include',
       });
+      let data = null;
       if (response.ok) {
-        const data = await response.json();
+        data = await response.json();
         setUser(data);
       } else {
+        try { data = await response.json(); } catch (e) {}
+        if (response.status !== 401 && import.meta.env.DEV) {
+           console.error('[fetchMe Error]', response.status, data);
+        }
         setUser(null);
       }
     } catch (error) {
+      if (import.meta.env.DEV) console.error('[fetchMe Exception]', error);
       setUser(null);
     } finally {
       setLoading(false);

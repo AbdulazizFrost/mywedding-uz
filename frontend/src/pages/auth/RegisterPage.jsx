@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { normalizeApiError } from '../../utils/apiUtils.js';
 
 const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
 
@@ -22,9 +23,15 @@ export default function RegisterPage() {
         body: JSON.stringify({ email, password, full_name: fullName }),
       });
       
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        data = null;
+      }
+      
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to register');
+        throw new Error(normalizeApiError(response.status, data));
       }
 
       // After successful registration, log them in automatically
