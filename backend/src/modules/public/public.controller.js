@@ -73,7 +73,7 @@ export const submitRsvp = async (req, res, next) => {
     }
 
     const data = typeof invitation.data === 'string' ? JSON.parse(invitation.data) : (invitation.data || {});
-    const rsvpEnabled = data.rsvp ? Boolean(data.rsvp.enabled) : false; // Default is false per user requirements
+    const rsvpEnabled = data.rsvp?.enabled !== undefined ? Boolean(data.rsvp.enabled) : true;
 
     if (!rsvpEnabled) {
       return res.status(404).json({ error: 'RSVP отключено для этого приглашения.' });
