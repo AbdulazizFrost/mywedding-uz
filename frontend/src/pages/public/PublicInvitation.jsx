@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export default function PublicInvitation() {
   const { slug } = useParams();
   
@@ -41,7 +43,6 @@ export default function PublicInvitation() {
   }, [slug]);
 
   const handleRsvpSubmit = async (rsvpData) => {
-    const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
     const res = await fetch(`${API_URL}/public/invitations/${slug}/rsvp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
