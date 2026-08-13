@@ -127,14 +127,14 @@ export default function Home() {
               <PhoneMockup className="relative transform lg:rotate-[2deg] hover:rotate-0 transition-transform duration-700 shadow-[0_20px_60px_rgb(0,0,0,0.15)]">
                 <div className="h-full w-full bg-ivory flex flex-col items-center justify-center relative overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=400&h=800&q=80" 
+                    src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=400&h=800&q=80" 
                     alt="Wedding Couple" 
                     className="absolute inset-0 w-full h-full object-cover opacity-90"
                     loading="lazy"
                   />
                   
                   {/* Overlay Content */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-8 pb-14 text-white">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent flex flex-col justify-end p-8 pb-14 text-white">
                     <FadeIn delay={0.8} className="text-center w-full">
                       <p className="text-[11px] uppercase tracking-[0.4em] font-semibold mb-4 text-white/90 drop-shadow-md">
                         Приглашение на свадьбу
