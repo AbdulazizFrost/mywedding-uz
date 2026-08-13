@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { normalizeApiError } from '../../utils/apiUtils.js';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { fetchMe } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -68,9 +70,9 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-1/2 relative bg-charcoal">
         <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
         <div className="absolute bottom-16 left-16 text-ivory max-w-lg z-10">
-          <h2 className="text-5xl font-serif mb-6 leading-tight">Создайте <br/><span className="italic text-champagne font-light drop-shadow-sm">своё приглашение</span></h2>
+          <h2 className="text-5xl font-serif mb-6 leading-tight">{t('auth.register.titlePart1')} <br/><span className="italic text-champagne font-light drop-shadow-sm">{t('auth.register.titlePart2')}</span></h2>
           <p className="text-ivory/90 text-[15px] font-light leading-relaxed">
-            Зарегистрируйтесь, чтобы получить доступ к эксклюзивным шаблонам и инструментам для создания идеального приглашения на свадьбу.
+            {t('auth.register.desc')}
           </p>
         </div>
       </div>
@@ -86,27 +88,27 @@ export default function RegisterPage() {
         >
           {/* Mobile minimal header */}
           <div className="lg:hidden text-center mb-12">
-            <h2 className="text-4xl font-serif text-charcoal mb-3">Создать аккаунт</h2>
+            <h2 className="text-4xl font-serif text-charcoal mb-3">{t('auth.register.createAccount')}</h2>
             <div className="flex justify-center mb-4">
               <div className="w-8 h-[1px] bg-champagne/50" />
             </div>
-            <p className="text-charcoal-light font-light text-sm">Начните историю прямо сейчас</p>
+            <p className="text-charcoal-light font-light text-sm">{t('auth.register.startNow')}</p>
           </div>
 
           <div className="hidden lg:block mb-12">
-            <h2 className="text-4xl font-serif text-charcoal mb-4">Создать аккаунт</h2>
+            <h2 className="text-4xl font-serif text-charcoal mb-4">{t('auth.register.createAccount')}</h2>
             <div className="w-10 h-[1px] bg-champagne/50 mb-6" />
-            <p className="text-charcoal-light font-light text-[15px]">Начните историю прямо сейчас</p>
+            <p className="text-charcoal-light font-light text-[15px]">{t('auth.register.startNow')}</p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-6">
             <div>
-              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">Имя и Фамилия</label>
+              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">{t('auth.register.nameLabel')}</label>
               <input
                 type="text"
                 required
                 className="w-full px-0 py-3 bg-transparent border-b border-champagne/40 focus:border-charcoal outline-none text-charcoal transition-colors placeholder:text-charcoal-light/30"
-                placeholder="Тимур и Лейла"
+                placeholder={t('auth.register.namePlaceholder')}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
@@ -125,7 +127,7 @@ export default function RegisterPage() {
             </div>
             
             <div>
-              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">Пароль (мин. 6 символов)</label>
+              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">{t('auth.register.password')}</label>
               <input
                 type="password"
                 required
@@ -150,14 +152,14 @@ export default function RegisterPage() {
               type="submit"
               className="w-full py-4 mt-8 bg-charcoal text-ivory rounded-full font-medium text-sm tracking-wide hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300"
             >
-              Зарегистрироваться
+              {t('auth.register.submit')}
             </button>
             
             <div className="text-center mt-10">
                <p className="text-charcoal-light text-[13px] font-light">
-                  Уже есть аккаунт?{' '}
+                  {t('auth.register.hasAccount')}{' '}
                   <Link to="/login" className="text-charcoal font-medium hover:text-champagne transition-colors underline decoration-champagne/30 underline-offset-4">
-                    Войти
+                    {t('auth.register.login')}
                   </Link>
                </p>
             </div>

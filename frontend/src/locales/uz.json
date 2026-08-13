@@ -74,5 +74,46 @@
     "rights": "Barcha huquqlar himoyalangan.",
     "privacy": "Maxfiylik siyosati",
     "terms": "Foydalanish shartlari"
+  },
+  "catalog": {
+    "loading": "To'plam tayyorlanmoqda...",
+    "badge": "Wedding Design Gallery",
+    "titlePart1": "Tarixingiz uslubini",
+    "titlePart2": "tanlang",
+    "desc": "Minimalizmdan abadiy klassikagacha. Har bir shablon detallarga muhabbat bilan yaratilgan va sizning to'yingizga osongina moslashadi.",
+    "empty": "Hozirda to'plam to'ldirilmoqda...",
+    "noPreview": "Ko'rish imkonsiz",
+    "details": "Tafsilotlarni ko'rish",
+    "free": "Bepul",
+    "defaultCategory": "Elegant",
+    "defaultDesc": "Sizning maxsus kuningiz uchun mukammal tanlov."
+  },
+  "auth": {
+    "login": {
+      "titlePart1": "Tarixingizni",
+      "titlePart2": "boshlang",
+      "desc": "Mukammal to'y taklifnomasini yaratishni davom ettirish uchun shaxsiy kabinetga kiring.",
+      "welcomeBack": "Xush kelibsiz",
+      "continue": "O'z hisobingizga kiring",
+      "continueMobile": "Taklifnoma yaratishni davom ettiring",
+      "password": "Parol",
+      "forgotPassword": "Parolni unutdingizmi?",
+      "submit": "Kirish",
+      "noAccount": "Hisobingiz yo'qmi?",
+      "register": "Ro'yxatdan o'tish"
+    },
+    "register": {
+      "titlePart1": "O'z taklifnomangizni",
+      "titlePart2": "yarating",
+      "desc": "Mukammal to'y taklifnomasini yaratish uchun eksklyuziv shablonlar va vositalarga kirish uchun ro'yxatdan o'ting.",
+      "createAccount": "Hisob yaratish",
+      "startNow": "Tarixingizni hozirdan boshlang",
+      "nameLabel": "Ism va Familiya",
+      "namePlaceholder": "Timur va Leyla",
+      "password": "Parol (min. 6 belgi)",
+      "submit": "Ro'yxatdan o'tish",
+      "hasAccount": "Allaqachon hisobingiz bormi?",
+      "login": "Kirish"
+    }
   }
 }

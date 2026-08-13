@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -8,6 +9,7 @@ export default function Catalog() {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Scroll to top on mount
@@ -35,7 +37,7 @@ export default function Catalog() {
     return (
       <div className="min-h-screen bg-ivory pt-32 pb-16 px-6 flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="font-serif text-charcoal-light italic text-xl">Подготавливаем коллекцию...</p>
+        <p className="font-serif text-charcoal-light italic text-xl">{t('catalog.loading')}</p>
       </div>
     );
   }
@@ -60,23 +62,23 @@ export default function Catalog() {
           className="text-center mb-16 lg:mb-24"
         >
           <span className="inline-flex items-center justify-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.2em] text-champagne uppercase rounded-full mb-8 bg-white/40 backdrop-blur-md shadow-sm">
-            Wedding Design Gallery
+            {t('catalog.badge')}
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-charcoal mb-6 leading-tight">
-            Выберите стиль <br className="hidden sm:block" />
-            <span className="italic font-light text-champagne drop-shadow-sm">вашей истории</span>
+            {t('catalog.titlePart1')} <br className="hidden sm:block" />
+            <span className="italic font-light text-champagne drop-shadow-sm">{t('catalog.titlePart2')}</span>
           </h1>
           <div className="flex justify-center mb-6">
             <img src="/assets/landing/divider.png" alt="" className="h-4 object-contain opacity-60" />
           </div>
           <p className="text-charcoal-light max-w-2xl mx-auto text-[15px] md:text-lg leading-relaxed font-light">
-            От минимализма до вечной классики. Каждый шаблон создан с любовью к деталям и легко настраивается под вашу свадьбу.
+            {t('catalog.desc')}
           </p>
         </motion.div>
         
         {templates.length === 0 ? (
           <div className="text-center text-charcoal-light font-serif italic text-xl h-64 flex items-center justify-center">
-            Коллекция в данный момент пополняется...
+            {t('catalog.empty')}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 max-w-7xl mx-auto px-4 md:px-8">
@@ -99,7 +101,7 @@ export default function Catalog() {
                     />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-sand text-charcoal/30">
-                      <span className="font-serif italic text-lg text-charcoal/40">Нет превью</span>
+                      <span className="font-serif italic text-lg text-charcoal/40">{t('catalog.noPreview')}</span>
                     </div>
                   )}
                   
@@ -112,7 +114,7 @@ export default function Catalog() {
                       to={`/templates/${template.slug}`}
                       className="flex items-center gap-2 px-8 py-4 bg-white/95 text-charcoal rounded-full font-medium text-sm tracking-widest uppercase hover:bg-champagne hover:text-white transition-all duration-300 shadow-xl"
                     >
-                      Смотреть детали
+                      {t('catalog.details')}
                     </Link>
                   </div>
                 </div>
@@ -120,16 +122,16 @@ export default function Catalog() {
                 {/* Text Content */}
                 <div className="flex flex-col items-center text-center px-2">
                   <span className="text-[9px] md:text-[10px] font-semibold tracking-[0.3em] text-charcoal/50 uppercase mb-3">
-                    {template.category || 'Элегантный'}
+                    {template.category || t('catalog.defaultCategory')}
                   </span>
                   <h3 className="text-2xl md:text-3xl font-serif text-charcoal mb-3 px-2 leading-tight">{template.name}</h3>
                   <div className="w-8 h-[1px] bg-champagne mb-4 transition-all duration-700 group-hover:w-16" />
                   <p className="text-charcoal-light/70 text-[12px] md:text-[13px] line-clamp-2 leading-relaxed mb-6 font-light max-w-sm">
-                    {template.description || 'Идеальный выбор для вашего особенного дня.'}
+                    {template.description || t('catalog.defaultDesc')}
                   </p>
                   <div className="mt-auto flex flex-col items-center gap-4 w-full">
                     <span className="text-sm font-semibold tracking-widest text-charcoal uppercase">
-                      {Number(template.price) === 0 ? 'Бесплатно' : `${Number(template.price).toLocaleString('ru-RU')} ${template.currency}`}
+                      {Number(template.price) === 0 ? t('catalog.free') : `${Number(template.price).toLocaleString('ru-RU')} ${template.currency}`}
                     </span>
                     
                     {/* Mobile visible CTA */}
@@ -137,7 +139,7 @@ export default function Catalog() {
                       to={`/templates/${template.slug}`}
                       className="md:hidden w-full max-w-[200px] py-3.5 border border-champagne text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-colors uppercase tracking-widest text-[11px]"
                     >
-                      Смотреть детали
+                      {t('catalog.details')}
                     </Link>
                   </div>
                 </div>

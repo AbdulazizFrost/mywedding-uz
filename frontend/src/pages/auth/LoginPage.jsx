@@ -3,6 +3,7 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { normalizeApiError } from '../../utils/apiUtils.js';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { fetchMe } = useAuth();
+  const { t } = useTranslation();
 
   const returnUrl = searchParams.get('returnUrl') || '/dashboard';
 
@@ -59,9 +61,9 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative bg-charcoal">
         <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
         <div className="absolute bottom-16 left-16 text-ivory max-w-lg z-10">
-          <h2 className="text-5xl font-serif mb-6 leading-tight">Начните <br/><span className="italic text-champagne font-light drop-shadow-sm">вашу историю</span></h2>
+          <h2 className="text-5xl font-serif mb-6 leading-tight">{t('auth.login.titlePart1')} <br/><span className="italic text-champagne font-light drop-shadow-sm">{t('auth.login.titlePart2')}</span></h2>
           <p className="text-ivory/90 text-[15px] font-light leading-relaxed">
-            Войдите в личный кабинет, чтобы продолжить работу над вашим идеальным свадебным приглашением.
+            {t('auth.login.desc')}
           </p>
         </div>
       </div>
@@ -77,17 +79,17 @@ export default function LoginPage() {
         >
           {/* Mobile minimal header */}
           <div className="lg:hidden text-center mb-12">
-            <h2 className="text-4xl font-serif text-charcoal mb-3">С возвращением</h2>
+            <h2 className="text-4xl font-serif text-charcoal mb-3">{t('auth.login.welcomeBack')}</h2>
             <div className="flex justify-center mb-4">
               <div className="w-8 h-[1px] bg-champagne/50" />
             </div>
-            <p className="text-charcoal-light font-light text-sm">Продолжите создание приглашения</p>
+            <p className="text-charcoal-light font-light text-sm">{t('auth.login.continueMobile')}</p>
           </div>
 
           <div className="hidden lg:block mb-12">
-            <h2 className="text-4xl font-serif text-charcoal mb-4">С возвращением</h2>
+            <h2 className="text-4xl font-serif text-charcoal mb-4">{t('auth.login.welcomeBack')}</h2>
             <div className="w-10 h-[1px] bg-champagne/50 mb-6" />
-            <p className="text-charcoal-light font-light text-[15px]">Войдите в свой аккаунт</p>
+            <p className="text-charcoal-light font-light text-[15px]">{t('auth.login.continue')}</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -105,8 +107,8 @@ export default function LoginPage() {
             
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase">Пароль</label>
-                <a href="#" className="text-[11px] text-charcoal-light/70 hover:text-champagne transition-colors">Забыли пароль?</a>
+                <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase">{t('auth.login.password')}</label>
+                <a href="#" className="text-[11px] text-charcoal-light/70 hover:text-champagne transition-colors">{t('auth.login.forgotPassword')}</a>
               </div>
               <input
                 type="password"
@@ -132,14 +134,14 @@ export default function LoginPage() {
               type="submit"
               className="w-full py-4 mt-8 bg-charcoal text-ivory rounded-full font-medium text-sm tracking-wide hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300"
             >
-              Войти
+              {t('auth.login.submit')}
             </button>
             
             <div className="text-center mt-10">
                <p className="text-charcoal-light text-[13px] font-light">
-                  Нет аккаунта?{' '}
+                  {t('auth.login.noAccount')}{' '}
                   <Link to="/register" className="text-charcoal font-medium hover:text-champagne transition-colors underline decoration-champagne/30 underline-offset-4">
-                    Зарегистрироваться
+                    {t('auth.login.register')}
                   </Link>
                </p>
             </div>
