@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { Heart, Image as ImageIcon, MapPin, Clock, Music, CheckCircle2, Smartphone, Gift, CalendarHeart } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 // Fade in component for scroll animations
 const FadeIn = ({ children, delay = 0, direction = 'up', className = '' }) => {
@@ -51,6 +52,7 @@ const PhoneMockup = ({ children, className = '' }) => (
 );
 
 export default function Home() {
+  const { user } = useAuth();
   // Ensure scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -97,8 +99,8 @@ export default function Home() {
               </p>
             </FadeIn>
             <FadeIn delay={0.7} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4 sm:px-0">
-              <Link to="/register" className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-charcoal text-ivory rounded-full font-medium hover:bg-charcoal-light transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 duration-300">
-                Создать приглашение &rarr;
+              <Link to={user ? "/dashboard" : "/register"} className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-charcoal text-ivory rounded-full font-medium hover:bg-charcoal-light transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 duration-300">
+                {user ? "Перейти в кабинет \u2192" : "Создать приглашение \u2192"}
               </Link>
               <a href="#templates" className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-transparent border border-charcoal text-charcoal rounded-full font-medium hover:bg-charcoal hover:text-ivory transition-all duration-300">
                 Посмотреть примеры
@@ -166,7 +168,7 @@ export default function Home() {
                   </div>
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-charcoal/30 backdrop-blur-sm">
-                    <Link to="/register" className="px-5 py-2.5 md:px-6 md:py-3 bg-ivory text-charcoal rounded-full text-sm md:text-base font-medium hover:bg-champagne hover:text-white transition-colors">
+                    <Link to={user ? "/dashboard" : "/register"} className="px-5 py-2.5 md:px-6 md:py-3 bg-ivory text-charcoal rounded-full text-sm md:text-base font-medium hover:bg-champagne hover:text-white transition-colors">
                       Выбрать дизайн
                     </Link>
                   </div>
@@ -355,8 +357,8 @@ export default function Home() {
             <p className="text-base md:text-xl text-charcoal-light mb-10 md:mb-12 max-w-2xl mx-auto px-2">
               Создайте красивое цифровое приглашение для своего особенного дня прямо сейчас.
             </p>
-            <Link to="/register" className="inline-block w-full sm:w-auto px-8 py-4 bg-charcoal text-ivory rounded-full font-medium text-base md:text-lg hover:bg-champagne transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 duration-300">
-              Создать приглашение &rarr;
+            <Link to={user ? "/dashboard" : "/register"} className="inline-block w-full sm:w-auto px-8 py-4 bg-charcoal text-ivory rounded-full font-medium text-base md:text-lg hover:bg-champagne transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 duration-300">
+              {user ? "Перейти в кабинет \u2192" : "Создать приглашение \u2192"}
             </Link>
           </FadeIn>
         </div>
