@@ -48,6 +48,10 @@ export default function RegisterPage() {
       });
       
       if (loginResponse.ok) {
+        const loginData = await loginResponse.json();
+        if (loginData && loginData.token) {
+          localStorage.setItem('token', loginData.token);
+        }
         await fetchMe();
         navigate('/dashboard');
       } else {

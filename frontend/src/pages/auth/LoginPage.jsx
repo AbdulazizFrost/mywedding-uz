@@ -42,6 +42,10 @@ export default function LoginPage() {
         throw new Error(normalizeApiError(response.status, data));
       }
       
+      if (data && data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      
       await fetchMe();
       navigate(returnUrl);
     } catch (err) {

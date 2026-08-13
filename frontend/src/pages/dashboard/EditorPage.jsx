@@ -571,7 +571,7 @@ const Input = ({ label, type="text", value, onChange, placeholder }) => (
       value={value || ''} 
       onChange={onChange} 
       placeholder={placeholder}
-      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[15px] outline-none transition-all shadow-sm placeholder:text-sand" 
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm placeholder:text-sand" 
     />
   </div>
 );
@@ -584,14 +584,14 @@ const TextArea = ({ label, value, onChange, placeholder, rows=3 }) => (
       value={value || ''} 
       onChange={onChange} 
       placeholder={placeholder}
-      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[15px] outline-none transition-all shadow-sm placeholder:text-sand custom-scrollbar resize-none" 
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm placeholder:text-sand custom-scrollbar resize-none" 
     />
   </div>
 );
 
 const Toggle = ({ label, checked, onChange }) => (
   <label className="flex items-center justify-between cursor-pointer p-4 border border-sand rounded-xl bg-white shadow-sm hover:border-champagne/30 transition-colors">
-    <div className="text-[15px] font-medium text-charcoal">{label}</div>
+    <div className="text-[16px] font-medium text-charcoal">{label}</div>
     <div className="relative shrink-0">
       <input type="checkbox" className="sr-only" checked={Boolean(checked)} onChange={onChange} />
       <div className={`block w-12 h-7 rounded-full transition-colors ${checked ? 'bg-champagne' : 'bg-sand'}`}></div>
@@ -606,7 +606,7 @@ const Select = ({ label, value, onChange, options }) => (
     <select 
       value={value || ''} 
       onChange={onChange} 
-      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[15px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
       style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
     >
       <option value="" disabled>Выберите опцию</option>

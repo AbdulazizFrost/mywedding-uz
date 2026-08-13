@@ -39,3 +39,20 @@ html {
 .body-lock {
   overflow: hidden;
 }
+
+/* Safe area insets for mobile notches/home indicators */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 20px);
+}
+
+/* Custom scrollbar hiding (used in EditorPage) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
