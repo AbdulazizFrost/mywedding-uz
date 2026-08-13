@@ -63,14 +63,19 @@ export default function Home() {
       
       <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-32 px-4 md:px-8 lg:px-12 w-full flex flex-col justify-center">
         
-        {/* Soft background gradient */}
+        {/* Soft background gradient & Floral Wrappers */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-br from-ivory/90 via-champagne-light/30 to-ivory/90" />
+          <img 
+            src="/assets/landing/hero-bg-left.png" 
+            alt="Floral Background" 
+            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 mix-blend-multiply opacity-95" 
+          />
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10 w-full">
           {/* Left Content */}
-          <div className="flex-1 text-center lg:text-left w-full mt-8 md:mt-0">
+          <div className="flex-1 text-center lg:text-left w-full mt-8 md:mt-0 flex flex-col justify-center">
             <FadeIn delay={0.1}>
               <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.15em] text-champagne uppercase rounded-full mb-8 bg-white/40 backdrop-blur-md shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
                 <Heart size={12} className="text-champagne" /> Digital Wedding Invitation
