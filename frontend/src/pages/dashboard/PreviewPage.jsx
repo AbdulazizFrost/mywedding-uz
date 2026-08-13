@@ -26,9 +26,17 @@ export default function PreviewPage() {
         const res = await fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' });
         if (!res.ok) throw new Error('Failed to fetch invitation');
         const resData = await res.json();
-        const parsedData = typeof resData.invitation.data === 'string' 
-          ? JSON.parse(resData.invitation.data) 
-          : resData.invitation.data;
+        let parsedData = {};
+        try {
+          if (typeof resData.invitation.data === 'string') {
+            parsedData = resData.invitation.data.trim() ? JSON.parse(resData.invitation.data) : {};
+          } else {
+            parsedData = resData.invitation.data || {};
+          }
+        } catch(e) {
+          console.error("JSON parse error:", e);
+          parsedData = {};
+        }
         setData(parsedData);
       } catch (err) {
         setError(err.message);

@@ -123,7 +123,15 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
             <motion.div variants={fadeUp} className="mt-8 flex flex-col items-center">
               <div className="h-16 w-px bg-white/30 mb-8" />
               <p className="text-xl sm:text-2xl uppercase tracking-[0.2em] font-light">
-                {new Date(mergedData.wedding_date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, ' . ')}
+                {(() => {
+                  try {
+                    const d = new Date(mergedData.wedding_date);
+                    if (isNaN(d.getTime())) return mergedData.wedding_date;
+                    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, ' . ');
+                  } catch (e) {
+                    return mergedData.wedding_date;
+                  }
+                })()}
               </p>
             </motion.div>
           )}

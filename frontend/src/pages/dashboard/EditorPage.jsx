@@ -46,7 +46,17 @@ export default function EditorPage() {
         setInvitation(inv);
         setLastUpdated(inv.updated_at);
         
-        const parsedData = typeof inv.data === 'string' ? JSON.parse(inv.data) : inv.data;
+        let parsedData = {};
+        try {
+          if (typeof inv.data === 'string') {
+            parsedData = inv.data.trim() ? JSON.parse(inv.data) : {};
+          } else {
+            parsedData = inv.data || {};
+          }
+        } catch (e) {
+          console.error("JSON parse error:", e);
+          parsedData = {};
+        }
         setData(parsedData);
 
         const mediaRes = await fetch(`${API_URL}/invitations/${id}/media`, { credentials: 'include' });

@@ -27,7 +27,17 @@ export default function PublicInvitation() {
         
         // Also fetch media if needed. Wait, does public API expose media?
         // We need a public endpoint for media or include it in the invitation response.
-        const parsedData = typeof data.invitation.data === 'string' ? JSON.parse(data.invitation.data) : data.invitation.data;
+        let parsedData = {};
+        try {
+          if (typeof data.invitation.data === 'string') {
+            parsedData = data.invitation.data.trim() ? JSON.parse(data.invitation.data) : {};
+          } else {
+            parsedData = data.invitation.data || {};
+          }
+        } catch(e) {
+          console.error("JSON parse error:", e);
+          parsedData = {};
+        }
         
         // Note: For step 7, we should fetch media. We'll do it via public API or assume backend provides it.
         // Actually, let's fetch media if we add a public media endpoint, or rely on invitation.media if returned.
