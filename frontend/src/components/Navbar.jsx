@@ -126,7 +126,7 @@ export default function Navbar() {
                     to="/register" 
                     className="px-4 py-2 lg:px-5 lg:py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all shadow-md hover:shadow-lg"
                   >
-                    Создать приглашение
+                    Регистрация
                   </Link>
                 </>
               )}
@@ -212,7 +212,7 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="text-center w-full px-6 py-4 bg-charcoal text-ivory text-lg font-medium rounded-full shadow-md mt-2"
                     >
-                      Создать приглашение
+                      Регистрация
                     </Link>
                   </>
                 )}

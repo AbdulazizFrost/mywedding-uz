@@ -139,7 +139,7 @@ export default function LoginPage() {
                <p className="text-charcoal-light text-sm">
                   Нет аккаунта?{' '}
                   <Link to="/register" className="text-charcoal font-medium hover:text-champagne transition-colors border-b border-charcoal/30 hover:border-champagne">
-                    Создать приглашение
+                    Зарегистрироваться
                   </Link>
                </p>
             </div>
