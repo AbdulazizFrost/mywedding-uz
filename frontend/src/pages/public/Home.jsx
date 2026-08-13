@@ -90,8 +90,8 @@ export default function Home() {
               </h1>
             </FadeIn>
             
-            <FadeIn delay={0.4} className="flex justify-center lg:justify-start mb-6 mt-2">
-              <img src="/assets/landing/divider.png" alt="Divider" className="h-6 md:h-8 object-contain opacity-80" />
+            <FadeIn delay={0.4} className="flex justify-center lg:justify-start mb-8 mt-4">
+              <img src="/assets/landing/divider.png" alt="Divider" className="h-10 md:h-16 object-contain opacity-80" />
             </FadeIn>
 
             <FadeIn delay={0.5}>
