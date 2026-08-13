@@ -61,16 +61,15 @@ export default function Home() {
   return (
     <div className="bg-ivory min-h-screen pt-20 md:pt-24 font-sans text-charcoal selection:bg-champagne selection:text-white overflow-x-hidden">
       
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-40 px-4 md:px-8 lg:px-12 w-full flex flex-col justify-center min-h-[90vh]">
+      <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-32 px-4 md:px-8 lg:px-12 w-full flex flex-col justify-center">
         
         {/* Soft background gradient & Floral Wrappers (Overflow hidden to prevent horizontal scrollbars) */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden -z-20 bg-ivory">
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
           <div className="absolute inset-0 bg-gradient-to-br from-ivory/90 via-champagne-light/30 to-ivory/90" />
           <img 
             src="/assets/landing/hero-bg-left.png" 
             alt="Floral Background" 
-            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 pointer-events-none opacity-90" 
+            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 pointer-events-none mix-blend-multiply opacity-95" 
           />
           <img 
             src="/assets/landing/flower-left.png" 
