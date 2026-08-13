@@ -285,9 +285,9 @@ export default function Home() {
           
           <FadeIn delay={0.3} direction="up" className="flex justify-center px-2">
             {/* Extremely large showcase mockup - optimized for mobile width */}
-            <div className="relative border-gray-900 bg-gray-900 border-[8px] md:border-[12px] rounded-[2.5rem] md:rounded-[3rem] h-[500px] sm:h-[600px] md:h-[700px] w-full max-w-[320px] shadow-2xl overflow-hidden mx-auto transform hover:scale-105 transition-transform duration-1000 shrink-0">
+            <div className="relative border-gray-900 bg-gray-900 border-[6px] md:border-[12px] rounded-[2rem] md:rounded-[3rem] w-[280px] h-[560px] sm:w-[320px] sm:h-[650px] md:w-[350px] md:h-[750px] shadow-2xl overflow-hidden mx-auto transform hover:scale-105 transition-transform duration-1000 shrink-0">
               {/* Notch */}
-              <div className="w-[120px] md:w-[150px] h-[20px] md:h-[25px] bg-gray-900 top-0 rounded-b-[1rem] md:rounded-b-[1.2rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
+              <div className="w-[120px] md:w-[150px] h-[16px] md:h-[25px] bg-gray-900 top-0 rounded-b-[1rem] md:rounded-b-[1.2rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
               
               <div className="w-full h-[1200px] md:h-[1500px] bg-ivory text-charcoal flex flex-col relative animate-scroll-mockup" style={{ animation: 'scrollMockup 20s linear infinite alternate' }}>
                 <style dangerouslySetInnerHTML={{__html: `
