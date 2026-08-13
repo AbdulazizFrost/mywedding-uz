@@ -127,7 +127,7 @@ export default function Home() {
               <PhoneMockup className="relative transform lg:rotate-[2deg] hover:rotate-0 transition-transform duration-700 shadow-[0_20px_60px_rgb(0,0,0,0.15)]">
                 <div className="h-full w-full bg-ivory flex flex-col items-center justify-center relative overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&q=80&w=400&h=800" 
+                    src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80&w=400&h=800" 
                     alt="Wedding Couple" 
                     className="absolute inset-0 w-full h-full object-cover opacity-80"
                     loading="lazy"
