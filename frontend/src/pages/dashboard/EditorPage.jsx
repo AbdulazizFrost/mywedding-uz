@@ -456,8 +456,8 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap
-                    ${activeTab === tab.id ? 'bg-champagne/10 text-charcoal border border-champagne/30' : 'text-charcoal-light hover:bg-sand'}`}
+                  className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap shrink-0
+                    ${activeTab === tab.id ? 'bg-champagne/10 text-charcoal border border-charcoal/20' : 'text-charcoal-light hover:bg-sand'}`}
                 >
                   {tab.label}
                 </button>
