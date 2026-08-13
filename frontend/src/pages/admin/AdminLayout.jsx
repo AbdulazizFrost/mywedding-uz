@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { 
@@ -25,6 +25,16 @@ export default function AdminLayout() {
       </div>
     );
   }
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.classList.add('body-lock');
+    } else {
+      document.body.classList.remove('body-lock');
+    }
+    return () => document.body.classList.remove('body-lock');
+  }, [isMobileOpen]);
 
   if (!user || user.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;

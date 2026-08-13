@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { ArrowLeft, Trash2, CheckCircle2, XCircle, Users, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function RsvpDashboard() {
   const { id } = useParams();
@@ -17,9 +19,10 @@ export default function RsvpDashboard() {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchData = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
+        const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
         const [invRes, rsvpRes] = await Promise.all([
           fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' }),
           fetch(`${API_URL}/invitations/${id}/rsvp`, { credentials: 'include' })
@@ -47,7 +50,7 @@ export default function RsvpDashboard() {
     if (!window.confirm('Вы уверены, что хотите удалить этот ответ?')) return;
     
     try {
-      const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
+      const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
       const res = await fetch(`${API_URL}/invitations/${id}/rsvp/${responseId}`, {
         method: 'DELETE',
         credentials: 'include'
@@ -60,8 +63,23 @@ export default function RsvpDashboard() {
     }
   };
 
-  if (loading || authLoading) return <div className="p-8 text-center">Loading...</div>;
-  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
+  if (loading || authLoading) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="font-serif text-charcoal-light italic text-xl">Загрузка данных...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center px-4">
+        <p className="text-red-700 font-serif text-xl mb-4 text-center">{error}</p>
+        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full">Вернуться в кабинет</button>
+      </div>
+    );
+  }
 
   const totalResponses = rsvps.length;
   const totalAttending = rsvps.filter(r => r.attending).length;
@@ -69,74 +87,100 @@ export default function RsvpDashboard() {
   const totalGuestsCount = rsvps.reduce((sum, r) => sum + r.guests_count, 0);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Ответы гостей
-          </h1>
-          <button onClick={() => navigate('/dashboard')} className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50">
-            Назад
-          </button>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-6 mb-8">
-          <h2 className="text-lg font-semibold mb-4 text-gray-700">Статистика</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-blue-50 p-4 rounded text-center">
-              <span className="block text-2xl font-bold text-blue-700">{totalResponses}</span>
-              <span className="text-sm text-blue-600">Всего ответов</span>
-            </div>
-            <div className="bg-green-50 p-4 rounded text-center">
-              <span className="block text-2xl font-bold text-green-700">{totalAttending}</span>
-              <span className="text-sm text-green-600">Придут</span>
-            </div>
-            <div className="bg-red-50 p-4 rounded text-center">
-              <span className="block text-2xl font-bold text-red-700">{totalNotAttending}</span>
-              <span className="text-sm text-red-600">Не придут</span>
-            </div>
-            <div className="bg-purple-50 p-4 rounded text-center">
-              <span className="block text-2xl font-bold text-purple-700">{totalGuestsCount}</span>
-              <span className="text-sm text-purple-600">Всего гостей</span>
-            </div>
+    <div className="min-h-screen bg-ivory font-sans pt-24 pb-24 selection:bg-champagne selection:text-white">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-6">
+          <div>
+            <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-charcoal-light hover:text-champagne mb-3 transition-colors">
+              <ArrowLeft size={16} className="mr-1" /> Вернуться в кабинет
+            </Link>
+            <h1 className="text-3xl md:text-4xl font-serif text-charcoal mb-2">Ответы гостей</h1>
+            <p className="text-charcoal-light">
+              Для приглашения: {invitation?.template?.name || 'Без названия'}
+            </p>
           </div>
         </div>
 
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <ul className="divide-y divide-gray-200">
-            {rsvps.length === 0 ? (
-              <li className="p-6 text-center text-gray-500">Пока нет ответов</li>
-            ) : (
-              rsvps.map(rsvp => (
-                <li key={rsvp.id} className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:bg-gray-50">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <div className="bg-white p-6 rounded-2xl border border-sand shadow-sm text-center">
+            <span className="block text-3xl font-serif text-charcoal mb-1">{totalResponses}</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light">Всего ответов</span>
+          </div>
+          <div className="bg-champagne/10 p-6 rounded-2xl border border-champagne/20 shadow-sm text-center">
+            <span className="block text-3xl font-serif text-champagne mb-1">{totalAttending}</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light">Придут</span>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-sand shadow-sm text-center">
+            <span className="block text-3xl font-serif text-charcoal-light mb-1">{totalNotAttending}</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light/70">Не придут</span>
+          </div>
+          <div className="bg-charcoal p-6 rounded-2xl border border-charcoal shadow-sm text-center text-ivory">
+            <span className="block text-3xl font-serif mb-1">{totalGuestsCount}</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-ivory/70">Всего гостей</span>
+          </div>
+        </div>
+
+        {/* Responses List */}
+        <div className="bg-white shadow-sm border border-sand rounded-3xl overflow-hidden">
+          {rsvps.length === 0 ? (
+            <div className="p-16 text-center text-charcoal-light">
+              <Users className="w-12 h-12 mx-auto text-sand mb-4" />
+              <p className="font-serif text-xl italic">Пока никто не ответил на приглашение.</p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-sand">
+              {rsvps.map((rsvp, idx) => (
+                <motion.li 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  key={rsvp.id} 
+                  className="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 hover:bg-sand/30 transition-colors"
+                >
                   <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">{rsvp.guest_name}</h3>
-                    <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500">
-                      {rsvp.attending ? (
-                        <span className="text-green-600 font-medium flex items-center">
-                          <span className="mr-1">✓</span> Приду
-                        </span>
-                      ) : (
-                        <span className="text-red-500 font-medium flex items-center">
-                          <span className="mr-1">✕</span> Не смогу прийти
-                        </span>
-                      )}
-                      <span>Гостей: {rsvp.guests_count}</span>
-                      <span>{new Date(rsvp.created_at).toLocaleDateString('ru-RU')}</span>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-serif text-charcoal">{rsvp.guest_name}</h3>
+                      <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-semibold ${
+                        rsvp.attending ? 'bg-champagne/20 text-champagne border border-champagne/30' : 'bg-gray-100 text-gray-500 border border-gray-200'
+                      }`}>
+                        {rsvp.attending ? <><CheckCircle2 size={12} /> Приду</> : <><XCircle size={12} /> Не приду</>}
+                      </span>
                     </div>
+                    
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-charcoal-light mb-3">
+                      <span className="flex items-center gap-1.5">
+                        <Users size={14} className="text-sand-dark" /> Гостей: {rsvp.guests_count}
+                      </span>
+                      <span className="text-xs opacity-70">
+                        {new Date(rsvp.created_at).toLocaleDateString('ru-RU')} в {new Date(rsvp.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    
                     {rsvp.message && (
-                      <p className="mt-2 text-sm text-gray-600 italic">"{rsvp.message}"</p>
+                      <div className="mt-3 bg-sand/50 p-4 rounded-xl border border-sand">
+                        <p className="text-sm text-charcoal italic flex gap-2">
+                          <MessageSquare size={14} className="mt-0.5 text-champagne shrink-0" />
+                          <span>"{rsvp.message}"</span>
+                        </p>
+                      </div>
                     )}
                   </div>
-                  <div>
-                    <button onClick={() => handleDelete(rsvp.id)} className="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1 border border-red-200 rounded hover:bg-red-50 transition-colors">
-                      Удалить
+                  
+                  <div className="w-full md:w-auto mt-2 md:mt-0 pt-4 md:pt-0 border-t md:border-0 border-sand">
+                    <button 
+                      onClick={() => handleDelete(rsvp.id)} 
+                      className="flex items-center justify-center gap-2 w-full md:w-auto text-red-500 hover:text-white text-sm font-medium px-4 py-2 border border-red-200 rounded-full hover:bg-red-500 hover:border-red-500 transition-all"
+                    >
+                      <Trash2 size={16} /> Удалить
                     </button>
                   </div>
-                </li>
-              ))
-            )}
-          </ul>
+                </motion.li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

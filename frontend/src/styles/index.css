@@ -34,3 +34,8 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* Mobile Drawer scroll lock */
+.body-lock {
+  overflow: hidden;
+}

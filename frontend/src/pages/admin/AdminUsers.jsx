@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, MoreVertical, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function AdminUsers() {
   const [data, setData] = useState({ users: [], pagination: null });
@@ -64,12 +64,47 @@ export default function AdminUsers() {
         <div className="text-red-500 bg-red-50 p-4 rounded-xl border border-red-100">{error}</div>
       ) : (
         <div className="bg-white rounded-2xl border border-sand shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-hidden">
+            {/* Mobile View (Cards) */}
+            <div className="block sm:hidden divide-y divide-sand">
+              {loading && data.users.length === 0 ? (
+                <div className="p-8 text-center text-charcoal-light">Загрузка...</div>
+              ) : data.users.length > 0 ? (
+                data.users.map((u) => (
+                  <motion.div 
+                    key={u.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-4 hover:bg-ivory/50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="font-medium text-charcoal">{u.full_name || 'Без имени'}</div>
+                        <div className="text-sm text-charcoal-light break-all">{u.email}</div>
+                      </div>
+                      <span className={`shrink-0 ml-2 inline-block px-2 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold ${
+                        u.role === 'admin' ? 'bg-champagne/20 text-champagne' : 'bg-gray-100 text-charcoal-light'
+                      }`}>
+                        {u.role}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs text-charcoal-light mt-3 border-t border-sand/50 pt-2">
+                      <span>Заказов: <span className="font-medium text-charcoal">{u._count?.orders || 0}</span></span>
+                      <span>{new Date(u.created_at).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-charcoal-light">Пользователи не найдены.</div>
+              )}
+            </div>
+
+            {/* Desktop View (Table) */}
+            <table className="hidden sm:table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-ivory border-b border-sand">
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Пользователь</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden sm:table-cell">Email</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Email</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">Дата регистрации</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Роль</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Заказы</th>
@@ -88,11 +123,10 @@ export default function AdminUsers() {
                       animate={{ opacity: 1 }}
                       className="hover:bg-ivory/50 transition-colors"
                     >
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-charcoal">{u.full_name || 'Без имени'}</div>
-                        <div className="text-sm text-charcoal-light sm:hidden">{u.email}</div>
+                      <td className="px-6 py-4 font-medium text-charcoal">
+                        {u.full_name || 'Без имени'}
                       </td>
-                      <td className="px-6 py-4 text-charcoal hidden sm:table-cell">{u.email}</td>
+                      <td className="px-6 py-4 text-charcoal">{u.email}</td>
                       <td className="px-6 py-4 text-charcoal-light hidden md:table-cell">
                         {new Date(u.created_at).toLocaleDateString('ru-RU')}
                       </td>

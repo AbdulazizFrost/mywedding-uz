@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, Upload, Trash2, LayoutTemplate, ExternalLink, Edit2 } from 'lucide-react';
+import { ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, Upload, Trash2, LayoutTemplate, ExternalLink, X, ChevronDown, Check } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function EditorPage() {
   const { id } = useParams();
@@ -24,9 +24,11 @@ export default function EditorPage() {
   const [activeCategory, setActiveCategory] = useState('main'); // main, media, extra
   const [activeTab, setActiveTab] = useState('couple');
   const [lastUpdated, setLastUpdated] = useState(null);
-  const [showMobilePreview, setShowMobilePreview] = useState(false);
+  
+  // Mobile specific state
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [showDesktopPreview, setShowDesktopPreview] = useState(true); // Toggle for desktop small screens
 
-  // Use a ref to store the latest data for autosave without triggering dependencies
   const dataRef = useRef(data);
   useEffect(() => { dataRef.current = data; }, [data]);
 
@@ -47,7 +49,6 @@ export default function EditorPage() {
         const parsedData = typeof inv.data === 'string' ? JSON.parse(inv.data) : inv.data;
         setData(parsedData);
 
-        // Fetch media
         const mediaRes = await fetch(`${API_URL}/invitations/${id}/media`, { credentials: 'include' });
         if (mediaRes.ok) {
           const mediaData = await mediaRes.json();
@@ -77,7 +78,7 @@ export default function EditorPage() {
       
       if (!res.ok) {
         if (res.status === 409) {
-          setError('Конфликт сохранения. Данные были изменены на другом устройстве.');
+          setError('Конфликт сохранения. Данные изменены на другом устройстве.');
         } else {
           throw new Error(resData.error || 'Failed to save');
         }
@@ -86,8 +87,8 @@ export default function EditorPage() {
 
       setLastUpdated(resData.invitation.updated_at);
       if (isManual) {
-        setMessage('Изменения сохранены');
-        setTimeout(() => setMessage(null), 3000);
+        setMessage('Сохранено');
+        setTimeout(() => setMessage(null), 2000);
       }
     } catch (err) {
       setError(err.message);
@@ -96,13 +97,12 @@ export default function EditorPage() {
     }
   };
 
-  // Debounced autosave
   const autosaveTimeout = useRef(null);
   const triggerAutosave = useCallback(() => {
     if (autosaveTimeout.current) clearTimeout(autosaveTimeout.current);
     autosaveTimeout.current = setTimeout(() => {
       saveToServer(dataRef.current);
-    }, 1500); // Increased debounce to 1.5s for smoother typing
+    }, 1500);
   }, [lastUpdated]);
 
   const handleChange = (section, field, value) => {
@@ -162,7 +162,7 @@ export default function EditorPage() {
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.error || 'Failed to publish');
       setInvitation(resData.invitation);
-      setMessage('Приглашение опубликовано!');
+      setMessage('Опубликовано!');
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
       setError(err.message);
@@ -171,23 +171,21 @@ export default function EditorPage() {
 
   if (loading || authLoading) {
     return (
-      <div className="min-h-screen bg-ivory flex flex-col items-center justify-center">
+      <div className="min-h-[100dvh] bg-ivory flex flex-col items-center justify-center">
         <div className="w-12 h-12 border-2 border-charcoal border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="font-serif text-charcoal-light italic text-xl">Открываем редактор...</p>
       </div>
     );
   }
   
   if (!invitation || !data) {
     return (
-      <div className="min-h-screen bg-ivory flex flex-col items-center justify-center">
+      <div className="min-h-[100dvh] bg-ivory flex flex-col items-center justify-center">
         <p className="font-serif text-charcoal text-xl">Приглашение не найдено</p>
-        <button onClick={() => navigate('/dashboard')} className="mt-4 px-6 py-2 bg-charcoal text-ivory rounded-full">Вернуться в кабинет</button>
+        <button onClick={() => navigate('/dashboard')} className="mt-4 px-6 py-2 bg-charcoal text-ivory rounded-full">В кабинет</button>
       </div>
     );
   }
 
-  // Progressive Disclosure Configuration
   const categories = {
     main: {
       label: 'Основное',
@@ -196,7 +194,7 @@ export default function EditorPage() {
         { id: 'couple', label: 'Имена', icon: User },
         { id: 'date', label: 'Дата и Время', icon: Calendar },
         { id: 'location', label: 'Место проведения', icon: MapPin },
-        { id: 'design', label: 'Дизайн и Цвета', icon: Palette }
+        { id: 'design', label: 'Дизайн', icon: Palette }
       ]
     },
     media: {
@@ -204,70 +202,206 @@ export default function EditorPage() {
       icon: ImageIcon,
       tabs: [
         { id: 'gallery', label: 'Галерея фото', icon: ImageIcon },
-        { id: 'music', label: 'Фоновая музыка', icon: Music }
+        { id: 'music', label: 'Музыка', icon: Music }
       ]
     },
     extra: {
-      label: 'Дополнительно',
+      label: 'Блоки',
       icon: BookOpen,
       tabs: [
-        { id: 'story', label: 'История любви', icon: BookOpen },
-        { id: 'rsvp', label: 'Ответы гостей (RSVP)', icon: CheckSquare }
+        { id: 'story', label: 'История', icon: BookOpen },
+        { id: 'rsvp', label: 'Форма RSVP', icon: CheckSquare }
       ]
     }
   };
 
+  const handleMobileCategoryClick = (key) => {
+    setActiveCategory(key);
+    setActiveTab(categories[key].tabs[0].id);
+    setMobileSheetOpen(true);
+  };
+
+  // The actual editor fields form
+  const EditorForm = () => (
+    <div className="space-y-6 pb-32">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 10 }}
+          transition={{ duration: 0.2 }}
+          className="w-full"
+        >
+          {/* MAIN */}
+          {activeTab === 'couple' && (
+            <div className="space-y-5">
+              <Input label="Имя жениха" placeholder="Тимур" value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
+              <Input label="Имя невесты" placeholder="Лейла" value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
+            </div>
+          )}
+
+          {activeTab === 'date' && (
+            <div className="space-y-5">
+              <Input type="date" label="Дата свадьбы" value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
+              <div className="grid grid-cols-2 gap-4">
+                <Input type="time" label="Сбор гостей" value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
+                <Input type="time" label="Церемония" value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
+              </div>
+              <Input type="time" label="Банкет" value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
+            </div>
+          )}
+
+          {activeTab === 'location' && (
+            <div className="space-y-5">
+              <Input label="Название заведения" placeholder="Ресторан Navruz" value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
+              <TextArea label="Адрес" placeholder="ул. Амира Темура, 1" value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
+              <Input type="url" label="Ссылка на карту" placeholder="https://yandex.uz/maps/..." value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
+            </div>
+          )}
+          
+          {activeTab === 'design' && (
+            <div className="space-y-6">
+              <Select label="Цветовая тема" value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
+                {value: 'elegant', label: 'Элегантная (Светлая)'},
+                {value: 'classic', label: 'Классическая'},
+                {value: 'minimal', label: 'Минимализм'},
+                {value: 'dark', label: 'Тёмная (Premium)'}
+              ]} />
+              <Select label="Шрифт" value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
+                {value: 'serif', label: 'С засечками (Cormorant)'},
+                {value: 'sans', label: 'Без засечек (Inter)'},
+                {value: 'script', label: 'Рукописный'}
+              ]} />
+              <div className="p-4 bg-sand/30 rounded-xl space-y-4">
+                <p className="text-sm font-medium text-charcoal">Кастомные цвета</p>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-xs text-charcoal-light mb-1">Фон/Текст</label>
+                    <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.primary_color || '#000000'} onChange={e => handleChange('design', 'primary_color', e.target.value)} />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs text-charcoal-light mb-1">Акцент</label>
+                    <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.secondary_color || '#d4af37'} onChange={e => handleChange('design', 'secondary_color', e.target.value)} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* MEDIA */}
+          {activeTab === 'gallery' && (
+            <div className="space-y-6">
+              <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-6 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
+                <Upload className="w-8 h-8 text-charcoal mx-auto mb-2 opacity-50" />
+                <p className="text-sm font-medium text-charcoal">Загрузить фото</p>
+                <input type="file" accept="image/jpeg, image/png, image/webp" onChange={handleMediaUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="" />
+              </div>
+              
+              {media.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {media.map((img) => (
+                    <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-square border border-sand">
+                      <img src={img.url} className="w-full h-full object-cover" alt="gallery" />
+                      <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button onClick={() => handleMediaDelete(img.id)} className="bg-white text-red-500 rounded-full p-2 shadow-lg">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'music' && (
+            <div className="space-y-5">
+              <Toggle label="Включить музыку" checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
+              {data.music?.enabled && (
+                <div className="space-y-5 pt-2">
+                  <Input label="Название трека" placeholder="A Thousand Years" value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
+                  <Input type="url" label="URL (.mp3)" placeholder="https://example.com/music.mp3" value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* EXTRA */}
+          {activeTab === 'story' && (
+            <div className="space-y-5">
+              <Toggle label="Отображать 'Историю любви'" checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
+              {data.story?.enabled && (
+                <div className="space-y-5 pt-2">
+                  <Input label="Заголовок" placeholder="Наша история" value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
+                  <TextArea label="Текст" rows={6} placeholder="Всё началось..." value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'rsvp' && (
+            <div className="space-y-5">
+              <Toggle label="Включить форму RSVP" checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
+              {data.rsvp?.enabled && (
+                <div className="space-y-5 pt-2">
+                  <Input label="Заголовок" placeholder="Ждём ответа" value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
+                  <TextArea label="Описание" placeholder="Подтвердите до..." value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+
   return (
-    <div className="flex flex-col h-[100dvh] bg-ivory font-sans selection:bg-champagne selection:text-white overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-ivory font-sans overflow-hidden w-full relative">
       
-      {/* HEADER - Premium minimal style */}
-      <header className="flex-shrink-0 h-16 bg-white border-b border-sand px-4 sm:px-8 flex items-center justify-between z-20 shadow-sm relative">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate('/dashboard')} 
-            className="flex items-center gap-2 text-charcoal-light hover:text-charcoal transition-colors p-2 -ml-2 rounded-full hover:bg-sand"
-          >
+      {/* GLOBAL HEADER */}
+      <header className="flex-shrink-0 h-[60px] bg-white border-b border-sand px-3 sm:px-6 flex items-center justify-between z-40 relative">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button onClick={() => navigate('/dashboard')} className="p-2 text-charcoal-light hover:text-charcoal rounded-full hover:bg-sand transition-colors">
             <ArrowLeft size={20} />
-            <span className="hidden sm:inline text-sm font-medium">В кабинет</span>
           </button>
-          <div className="h-4 w-px bg-sand hidden sm:block mx-2" />
-          <h1 className="font-serif text-lg text-charcoal hidden sm:block truncate max-w-[200px]">
+          <div className="h-4 w-px bg-sand mx-1" />
+          <h1 className="font-serif text-sm sm:text-lg text-charcoal truncate max-w-[120px] sm:max-w-xs">
             {invitation.template?.name || 'Редактор'}
           </h1>
         </div>
         
-        {/* Status Toast Notification (Absolute positioned center) */}
+        {/* Toast Notification */}
         <AnimatePresence>
           {(message || error) && (
             <motion.div 
-              initial={{ opacity: 0, y: -20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className={`absolute left-1/2 -translate-x-1/2 top-4 px-4 py-2 rounded-full shadow-lg text-xs font-medium tracking-wide z-50 flex items-center gap-2
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className={`absolute left-1/2 -translate-x-1/2 top-4 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg text-[10px] sm:text-xs font-medium tracking-wide z-50 flex items-center gap-2 whitespace-nowrap
                 ${error ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'}`}
             >
-              <span className={`w-2 h-2 rounded-full ${error ? 'bg-red-500' : 'bg-green-500'}`} />
               {error || message}
             </motion.div>
           )}
         </AnimatePresence>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button 
             onClick={() => saveToServer(data, true)} 
             disabled={saving} 
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-charcoal bg-sand hover:bg-champagne hover:text-white transition-all disabled:opacity-50"
+            className="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full sm:rounded-full bg-sand text-charcoal hover:bg-champagne hover:text-white transition-colors"
           >
             <Save size={16} />
-            <span className="hidden sm:inline">{saving ? 'Сохранение...' : 'Сохранить'}</span>
+            <span className="hidden sm:inline ml-2 text-sm font-medium">{saving ? '...' : 'Сохранить'}</span>
           </button>
           
           {invitation.status !== 'published' ? (
             <button 
               onClick={handlePublish} 
-              className="flex items-center gap-2 px-5 py-2 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-charcoal/90 transition-all shadow-md"
+              className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-charcoal text-ivory rounded-full text-xs sm:text-sm font-medium hover:bg-charcoal-light shadow-md"
             >
-              <Globe size={16} />
+              <Globe size={14} className="sm:mr-2" />
               <span className="hidden sm:inline">Опубликовать</span>
             </button>
           ) : (
@@ -275,59 +409,45 @@ export default function EditorPage() {
                href={`/w/${invitation.slug}`} 
                target="_blank" 
                rel="noreferrer" 
-               className="flex items-center gap-2 px-5 py-2 bg-green-700 text-white rounded-full text-sm font-medium hover:bg-green-800 transition-all shadow-md"
+               className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-green-700 text-white rounded-full text-xs sm:text-sm font-medium shadow-md"
              >
-               <ExternalLink size={16} />
+               <ExternalLink size={14} className="sm:mr-2" />
                <span className="hidden sm:inline">Сайт готов</span>
              </a>
           )}
-
-          {/* Mobile Preview Toggle */}
-          <button 
-            className="sm:hidden p-2 text-charcoal bg-sand rounded-full"
-            onClick={() => setShowMobilePreview(!showMobilePreview)}
-          >
-            {showMobilePreview ? <Edit2 size={20} /> : <Smartphone size={20} />}
-          </button>
         </div>
       </header>
 
-      {/* MAIN WORKSPACE */}
-      <div className="flex flex-1 overflow-hidden relative">
+      {/* WORKSPACE AREA */}
+      <div className="flex flex-1 overflow-hidden relative w-full h-[calc(100dvh-60px)]">
         
-        {/* LEFT: EDITING PANEL */}
-        <div className={`w-full sm:w-[400px] lg:w-[450px] bg-white flex flex-col z-10 transition-transform duration-300 ${showMobilePreview ? '-translate-x-full absolute h-full' : 'translate-x-0'}`}>
-          
-          {/* Progressive Disclosure Categories */}
-          <div className="flex p-4 gap-2 overflow-x-auto border-b border-sand shrink-0 no-scrollbar">
-            {Object.entries(categories).map(([key, cat]) => {
-              const Icon = cat.icon;
-              return (
-                <button
-                  key={key}
-                  onClick={() => {
-                    setActiveCategory(key);
-                    setActiveTab(cat.tabs[0].id); // Auto-select first tab of category
-                  }}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-medium tracking-wide whitespace-nowrap transition-all
-                    ${activeCategory === key ? 'bg-charcoal text-ivory shadow-sm' : 'bg-sand text-charcoal hover:bg-champagne/20'}`}
-                >
-                  <Icon size={14} />
-                  {cat.label}
-                </button>
-              );
-            })}
+        {/* DESKTOP SIDEBAR (Hidden on mobile) */}
+        <div className="hidden lg:flex w-[400px] flex-col bg-white border-r border-sand h-full z-10 shrink-0">
+          <div className="flex p-4 gap-2 border-b border-sand">
+            {Object.entries(categories).map(([key, cat]) => (
+              <button
+                key={key}
+                onClick={() => {
+                  setActiveCategory(key);
+                  setActiveTab(cat.tabs[0].id);
+                }}
+                className={`flex-1 flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-xs font-medium transition-all
+                  ${activeCategory === key ? 'bg-charcoal text-ivory shadow-sm' : 'bg-sand text-charcoal hover:bg-champagne/20'}`}
+              >
+                <cat.icon size={16} />
+                {cat.label}
+              </button>
+            ))}
           </div>
 
-          {/* Sub-tabs */}
           <div className="px-4 pt-4 shrink-0">
-            <div className="flex gap-1 overflow-x-auto pb-2 no-scrollbar">
+            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
               {categories[activeCategory].tabs.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap
-                    ${activeTab === tab.id ? 'border-champagne text-charcoal' : 'border-transparent text-charcoal-light hover:text-charcoal'}`}
+                  className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap
+                    ${activeTab === tab.id ? 'bg-champagne/10 text-charcoal border border-champagne/30' : 'text-charcoal-light hover:bg-sand'}`}
                 >
                   {tab.label}
                 </button>
@@ -335,164 +455,108 @@ export default function EditorPage() {
             </div>
           </div>
           
-          {/* Form Fields Area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar pb-24">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                
-                {/* --- MAIN --- */}
-                {activeTab === 'couple' && (
-                  <div className="space-y-5">
-                    <Input label="Имя жениха" placeholder="Тимур" value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
-                    <Input label="Имя невесты" placeholder="Лейла" value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
-                  </div>
-                )}
-
-                {activeTab === 'date' && (
-                  <div className="space-y-5">
-                    <Input type="date" label="Дата свадьбы" value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
-                    <div className="grid grid-cols-2 gap-4">
-                      <Input type="time" label="Сбор гостей" value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
-                      <Input type="time" label="Церемония" value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
-                    </div>
-                    <Input type="time" label="Банкет" value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
-                  </div>
-                )}
-
-                {activeTab === 'location' && (
-                  <div className="space-y-5">
-                    <Input label="Название заведения" placeholder="Ресторан Navruz" value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
-                    <TextArea label="Адрес" placeholder="ул. Амира Темура, 1" value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
-                    <Input type="url" label="Ссылка на карту (Yandex/Google Maps)" placeholder="https://yandex.uz/maps/..." value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
-                  </div>
-                )}
-                
-                {activeTab === 'design' && (
-                  <div className="space-y-6">
-                    <Select label="Цветовая тема" value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
-                      {value: 'elegant', label: 'Элегантная (Светлая)'},
-                      {value: 'classic', label: 'Классическая'},
-                      {value: 'minimal', label: 'Минимализм'},
-                      {value: 'dark', label: 'Тёмная (Premium)'}
-                    ]} />
-                    <Select label="Стиль шрифтов" value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
-                      {value: 'serif', label: 'Традиционный с засечками (Cormorant)'},
-                      {value: 'sans', label: 'Современный (Inter)'},
-                      {value: 'script', label: 'Рукописный акцент'}
-                    ]} />
-                    <div className="p-4 bg-sand/30 rounded-xl space-y-4">
-                      <p className="text-sm font-medium text-charcoal">Пользовательские цвета (опционально)</p>
-                      <div className="flex gap-4">
-                        <div className="flex-1">
-                          <label className="block text-xs text-charcoal-light mb-1">Основной</label>
-                          <div className="flex items-center gap-2 border border-sand rounded-lg p-1 bg-white">
-                            <input type="color" className="w-8 h-8 rounded cursor-pointer border-0 p-0" value={data.design?.primary_color || '#000000'} onChange={e => handleChange('design', 'primary_color', e.target.value)} />
-                            <span className="text-xs font-mono text-charcoal uppercase">{data.design?.primary_color || 'Дефолт'}</span>
-                          </div>
-                        </div>
-                        <div className="flex-1">
-                          <label className="block text-xs text-charcoal-light mb-1">Акцент</label>
-                          <div className="flex items-center gap-2 border border-sand rounded-lg p-1 bg-white">
-                            <input type="color" className="w-8 h-8 rounded cursor-pointer border-0 p-0" value={data.design?.secondary_color || '#d4af37'} onChange={e => handleChange('design', 'secondary_color', e.target.value)} />
-                            <span className="text-xs font-mono text-charcoal uppercase">{data.design?.secondary_color || 'Дефолт'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* --- MEDIA --- */}
-                {activeTab === 'gallery' && (
-                  <div className="space-y-6">
-                    <div className="border-2 border-dashed border-champagne/50 bg-champagne/5 rounded-2xl p-6 text-center hover:bg-champagne/10 transition-colors relative cursor-pointer group">
-                      <Upload className="w-8 h-8 text-champagne mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                      <p className="text-sm font-medium text-charcoal">Нажмите, чтобы загрузить фото</p>
-                      <p className="text-xs text-charcoal-light mt-1">JPG, PNG (до 5 МБ)</p>
-                      <input type="file" accept="image/jpeg, image/png, image/webp" onChange={handleMediaUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="" />
-                    </div>
-                    
-                    {media.length > 0 && (
-                      <div className="grid grid-cols-2 gap-3 mt-4">
-                        {media.map((img) => (
-                          <div key={img.id} className="relative group rounded-xl overflow-hidden shadow-sm border border-sand">
-                            <img src={img.url} className="h-32 w-full object-cover transition-transform duration-500 group-hover:scale-110" alt="gallery" />
-                            <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <button onClick={() => handleMediaDelete(img.id)} className="bg-white text-red-500 rounded-full p-2 hover:scale-110 transition-transform shadow-lg">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'music' && (
-                  <div className="space-y-5">
-                    <Toggle label="Включить фоновую музыку" checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
-                    {data.music?.enabled && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-5 pt-2">
-                        <Input label="Название композиции" placeholder="A Thousand Years" value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
-                        <Input type="url" label="Ссылка на трек (.mp3 URL)" placeholder="https://example.com/music.mp3" value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
-                        <p className="text-xs text-charcoal-light">Совет: Убедитесь, что ссылка ведет напрямую на аудиофайл (заканчивается на .mp3)</p>
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-
-                {/* --- EXTRA --- */}
-                {activeTab === 'story' && (
-                  <div className="space-y-5">
-                    <Toggle label="Отображать блок 'История любви'" checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
-                    {data.story?.enabled && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-5 pt-2">
-                        <Input label="Заголовок" placeholder="Наша история" value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
-                        <TextArea label="Текст истории" rows={6} placeholder="Всё началось теплым вечером..." value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'rsvp' && (
-                  <div className="space-y-5">
-                    <Toggle label="Включить форму подтверждения (RSVP)" checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
-                    {data.rsvp?.enabled && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-5 pt-2">
-                        <Input label="Заголовок блока" placeholder="Ждём вашего ответа" value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
-                        <TextArea label="Описание" placeholder="Пожалуйста, подтвердите присутствие до..." value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
-                        <Input label="Текст на кнопке" placeholder="Подтвердить присутствие" value={data.rsvp?.button_text} onChange={e => handleChange('rsvp', 'button_text', e.target.value)} />
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-
-              </motion.div>
-            </AnimatePresence>
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            <EditorForm />
           </div>
         </div>
 
-        {/* RIGHT: LIVE PREVIEW (Smartphone Mockup) */}
-        <div className={`flex-1 bg-ivory/50 flex items-center justify-center p-4 sm:p-8 relative ${showMobilePreview ? 'block z-20 bg-ivory w-full absolute inset-0 pt-8' : 'hidden sm:flex'}`}>
+        {/* PREVIEW AREA (Full screen on mobile, right panel on desktop) */}
+        <div className="flex-1 bg-sand/30 relative h-full flex flex-col items-center justify-center lg:p-8 overflow-hidden">
           
-          <div className="w-full max-w-[390px] aspect-[9/19.5] max-h-full bg-white shadow-2xl rounded-[3rem] overflow-hidden border-[12px] border-charcoal shrink-0 relative flex flex-col">
-            {/* Dynamic Island Notch Fake */}
+          {/* Mobile Full Screen Preview Wrapper */}
+          <div className="w-full h-full lg:hidden relative bg-white overflow-y-auto overflow-x-hidden no-scrollbar">
+            <PreviewComponent data={data} media={media} />
+            {/* Overlay gradient at bottom so buttons are visible */}
+            <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/90 to-transparent pointer-events-none z-10" />
+          </div>
+
+          {/* Desktop Mockup Preview Wrapper */}
+          <div className="hidden lg:flex w-full max-w-[400px] aspect-[9/19.5] max-h-full bg-white shadow-2xl rounded-[3rem] overflow-hidden border-[12px] border-charcoal shrink-0 relative flex-col">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-charcoal rounded-b-3xl z-50 pointer-events-none" />
-            
-            {/* The actual preview iframe/component */}
             <div className="flex-1 overflow-y-auto no-scrollbar bg-white">
                <PreviewComponent data={data} media={media} />
             </div>
           </div>
-          
+
         </div>
+
+        {/* MOBILE BOTTOM NAVIGATION */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-sand pb-safe z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+          <div className="flex items-center justify-around p-3 px-6 h-[72px]">
+            {Object.entries(categories).map(([key, cat]) => (
+              <button
+                key={key}
+                onClick={() => handleMobileCategoryClick(key)}
+                className="flex flex-col items-center gap-1.5 p-2 text-charcoal-light hover:text-charcoal transition-colors w-20"
+              >
+                <div className="w-10 h-10 rounded-full bg-sand flex items-center justify-center">
+                  <cat.icon size={20} className={activeCategory === key && mobileSheetOpen ? "text-champagne" : "text-charcoal"} />
+                </div>
+                <span className="text-[10px] font-medium tracking-wide uppercase">{cat.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* MOBILE BOTTOM SHEET FOR EDITING */}
+        <AnimatePresence>
+          {mobileSheetOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                onClick={() => setMobileSheetOpen(false)}
+                className="lg:hidden fixed inset-0 bg-charcoal/20 backdrop-blur-sm z-40"
+              />
+              
+              {/* Sheet */}
+              <motion.div 
+                initial={{ y: "100%" }} 
+                animate={{ y: 0 }} 
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 flex flex-col max-h-[85dvh]"
+              >
+                {/* Handle */}
+                <div className="w-full flex justify-center pt-3 pb-2" onClick={() => setMobileSheetOpen(false)}>
+                  <div className="w-12 h-1.5 bg-sand rounded-full" />
+                </div>
+                
+                {/* Header */}
+                <div className="px-6 py-2 flex justify-between items-center border-b border-sand">
+                  <h3 className="font-serif text-lg text-charcoal">{categories[activeCategory].label}</h3>
+                  <button onClick={() => setMobileSheetOpen(false)} className="p-2 bg-sand rounded-full text-charcoal">
+                    <Check size={16} />
+                  </button>
+                </div>
+
+                {/* Tabs */}
+                <div className="px-4 py-3 shrink-0 bg-ivory/50 border-b border-sand">
+                  <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                    {categories[activeCategory].tabs.map(tab => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap shrink-0
+                          ${activeTab === tab.id ? 'bg-charcoal text-ivory shadow-sm' : 'bg-white border border-sand text-charcoal'}`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Form Content */}
+                <div className="flex-1 overflow-y-auto p-6 pb-safe mb-10 custom-scrollbar">
+                  <EditorForm />
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
       </div>
     </div>
   );
@@ -507,7 +571,7 @@ const Input = ({ label, type="text", value, onChange, placeholder }) => (
       value={value || ''} 
       onChange={onChange} 
       placeholder={placeholder}
-      className="w-full bg-white border border-sand focus:border-champagne rounded-lg px-4 py-2.5 text-charcoal text-sm outline-none transition-colors shadow-sm placeholder:text-sand" 
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[15px] outline-none transition-all shadow-sm placeholder:text-sand" 
     />
   </div>
 );
@@ -520,19 +584,19 @@ const TextArea = ({ label, value, onChange, placeholder, rows=3 }) => (
       value={value || ''} 
       onChange={onChange} 
       placeholder={placeholder}
-      className="w-full bg-white border border-sand focus:border-champagne rounded-lg px-4 py-2.5 text-charcoal text-sm outline-none transition-colors shadow-sm placeholder:text-sand custom-scrollbar resize-none" 
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[15px] outline-none transition-all shadow-sm placeholder:text-sand custom-scrollbar resize-none" 
     />
   </div>
 );
 
 const Toggle = ({ label, checked, onChange }) => (
-  <label className="flex items-center cursor-pointer p-4 border border-sand rounded-xl bg-white shadow-sm hover:border-champagne/50 transition-colors">
-    <div className="relative">
+  <label className="flex items-center justify-between cursor-pointer p-4 border border-sand rounded-xl bg-white shadow-sm hover:border-champagne/30 transition-colors">
+    <div className="text-[15px] font-medium text-charcoal">{label}</div>
+    <div className="relative shrink-0">
       <input type="checkbox" className="sr-only" checked={Boolean(checked)} onChange={onChange} />
-      <div className={`block w-10 h-6 rounded-full transition-colors ${checked ? 'bg-champagne' : 'bg-sand'}`}></div>
-      <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${checked ? 'transform translate-x-4' : ''}`}></div>
+      <div className={`block w-12 h-7 rounded-full transition-colors ${checked ? 'bg-champagne' : 'bg-sand'}`}></div>
+      <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform shadow-sm ${checked ? 'transform translate-x-5' : ''}`}></div>
     </div>
-    <div className="ml-3 text-sm font-medium text-charcoal">{label}</div>
   </label>
 );
 
@@ -542,7 +606,7 @@ const Select = ({ label, value, onChange, options }) => (
     <select 
       value={value || ''} 
       onChange={onChange} 
-      className="w-full bg-white border border-sand focus:border-champagne rounded-lg px-4 py-2.5 text-charcoal text-sm outline-none transition-colors shadow-sm appearance-none cursor-pointer"
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[15px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
       style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
     >
       <option value="" disabled>Выберите опцию</option>

@@ -1,6 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_URL || API_URL + '';
-
-const API_URL = import.meta.env.VITE_API_URL || API_URL + '';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
+const BASE_URL = API_URL;
 
 /**
  * Минимальный fetch-обёртка. На Шаге 1 используется только

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Power, PowerOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function AdminTemplates() {
   const [templates, setTemplates] = useState([]);

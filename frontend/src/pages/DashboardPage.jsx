@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { motion } from 'framer-motion';
 import { Settings, LogOut, Plus, Edit2, Eye, ExternalLink, CreditCard } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function DashboardPage() {
   const { user, loading, fetchMe } = useAuth();
@@ -71,16 +71,16 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-serif text-charcoal mb-2">Личный кабинет</h1>
             <p className="text-charcoal-light tracking-wide">{user.full_name || user.email}</p>
           </div>
-          <div className="mt-6 sm:mt-0 flex gap-4">
+          <div className="mt-6 sm:mt-0 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-2 px-5 py-2.5 border border-charcoal/20 rounded-full text-sm font-medium text-charcoal hover:bg-sand transition-colors"
+              className="flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 border border-charcoal/20 rounded-full text-sm font-medium text-charcoal hover:bg-sand transition-colors w-full sm:w-auto"
             >
               <LogOut size={16} /> Выйти
             </button>
             <Link 
               to="/catalog"
-              className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg"
+              className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg w-full sm:w-auto"
             >
               <Plus size={16} /> Создать
             </Link>
@@ -156,10 +156,10 @@ export default function DashboardPage() {
                         </p>
                       </div>
                       
-                      <div className="flex flex-wrap gap-3 mt-8">
+                      <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 mt-6 sm:mt-8">
                         <Link 
                           to={`/editor/${inv.id}`} 
-                          className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all"
+                          className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all w-full sm:w-auto"
                         >
                           <Edit2 size={16} /> Редактировать
                         </Link>
@@ -169,7 +169,7 @@ export default function DashboardPage() {
                             href={`/w/${inv.slug}`} 
                             target="_blank" 
                             rel="noreferrer" 
-                            className="flex items-center gap-2 px-6 py-2.5 border border-charcoal text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all"
+                            className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 border border-charcoal text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all w-full sm:w-auto"
                           >
                             <ExternalLink size={16} /> Открыть сайт
                           </a>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                         {inv.status !== 'published' && (
                           <Link 
                             to={`/preview/${inv.id}`} 
-                            className="flex items-center gap-2 px-6 py-2.5 border border-charcoal/20 text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all"
+                            className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 border border-charcoal/20 text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all w-full sm:w-auto"
                           >
                             <Eye size={16} /> Предпросмотр
                           </Link>

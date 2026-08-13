@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ExternalLink, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5173';
 
 export default function AdminInvitations() {
@@ -52,12 +52,55 @@ export default function AdminInvitations() {
         <div className="text-red-500 bg-red-50 p-4 rounded-xl border border-red-100">{error}</div>
       ) : (
         <div className="bg-white rounded-2xl border border-sand shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-hidden">
+            {/* Mobile View (Cards) */}
+            <div className="block sm:hidden divide-y divide-sand">
+              {loading && data.invitations.length === 0 ? (
+                <div className="p-8 text-center text-charcoal-light">Загрузка...</div>
+              ) : data.invitations.length > 0 ? (
+                data.invitations.map((inv) => (
+                  <motion.div 
+                    key={inv.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-4 hover:bg-ivory/50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="font-medium text-charcoal">{inv.user.full_name || 'Без имени'}</div>
+                        <div className="text-xs text-charcoal-light">{inv.user.email}</div>
+                      </div>
+                      <div className="shrink-0 ml-2">
+                        {getStatusBadge(inv.status)}
+                      </div>
+                    </div>
+                    <div className="mb-3 space-y-1">
+                      <span className="block text-sm font-medium text-charcoal">{inv.template.name}</span>
+                      <a 
+                        href={`${FRONTEND_URL}/w/${inv.slug}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-champagne hover:text-charcoal transition-colors text-xs font-medium"
+                      >
+                        /w/{inv.slug} <ExternalLink size={12} />
+                      </a>
+                    </div>
+                    <div className="flex justify-end items-center text-xs text-charcoal-light border-t border-sand/50 pt-2">
+                      <span>{new Date(inv.created_at).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-charcoal-light">Приглашения не найдены.</div>
+              )}
+            </div>
+
+            {/* Desktop View (Table) */}
+            <table className="hidden sm:table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-ivory border-b border-sand">
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Пользователь</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden sm:table-cell">Шаблон</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Шаблон</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Ссылка</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Статус</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">Дата создания</th>
@@ -80,7 +123,7 @@ export default function AdminInvitations() {
                         <div className="font-medium text-charcoal">{inv.user.full_name || 'Без имени'}</div>
                         <div className="text-xs text-charcoal-light">{inv.user.email}</div>
                       </td>
-                      <td className="px-6 py-4 text-charcoal font-medium hidden sm:table-cell">
+                      <td className="px-6 py-4 text-charcoal font-medium">
                         {inv.template.name}
                       </td>
                       <td className="px-6 py-4">

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { ArrowLeft, Edit2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function PreviewPage() {
   const { id } = useParams();
@@ -18,6 +20,7 @@ export default function PreviewPage() {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchInvitation = async () => {
       try {
         const res = await fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' });
@@ -36,69 +39,99 @@ export default function PreviewPage() {
     if (user) fetchInvitation();
   }, [id, user]);
 
-  if (loading || authLoading) return <div className="p-8 text-center">Loading...</div>;
-  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
+  if (loading || authLoading) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="font-serif text-charcoal-light italic text-xl">Загрузка превью...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center px-4">
+        <p className="text-red-700 font-serif text-xl mb-4 text-center">{error}</p>
+        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full">Вернуться в кабинет</button>
+      </div>
+    );
+  }
+
   if (!data) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-sand flex flex-col items-center pt-20 pb-12 px-0 md:px-6 lg:px-8 relative selection:bg-champagne selection:text-white">
       {/* Dev Toolbar */}
-      <div className="fixed top-0 left-0 right-0 bg-gray-900 text-white px-4 py-2 flex justify-between items-center z-50">
-        <span className="text-sm font-medium">Режим предпросмотра (Preview)</span>
-        <button onClick={() => navigate(`/editor/${id}`)} className="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">
-          Вернуться в редактор
-        </button>
+      <div className="fixed top-0 left-0 right-0 bg-charcoal text-ivory px-4 py-3 flex justify-between items-center z-50 shadow-md">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-champagne animate-pulse" />
+          <span className="text-xs md:text-sm font-medium tracking-wide uppercase">Режим предпросмотра</span>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => navigate('/dashboard')} className="hidden sm:flex text-xs items-center gap-1 text-ivory/70 hover:text-ivory px-3 py-1.5 transition-colors">
+            <ArrowLeft size={14} /> Кабинет
+          </button>
+          <button onClick={() => navigate(`/editor/${id}`)} className="text-xs md:text-sm flex items-center gap-2 bg-champagne hover:bg-champagne-light text-charcoal px-4 py-1.5 rounded-full font-medium transition-colors">
+            <Edit2 size={14} /> <span className="hidden sm:inline">Вернуться в</span> Редактор
+          </button>
+        </div>
       </div>
 
-      <div className="mt-12 max-w-2xl w-full bg-white shadow-xl rounded-lg overflow-hidden border border-gray-100 p-8 text-center space-y-8">
-        <div>
-          <p className="text-gray-500 uppercase tracking-widest text-sm mb-2">Приглашаем на свадьбу</p>
-          <h1 className="text-5xl font-serif text-gray-900 mb-2">
-            {data.groom_name || 'Имя Жениха'} & {data.bride_name || 'Имя Невесты'}
-          </h1>
-        </div>
-
-        <div className="py-8 border-t border-b border-gray-100 flex justify-center gap-8 text-gray-800">
-          <div className="text-center">
-            <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">Дата</span>
-            <span className="text-xl font-medium">{data.wedding_date || 'ДД.ММ.ГГГГ'}</span>
-          </div>
-          <div className="w-px bg-gray-200"></div>
-          <div className="text-center">
-            <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">Время</span>
-            <span className="text-xl font-medium">{data.wedding_time || 'ЧЧ:ММ'}</span>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Локация</h3>
-          <p className="text-gray-600">{data.location || 'Место проведения не указано'}</p>
-        </div>
-
-        {data.story && (
+      {/* Mockup Container to force mobile-like aspect ratio on desktop */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full h-full md:max-w-md md:h-[800px] bg-ivory md:rounded-[2.5rem] shadow-2xl md:overflow-y-auto md:border-8 md:border-charcoal hide-scrollbar relative"
+      >
+        <div className="p-8 md:p-10 text-center space-y-10">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Наша история</h3>
-            <p className="text-gray-600 italic">"{data.story}"</p>
+            <p className="text-champagne uppercase tracking-widest text-xs font-semibold mb-3">Приглашаем на свадьбу</p>
+            <h1 className="text-5xl font-serif text-charcoal mb-2 leading-none">
+              {data.groom_name || 'Имя Жениха'} <br/>
+              <span className="italic text-champagne">&</span><br/>
+              {data.bride_name || 'Имя Невесты'}
+            </h1>
           </div>
-        )}
 
-        {data.music && (
-          <div className="bg-gray-50 p-4 rounded-md">
-            <span className="text-sm text-gray-500 block mb-1">Фоновая музыка (Плейсхолдер)</span>
-            <a href={data.music} target="_blank" rel="noreferrer" className="text-indigo-600 text-sm">{data.music}</a>
+          <div className="py-6 border-y border-sand flex justify-center gap-8 text-charcoal-light">
+            <div className="text-center">
+              <span className="block text-xs uppercase tracking-widest mb-2 font-semibold">Дата</span>
+              <span className="text-xl font-serif text-charcoal">{data.wedding_date || 'ДД.ММ.ГГГГ'}</span>
+            </div>
+            <div className="w-px bg-sand/80"></div>
+            <div className="text-center">
+              <span className="block text-xs uppercase tracking-widest mb-2 font-semibold">Время</span>
+              <span className="text-xl font-serif text-charcoal">{data.wedding_time || 'ЧЧ:ММ'}</span>
+            </div>
           </div>
-        )}
 
-        {data.rsvp?.enabled && (
-          <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-6 mt-8">
-            <h3 className="text-xl font-medium text-gray-900 mb-2">RSVP</h3>
-            <p className="text-gray-600 mb-4">Пожалуйста, подтвердите ваше присутствие.</p>
-            <button disabled className="bg-indigo-600 text-white px-6 py-2 rounded-md opacity-50 cursor-not-allowed">
-              Форма сбора гостей (демо)
-            </button>
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-champagne mb-3">Локация</h3>
+            <p className="text-charcoal-light">{data.location || 'Место проведения не указано'}</p>
           </div>
-        )}
-      </div>
+
+          {data.story && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-champagne mb-3">Наша история</h3>
+              <p className="text-charcoal-light italic font-serif text-lg leading-relaxed">"{data.story}"</p>
+            </div>
+          )}
+
+          {data.rsvp?.enabled && (
+            <div className="bg-sand/30 border border-sand rounded-2xl p-6 mt-8 text-left">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-charcoal mb-2 text-center">RSVP</h3>
+              <p className="text-charcoal-light text-sm mb-6 text-center">Пожалуйста, подтвердите ваше присутствие до 1 Сентября.</p>
+              
+              <div className="space-y-3">
+                <input type="text" placeholder="Ваше Имя и Фамилия" className="w-full bg-white border border-sand rounded-lg px-4 py-3 text-sm outline-none cursor-not-allowed opacity-70" disabled />
+                <button disabled className="w-full bg-charcoal text-ivory px-6 py-3 rounded-full text-sm font-medium opacity-50 cursor-not-allowed">
+                  Отправить ответ (Демо)
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }

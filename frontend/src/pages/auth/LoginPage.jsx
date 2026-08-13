@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { normalizeApiError } from '../../utils/apiUtils.js';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -50,7 +50,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-ivory font-sans selection:bg-champagne selection:text-white">
+    <div className="min-h-screen flex pt-20 md:pt-24 bg-ivory font-sans selection:bg-champagne selection:text-white">
       {/* Left side: Premium Image (Hidden on mobile) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-charcoal">
         <img 
@@ -68,7 +68,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right side: Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-10 sm:p-12 lg:p-24 relative">
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function AdminOrders() {
   const [data, setData] = useState({ orders: [], pagination: null });
@@ -49,13 +49,49 @@ export default function AdminOrders() {
         <div className="text-red-500 bg-red-50 p-4 rounded-xl border border-red-100">{error}</div>
       ) : (
         <div className="bg-white rounded-2xl border border-sand shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-hidden">
+            {/* Mobile View (Cards) */}
+            <div className="block sm:hidden divide-y divide-sand">
+              {loading && data.orders.length === 0 ? (
+                <div className="p-8 text-center text-charcoal-light">Загрузка...</div>
+              ) : data.orders.length > 0 ? (
+                data.orders.map((order) => (
+                  <motion.div 
+                    key={order.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-4 hover:bg-ivory/50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="font-medium text-charcoal">{order.user.full_name || 'Без имени'}</div>
+                        <div className="text-xs text-charcoal-light">{order.user.email}</div>
+                      </div>
+                      <div className="shrink-0 ml-2">
+                        {getStatusBadge(order.status)}
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <span className="text-sm font-medium text-charcoal">{order.template.name}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs text-charcoal-light border-t border-sand/50 pt-2">
+                      <span className="font-bold text-charcoal text-sm">{Number(order.amount).toLocaleString('ru-RU')} {order.currency}</span>
+                      <span>{new Date(order.created_at).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-charcoal-light">Заказы не найдены.</div>
+              )}
+            </div>
+
+            {/* Desktop View (Table) */}
+            <table className="hidden sm:table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-ivory border-b border-sand">
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">ID Заказа</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Клиент</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden sm:table-cell">Шаблон</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Шаблон</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Сумма</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Статус</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">Дата</th>
@@ -81,7 +117,7 @@ export default function AdminOrders() {
                         <div className="font-medium text-charcoal">{order.user.full_name || 'Без имени'}</div>
                         <div className="text-xs text-charcoal-light">{order.user.email}</div>
                       </td>
-                      <td className="px-6 py-4 text-charcoal font-medium hidden sm:table-cell">{order.template.name}</td>
+                      <td className="px-6 py-4 text-charcoal font-medium">{order.template.name}</td>
                       <td className="px-6 py-4 text-charcoal font-bold">
                         {Number(order.amount).toLocaleString('ru-RU')} {order.currency}
                       </td>

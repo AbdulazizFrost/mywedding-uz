@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
 
 export default function Catalog() {
   const [templates, setTemplates] = useState([]);
@@ -102,8 +102,8 @@ export default function Catalog() {
                   {/* Elegant Overlay */}
                   <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/30 transition-colors duration-500 backdrop-blur-[0px] group-hover:backdrop-blur-[2px]" />
                   
-                  {/* CTA Button that appears on hover */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+                  {/* Hover Overlay - Desktop only */}
+                  <div className="absolute inset-0 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-charcoal/30 backdrop-blur-sm">
                     <Link
                       to={`/templates/${template.slug}`}
                       className="px-8 py-3 bg-ivory text-charcoal rounded-full font-medium tracking-wide hover:bg-champagne hover:text-white hover:shadow-lg transition-all"
@@ -122,10 +122,18 @@ export default function Catalog() {
                   <p className="text-charcoal-light text-sm line-clamp-2 leading-relaxed mb-4">
                     {template.description || 'Идеальный выбор для вашего особенного дня.'}
                   </p>
-                  <div className="mt-auto">
+                  <div className="mt-auto flex flex-col items-center gap-3 w-full">
                     <span className="text-sm font-medium text-charcoal">
                       {Number(template.price) === 0 ? 'Бесплатно' : `${Number(template.price).toLocaleString('ru-RU')} ${template.currency}`}
                     </span>
+                    
+                    {/* Mobile visible CTA */}
+                    <Link
+                      to={`/templates/${template.slug}`}
+                      className="md:hidden w-full py-2.5 border border-champagne text-champagne rounded-full text-sm font-medium hover:bg-champagne hover:text-white transition-colors"
+                    >
+                      Смотреть детали
+                    </Link>
                   </div>
                 </div>
               </motion.div>
