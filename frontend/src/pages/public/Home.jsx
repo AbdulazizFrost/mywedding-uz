@@ -118,6 +118,21 @@ export default function Home() {
 
           {/* Right Mockup */}
           <div className="flex-1 w-full flex justify-center relative mt-12 lg:mt-0">
+            
+            {/* Dark Floral Backdrop with Soft Edges */}
+            <div className="absolute inset-0 -z-10 flex items-center justify-center opacity-80 scale-[1.4] md:scale-[1.6] pointer-events-none translate-y-[-10%]">
+               <div 
+                 className="w-[120%] aspect-square rounded-full mix-blend-normal"
+                 style={{
+                   backgroundImage: `url('/assets/landing/hero-flowers-right.jpg')`,
+                   backgroundSize: 'cover',
+                   backgroundPosition: 'center',
+                   maskImage: 'radial-gradient(circle, rgba(0,0,0,0.9) 30%, rgba(0,0,0,0) 70%)',
+                   WebkitMaskImage: 'radial-gradient(circle, rgba(0,0,0,0.9) 30%, rgba(0,0,0,0) 70%)'
+                 }}
+               />
+            </div>
+
             <FadeIn delay={0.8} direction="up" className="relative z-10 w-full max-w-[280px] md:max-w-[320px]">
               <PhoneMockup className="relative transform lg:rotate-[2deg] hover:rotate-0 transition-transform duration-700 shadow-[0_20px_60px_rgb(0,0,0,0.15)]">
                 <div className="h-full w-full bg-ivory flex flex-col items-center justify-center relative overflow-hidden">
