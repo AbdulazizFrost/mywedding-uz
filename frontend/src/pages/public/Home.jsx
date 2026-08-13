@@ -102,7 +102,7 @@ export default function Home() {
             
             <FadeIn delay={0.7} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 px-4 sm:px-0">
               <Link to={user ? "/dashboard" : "/register"} className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white rounded-full font-medium hover:bg-black transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] hover:-translate-y-0.5 duration-300">
-                <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 invert object-contain opacity-90" />
+                <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert object-contain opacity-90" />
                 {user ? "Перейти в кабинет" : "Создать приглашение"}
               </Link>
               <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-white/50 border border-champagne text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
@@ -335,7 +335,7 @@ export default function Home() {
               Создайте красивое цифровое приглашение для своего особенного дня прямо сейчас.
             </p>
             <Link to={user ? "/dashboard" : "/register"} className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-charcoal text-white rounded-full font-medium text-[15px] hover:bg-black transition-all shadow-[0_10px_30px_rgb(0,0,0,0.1)] hover:shadow-[0_10px_40px_rgb(0,0,0,0.15)] hover:-translate-y-1 duration-300">
-              <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 invert opacity-90" />
+              <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert opacity-90" />
               {user ? "Перейти в кабинет" : "Создать приглашение"}
             </Link>
           </FadeIn>

@@ -115,7 +115,7 @@ export default function Navbar() {
                     to="/dashboard" 
                     className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-white text-sm font-medium rounded-full hover:bg-black transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
                   >
-                    <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 invert opacity-90" />
+                    <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 brightness-0 invert opacity-90" />
                     Личный кабинет
                   </Link>
                 </div>
@@ -131,7 +131,7 @@ export default function Navbar() {
                     to="/register" 
                     className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-white text-sm font-medium rounded-full hover:bg-black transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
                   >
-                    <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 invert opacity-90" />
+                    <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 brightness-0 invert opacity-90" />
                     Создать приглашение
                   </Link>
                 </>
@@ -192,7 +192,7 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-charcoal text-white text-lg font-medium rounded-full shadow-md"
                     >
-                      <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 invert opacity-90" />
+                      <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert opacity-90" />
                       Личный кабинет
                     </Link>
                     {user.role === 'admin' && (
@@ -219,7 +219,7 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-charcoal text-white text-lg font-medium rounded-full shadow-md mt-2"
                     >
-                      <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 invert opacity-90" />
+                      <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert opacity-90" />
                       Создать приглашение
                     </Link>
                   </>
