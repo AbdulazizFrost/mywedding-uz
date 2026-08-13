@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { CreditCard, CheckCircle2, ArrowLeft, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -10,6 +11,7 @@ export default function CheckoutPage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   
   const [order, setOrder] = useState(null);
   const [payment, setPayment] = useState(null);
@@ -82,7 +84,7 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
         <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="font-serif text-charcoal-light italic text-xl">Подготовка заказа...</p>
+        <p className="font-serif text-charcoal-light italic text-xl">{t('checkout.loading')}</p>
       </div>
     );
   }
@@ -91,7 +93,7 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center px-4">
         <p className="text-red-700 font-serif text-xl mb-4 text-center">{error}</p>
-        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-charcoal-light transition-colors">Вернуться в кабинет</button>
+        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-charcoal-light transition-colors">{t('dashboard.back')}</button>
       </div>
     );
   }
@@ -99,8 +101,8 @@ export default function CheckoutPage() {
   if (!order) {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center px-4">
-        <p className="text-charcoal-light font-serif text-xl mb-4 text-center">Заказ не найден</p>
-        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-charcoal-light transition-colors">Вернуться в кабинет</button>
+        <p className="text-charcoal-light font-serif text-xl mb-4 text-center">{t('checkout.errorNotFound')}</p>
+        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full hover:bg-charcoal-light transition-colors">{t('dashboard.back')}</button>
       </div>
     );
   }
@@ -112,7 +114,7 @@ export default function CheckoutPage() {
       
       <div className="w-full max-w-lg">
         <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-charcoal-light hover:text-champagne mb-8 transition-colors">
-          <ArrowLeft size={16} className="mr-1" /> Вернуться в кабинет
+          <ArrowLeft size={16} className="mr-1" /> {t('dashboard.back')}
         </Link>
         
         <motion.div 
@@ -124,18 +126,18 @@ export default function CheckoutPage() {
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-champagne-light via-champagne to-champagne-light" />
           
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-charcoal mb-3">Оформление заказа</h2>
-            <p className="text-charcoal-light text-sm">Заказ <span className="font-mono bg-sand px-2 py-0.5 rounded ml-1">#{order.id.slice(0, 8)}</span></p>
+            <h2 className="text-3xl md:text-4xl font-serif text-charcoal mb-3">{t('checkout.title')}</h2>
+            <p className="text-charcoal-light text-sm">{t('checkout.order')} <span className="font-mono bg-sand px-2 py-0.5 rounded ml-1">#{order.id.slice(0, 8)}</span></p>
           </div>
 
           <div className="bg-sand/30 rounded-2xl p-6 md:p-8 space-y-6 mb-10">
             <div className="flex justify-between items-center border-b border-sand pb-4">
-              <span className="text-charcoal-light">Шаблон:</span>
-              <span className="font-serif text-xl text-charcoal">{order.template?.name || 'Неизвестен'}</span>
+              <span className="text-charcoal-light">{t('checkout.template')}</span>
+              <span className="font-serif text-xl text-charcoal">{order.template?.name || t('checkout.unknown')}</span>
             </div>
             
             <div className="flex justify-between items-center pt-2">
-              <span className="text-charcoal-light text-lg">К оплате:</span>
+              <span className="text-charcoal-light text-lg">{t('checkout.total')}</span>
               <span className="text-3xl font-serif text-charcoal">
                 {Number(order.amount).toLocaleString('ru-RU')} {order.currency}
               </span>
@@ -145,8 +147,8 @@ export default function CheckoutPage() {
           {order.status !== 'pending' ? (
             <div className="p-5 bg-champagne-light/50 text-charcoal rounded-2xl border border-champagne/50 text-center flex flex-col items-center gap-3">
               <CheckCircle2 className="w-10 h-10 text-champagne" />
-              <p className="font-medium">Этот заказ уже имеет статус: {order.status}</p>
-              <button onClick={() => navigate('/dashboard')} className="mt-2 text-sm underline hover:text-champagne transition-colors">Перейти в панель</button>
+              <p className="font-medium">{t('checkout.statusInfo')}{order.status}</p>
+              <button onClick={() => navigate('/dashboard')} className="mt-2 text-sm underline hover:text-champagne transition-colors">{t('dashboard.goToPanel')}</button>
             </div>
           ) : !payment ? (
             <button
@@ -155,13 +157,13 @@ export default function CheckoutPage() {
               className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-full shadow-lg text-lg font-medium text-ivory bg-charcoal hover:bg-charcoal-light focus:outline-none transition-all hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:transform-none"
             >
               {processing ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}
-              {processing ? 'Обработка...' : 'Перейти к оплате'}
+              {processing ? t('checkout.processing') : t('checkout.payBtn')}
             </button>
           ) : (
             <div className="space-y-4">
               <div className="p-6 bg-sand/50 rounded-2xl border border-sand flex flex-col items-center justify-center gap-4 text-center">
                 <Loader2 className="w-8 h-8 text-champagne animate-spin" />
-                <p className="text-charcoal-light font-medium">Ожидаем подтверждение оплаты от платёжной системы...</p>
+                <p className="text-charcoal-light font-medium">{t('checkout.waitingPayment')}</p>
               </div>
               
               {isDev && (
@@ -170,7 +172,7 @@ export default function CheckoutPage() {
                   disabled={processing}
                   className="w-full flex justify-center py-3 px-4 border-2 border-champagne rounded-full shadow-sm text-sm font-medium text-champagne bg-transparent hover:bg-champagne hover:text-white transition-colors mt-6"
                 >
-                  {processing ? '...' : '[DEV] Симулировать успешную оплату'}
+                  {processing ? '...' : t('checkout.devSimulate')}
                 </button>
               )}
             </div>

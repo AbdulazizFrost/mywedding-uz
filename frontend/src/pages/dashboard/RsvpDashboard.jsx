@@ -3,11 +3,13 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { ArrowLeft, Trash2, CheckCircle2, XCircle, Users, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function RsvpDashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   
   const [invitation, setInvitation] = useState(null);
   const [rsvps, setRsvps] = useState([]);
@@ -47,7 +49,7 @@ export default function RsvpDashboard() {
   }, [id, user]);
 
   const handleDelete = async (responseId) => {
-    if (!window.confirm('Вы уверены, что хотите удалить этот ответ?')) return;
+    if (!window.confirm(t('rsvp.confirmDelete'))) return;
     
     try {
       const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
@@ -67,7 +69,7 @@ export default function RsvpDashboard() {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
         <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="font-serif text-charcoal-light italic text-xl">Загрузка данных...</p>
+        <p className="font-serif text-charcoal-light italic text-xl">{t('rsvp.loading')}</p>
       </div>
     );
   }
@@ -76,7 +78,7 @@ export default function RsvpDashboard() {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center px-4">
         <p className="text-red-700 font-serif text-xl mb-4 text-center">{error}</p>
-        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full">Вернуться в кабинет</button>
+        <button onClick={() => navigate('/dashboard')} className="px-6 py-2 bg-charcoal text-white rounded-full">{t('dashboard.back')}</button>
       </div>
     );
   }
@@ -94,11 +96,11 @@ export default function RsvpDashboard() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-6">
           <div>
             <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-charcoal-light hover:text-champagne mb-3 transition-colors">
-              <ArrowLeft size={16} className="mr-1" /> Вернуться в кабинет
+              <ArrowLeft size={16} className="mr-1" /> {t('dashboard.back')}
             </Link>
-            <h1 className="text-3xl md:text-4xl font-serif text-charcoal mb-2">Ответы гостей</h1>
+            <h1 className="text-3xl md:text-4xl font-serif text-charcoal mb-2">{t('rsvp.title')}</h1>
             <p className="text-charcoal-light">
-              Для приглашения: {invitation?.template?.name || 'Без названия'}
+              {t('rsvp.forInvitation')} {invitation?.template?.name || t('rsvp.untitled')}
             </p>
           </div>
         </div>
@@ -107,19 +109,19 @@ export default function RsvpDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           <div className="bg-white p-6 rounded-2xl border border-sand shadow-sm text-center">
             <span className="block text-3xl font-serif text-charcoal mb-1">{totalResponses}</span>
-            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light">Всего ответов</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light">{t('rsvp.totalResponses')}</span>
           </div>
           <div className="bg-champagne/10 p-6 rounded-2xl border border-champagne/20 shadow-sm text-center">
             <span className="block text-3xl font-serif text-champagne mb-1">{totalAttending}</span>
-            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light">Придут</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light">{t('rsvp.attending')}</span>
           </div>
           <div className="bg-white p-6 rounded-2xl border border-sand shadow-sm text-center">
             <span className="block text-3xl font-serif text-charcoal-light mb-1">{totalNotAttending}</span>
-            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light/70">Не придут</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-charcoal-light/70">{t('rsvp.notAttending')}</span>
           </div>
           <div className="bg-charcoal p-6 rounded-2xl border border-charcoal shadow-sm text-center text-ivory">
             <span className="block text-3xl font-serif mb-1">{totalGuestsCount}</span>
-            <span className="text-xs uppercase tracking-wider font-semibold text-ivory/70">Всего гостей</span>
+            <span className="text-xs uppercase tracking-wider font-semibold text-ivory/70">{t('rsvp.totalGuests')}</span>
           </div>
         </div>
 
@@ -128,7 +130,7 @@ export default function RsvpDashboard() {
           {rsvps.length === 0 ? (
             <div className="p-16 text-center text-charcoal-light">
               <Users className="w-12 h-12 mx-auto text-sand mb-4" />
-              <p className="font-serif text-xl italic">Пока никто не ответил на приглашение.</p>
+              <p className="font-serif text-xl italic">{t('rsvp.empty')}</p>
             </div>
           ) : (
             <ul className="divide-y divide-sand">
@@ -146,13 +148,13 @@ export default function RsvpDashboard() {
                       <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-wider font-semibold ${
                         rsvp.attending ? 'bg-champagne/20 text-champagne border border-champagne/30' : 'bg-gray-100 text-gray-500 border border-gray-200'
                       }`}>
-                        {rsvp.attending ? <><CheckCircle2 size={12} /> Приду</> : <><XCircle size={12} /> Не приду</>}
+                        {rsvp.attending ? <><CheckCircle2 size={12} /> {t('rsvp.willAttend')}</> : <><XCircle size={12} /> {t('rsvp.willNotAttend')}</>}
                       </span>
                     </div>
                     
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-charcoal-light mb-3">
                       <span className="flex items-center gap-1.5">
-                        <Users size={14} className="text-sand-dark" /> Гостей: {rsvp.guests_count}
+                        <Users size={14} className="text-sand-dark" /> {t('rsvp.guestsCount')} {rsvp.guests_count}
                       </span>
                       <span className="text-xs opacity-70">
                         {new Date(rsvp.created_at).toLocaleDateString('ru-RU')} в {new Date(rsvp.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
@@ -174,7 +176,7 @@ export default function RsvpDashboard() {
                       onClick={() => handleDelete(rsvp.id)} 
                       className="flex items-center justify-center gap-2 w-full md:w-auto text-red-500 hover:text-white text-sm font-medium px-4 py-2 border border-red-200 rounded-full hover:bg-red-500 hover:border-red-500 transition-all"
                     >
-                      <Trash2 size={16} /> Удалить
+                      <Trash2 size={16} /> {t('rsvp.delete')}
                     </button>
                   </div>
                 </motion.li>

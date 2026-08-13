@@ -115,5 +115,62 @@
       "hasAccount": "Уже есть аккаунт?",
       "login": "Войти"
     }
+  },
+  "dashboard": {
+    "title": "Личный кабинет",
+    "placeholder": "Placeholder — Шаг 1",
+    "back": "Вернуться в кабинет",
+    "goToPanel": "Перейти в панель"
+  },
+  "checkout": {
+    "loading": "Подготовка заказа...",
+    "errorNotFound": "Заказ не найден",
+    "title": "Оформление заказа",
+    "order": "Заказ",
+    "template": "Шаблон:",
+    "unknown": "Неизвестен",
+    "total": "К оплате:",
+    "statusInfo": "Этот заказ уже имеет статус: ",
+    "processing": "Обработка...",
+    "payBtn": "Перейти к оплате",
+    "waitingPayment": "Ожидаем подтверждение оплаты от платёжной системы...",
+    "devSimulate": "[DEV] Симулировать успешную оплату"
+  },
+  "preview": {
+    "loading": "Загрузка превью...",
+    "mode": "Режим предпросмотра",
+    "cabinet": "Кабинет",
+    "backToEditor": "Вернуться в",
+    "editor": "Редактор",
+    "invitationTo": "Приглашаем на свадьбу",
+    "groom": "Имя Жениха",
+    "bride": "Имя Невесты",
+    "date": "Дата",
+    "datePlaceholder": "ДД.ММ.ГГГГ",
+    "time": "Время",
+    "timePlaceholder": "ЧЧ:ММ",
+    "location": "Локация",
+    "locationPlaceholder": "Место проведения не указано",
+    "ourStory": "Наша история",
+    "rsvpTitle": "RSVP",
+    "rsvpDesc": "Пожалуйста, подтвердите ваше присутствие до 1 Сентября.",
+    "rsvpName": "Ваше Имя и Фамилия",
+    "rsvpSubmit": "Отправить ответ (Демо)"
+  },
+  "rsvp": {
+    "confirmDelete": "Вы уверены, что хотите удалить этот ответ?",
+    "loading": "Загрузка данных...",
+    "title": "Ответы гостей",
+    "forInvitation": "Для приглашения:",
+    "untitled": "Без названия",
+    "totalResponses": "Всего ответов",
+    "attending": "Придут",
+    "notAttending": "Не придут",
+    "totalGuests": "Всего гостей",
+    "empty": "Пока никто не ответил на приглашение.",
+    "willAttend": "Приду",
+    "willNotAttend": "Не приду",
+    "guestsCount": "Гостей:",
+    "delete": "Удалить"
   }
 }
