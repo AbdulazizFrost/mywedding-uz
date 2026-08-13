@@ -86,10 +86,10 @@ export default function Catalog() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: idx * 0.1, ease: "easeOut" }}
-                className="group flex flex-col"
+                className="group flex flex-col items-center w-full"
               >
                 {/* Image Container */}
-                <div className="relative w-full aspect-[3/4] rounded-[2px] overflow-hidden mb-6 bg-sand/30 shadow-[0_10px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.12)] transition-all duration-700">
+                <div className="relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-none aspect-[4/5] md:aspect-[3/4] rounded-[2px] overflow-hidden mb-6 bg-sand/30 shadow-[0_10px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.12)] transition-all duration-700">
                   {template.thumbnail || template.preview_image ? (
                     <img
                       src={template.thumbnail || template.preview_image}
