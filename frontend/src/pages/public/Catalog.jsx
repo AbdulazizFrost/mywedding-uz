@@ -79,7 +79,7 @@ export default function Catalog() {
             Коллекция в данный момент пополняется...
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-20 max-w-6xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 max-w-7xl mx-auto px-4 md:px-8">
             {templates.map((template, idx) => (
               <motion.div 
                 key={template.id}
@@ -89,28 +89,28 @@ export default function Catalog() {
                 className="group flex flex-col"
               >
                 {/* Image Container */}
-                <div className="relative w-full aspect-[4/5] rounded-[2px] overflow-hidden mb-8 bg-sand/30 shadow-[0_20px_50px_rgb(0,0,0,0.06)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.1)] transition-all duration-700">
+                <div className="relative w-full aspect-[3/4] rounded-[2px] overflow-hidden mb-6 bg-sand/30 shadow-[0_10px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.12)] transition-all duration-700">
                   {template.thumbnail || template.preview_image ? (
                     <img
                       src={template.thumbnail || template.preview_image}
                       alt={template.name}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.05]"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-sand text-charcoal/30">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-sand text-charcoal/30">
                       <span className="font-serif italic text-lg text-charcoal/40">Нет превью</span>
                     </div>
                   )}
                   
                   {/* Subtle Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/30 transition-colors duration-700" />
                   
                   {/* Hover Actions - Desktop */}
-                  <div className="absolute inset-0 hidden md:flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 bg-charcoal/20 backdrop-blur-[2px]">
+                  <div className="absolute inset-0 hidden md:flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 backdrop-blur-[2px]">
                     <Link
                       to={`/templates/${template.slug}`}
-                      className="flex items-center gap-2 px-8 py-4 bg-charcoal text-white rounded-full font-medium text-sm tracking-wide hover:bg-black hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                      className="flex items-center gap-2 px-8 py-4 bg-white/95 text-charcoal rounded-full font-medium text-sm tracking-widest uppercase hover:bg-champagne hover:text-white transition-all duration-300 shadow-xl"
                     >
                       Смотреть детали
                     </Link>
@@ -118,24 +118,24 @@ export default function Catalog() {
                 </div>
 
                 {/* Text Content */}
-                <div className="flex flex-col items-center text-center px-4">
-                  <span className="text-[10px] md:text-[11px] font-medium tracking-[0.2em] text-champagne uppercase mb-3">
+                <div className="flex flex-col items-center text-center px-2">
+                  <span className="text-[9px] md:text-[10px] font-semibold tracking-[0.3em] text-charcoal/50 uppercase mb-3">
                     {template.category || 'Элегантный'}
                   </span>
-                  <h3 className="text-3xl font-serif text-charcoal mb-3">{template.name}</h3>
-                  <div className="w-8 h-[1px] bg-champagne/40 mb-4" />
-                  <p className="text-charcoal-light/80 text-[13px] md:text-sm line-clamp-2 leading-relaxed mb-6 font-light max-w-md">
+                  <h3 className="text-2xl md:text-3xl font-serif text-charcoal mb-3 px-2 leading-tight">{template.name}</h3>
+                  <div className="w-8 h-[1px] bg-champagne mb-4 transition-all duration-700 group-hover:w-16" />
+                  <p className="text-charcoal-light/70 text-[12px] md:text-[13px] line-clamp-2 leading-relaxed mb-6 font-light max-w-sm">
                     {template.description || 'Идеальный выбор для вашего особенного дня.'}
                   </p>
                   <div className="mt-auto flex flex-col items-center gap-4 w-full">
-                    <span className="text-[15px] font-medium text-charcoal">
+                    <span className="text-sm font-semibold tracking-widest text-charcoal uppercase">
                       {Number(template.price) === 0 ? 'Бесплатно' : `${Number(template.price).toLocaleString('ru-RU')} ${template.currency}`}
                     </span>
                     
                     {/* Mobile visible CTA */}
                     <Link
                       to={`/templates/${template.slug}`}
-                      className="md:hidden w-full max-w-[200px] py-3.5 border border-champagne text-charcoal rounded-full text-sm font-medium hover:bg-champagne/10 transition-colors uppercase tracking-widest text-[11px]"
+                      className="md:hidden w-full max-w-[200px] py-3.5 border border-champagne text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-colors uppercase tracking-widest text-[11px]"
                     >
                       Смотреть детали
                     </Link>
