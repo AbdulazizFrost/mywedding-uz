@@ -6,6 +6,73 @@
     "language": "Til",
     "dashboard": "Shaxsiy kabinet",
     "login": "Kirish",
-    "createInvitation": "Taklifnoma yaratish"
+    "createInvitation": "Taklifnoma yaratish",
+    "admin": "Admin"
+  },
+  "home": {
+    "hero": {
+      "badge": "Digital Wedding Invitation",
+      "titlePart1": "Raqamli formatdagi",
+      "titlePart2": "to'y",
+      "titlePart3": "taklifnomangiz",
+      "titlePart4": "",
+      "desc": "Bir necha daqiqa ichida chiroyli shaxsiy to'y taklifnomasini yarating va uni mehmonlarga bitta havola orqali yuboring.",
+      "goToDashboard": "Kabinetga o'tish",
+      "createBtn": "Taklifnoma yaratish",
+      "seeExamples": "Namunalarni ko'rish",
+      "mockupBadge": "To'y taklifnomasi"
+    },
+    "templates": {
+      "title": "Dizaynlar to'plami",
+      "desc": "Sizning maxsus kuningiz muhitini mukammal aks ettiruvchi taklifnomani yarating.",
+      "select": "Tanlash",
+      "seeAll": "Barcha dizaynlarni ko'rish"
+    },
+    "howItWorks": {
+      "title": "Qanday ishlaydi",
+      "steps": {
+        "1": { "title": "Dizaynni tanlang", "desc": "Bizning premium shablonlar to'plamimizni ko'rib chiqing." },
+        "2": { "title": "Tafsilotlarni qo'shing", "desc": "Ismlar, sana va bayram o'tkaziladigan joyni kiriting." },
+        "3": { "title": "Variantlarni sozlang", "desc": "Taymer, musiqa va RSVP tasdiqlovini yoqing." },
+        "4": { "title": "Mehmonlarga yuboring", "desc": "Noyob havolani qulay usulda tarqating." }
+      }
+    },
+    "features": {
+      "titlePart1": "Barcha kerakli narsalar",
+      "titlePart2": "bitta taklifnomada",
+      "desc": "Mehmonlaringiz maksimal ma'lumot olishi va sizda kamroq tashvish bo'lishi uchun har bir detalni o'ylab chiqdik.",
+      "items": {
+        "site": { "title": "Shaxsiy sayt", "desc": "Sizning shaxsiy sahifangizning noyob dizayni." },
+        "gallery": { "title": "Galereya", "desc": "Sevgi tarixingiz (Love Story) bilan o'rtoqlashing." },
+        "location": { "title": "Joylashuv", "desc": "Tadbir joyiga qulay navigatsiya." },
+        "timer": { "title": "Taymer", "desc": "Muhim daqiqagacha ortga hisoblash." },
+        "music": { "title": "Musiqa", "desc": "Ilk soniyalardanoq kayfiyat yarating." },
+        "rsvp": { "title": "RSVP", "desc": "Mehmonlarning aniq ro'yxati va ularning xohishlari." },
+        "responsive": { "title": "Moslashuvchanlik", "desc": "Har qanday qurilmalarda mukammal ko'rinish." },
+        "wishlist": { "title": "Istaklar ro'yxati", "desc": "Kerakli sovg'alar haqida muloyim ishora." }
+      },
+      "detailsTitle": "Tafsilotlar",
+      "detailsDesc": "Sizni bayramimizda kutib qolamiz",
+      "days": "Kun",
+      "hours": "Soat"
+    },
+    "cta": {
+      "titlePart1": "Sizning tarixingiz",
+      "titlePart2": "shu yerdan",
+      "titlePart3": "boshlanadi.",
+      "desc": "Hozirning o'zida maxsus kuningiz uchun chiroyli raqamli taklifnomani yarating.",
+      "goToDashboard": "Kabinetga o'tish",
+      "createBtn": "Taklifnoma yaratish"
+    }
+  },
+  "footer": {
+    "desc": "Sizning maxsus kuningiz uchun chiroyli raqamli taklifnomani yarating va quvonchni yaqinlaringiz bilan baham ko'ring.",
+    "navTitle": "Navigatsiya",
+    "supportTitle": "Qo'llab-quvvatlash",
+    "contacts": "Kontaktlar",
+    "register": "Ro'yxatdan o'tish",
+    "rights": "Barcha huquqlar himoyalangan.",
+    "privacy": "Maxfiylik siyosati",
+    "terms": "Foydalanish shartlari"
   }
 }

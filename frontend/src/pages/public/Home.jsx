@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { Heart, Image as ImageIcon, MapPin, Clock, Music, CheckCircle2, Smartphone, Gift, CalendarHeart, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 // Fade in component for scroll animations
 const FadeIn = ({ children, delay = 0, direction = 'up', className = '' }) => {
@@ -53,6 +54,8 @@ const PhoneMockup = ({ children, className = '' }) => (
 
 export default function Home() {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
+  
   // Ensure scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -78,15 +81,15 @@ export default function Home() {
           <div className="flex-1 text-center lg:text-left w-full mt-8 lg:-mt-16 block">
             <FadeIn delay={0.1}>
               <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.15em] text-champagne uppercase rounded-full mb-8 bg-white/40 backdrop-blur-md shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
-                <Heart size={12} className="text-champagne" /> Digital Wedding Invitation
+                <Heart size={12} className="text-champagne" /> {t('home.hero.badge')}
               </span>
             </FadeIn>
             
             <FadeIn delay={0.3}>
               <h1 className="text-[2.5rem] leading-[1.1] sm:text-5xl lg:text-[clamp(3.5rem,5vw,5.5rem)] font-serif font-medium mb-6 text-charcoal">
-                Ваше свадебное <br />
-                <span className="italic text-champagne font-light drop-shadow-sm">приглашение</span> <br />
-                в цифровом <br className="hidden lg:block"/> формате
+                {t('home.hero.titlePart1')} <br />
+                <span className="italic text-champagne font-light drop-shadow-sm">{t('home.hero.titlePart2')}</span> <br />
+                {t('home.hero.titlePart3')} <br className="hidden lg:block"/> {t('home.hero.titlePart4')}
               </h1>
             </FadeIn>
             
@@ -96,17 +99,17 @@ export default function Home() {
 
             <FadeIn delay={0.5}>
               <p className="text-[15px] md:text-lg text-charcoal-light/80 mb-10 max-w-[22rem] sm:max-w-md lg:max-w-md mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0 font-light">
-                Создайте красивое персональное приглашение на свадьбу за несколько минут и отправьте его гостям одной ссылкой.
+                {t('home.hero.desc')}
               </p>
             </FadeIn>
             
             <FadeIn delay={0.7} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 px-4 sm:px-0">
               <Link to={user ? "/dashboard" : "/register"} className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white rounded-full font-medium hover:bg-black transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] hover:-translate-y-0.5 duration-300">
                 <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert object-contain opacity-90" />
-                {user ? "Перейти в кабинет" : "Создать приглашение"}
+                {user ? t('home.hero.goToDashboard') : t('home.hero.createBtn')}
               </Link>
               <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-white/50 border border-champagne text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-                Посмотреть примеры
+                {t('home.hero.seeExamples')}
               </a>
             </FadeIn>
           </div>
@@ -137,7 +140,7 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent flex flex-col justify-end p-8 pb-14 text-white">
                     <FadeIn delay={0.8} className="text-center w-full">
                       <p className="text-[11px] uppercase tracking-[0.4em] font-semibold mb-4 text-white/90 drop-shadow-md">
-                        Приглашение на свадьбу
+                        {t('home.hero.mockupBadge')}
                       </p>
                       <div className="flex items-center justify-center gap-4 mb-6">
                         <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-champagne/80"></div>
@@ -168,9 +171,9 @@ export default function Home() {
       <section id="templates" className="py-24 md:py-32 bg-white relative w-full overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-8 mb-16 md:mb-24 text-center">
           <FadeIn>
-            <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal mb-6">Коллекция дизайнов</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal mb-6">{t('home.templates.title')}</h2>
             <p className="text-charcoal-light/80 max-w-2xl mx-auto text-[15px] md:text-lg font-light px-4">
-              Создайте приглашение, которое идеально отражает атмосферу вашего особенного дня.
+              {t('home.templates.desc')}
             </p>
           </FadeIn>
         </div>
@@ -202,7 +205,7 @@ export default function Home() {
                       <div className="w-8 h-[1px] bg-champagne mb-6 transition-all duration-700 group-hover:w-16" />
                       
                       <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-charcoal hover:text-champagne transition-colors">
-                        Выбрать <ArrowRight size={12} />
+                        {t('home.templates.select')} <ArrowRight size={12} />
                       </span>
                     </div>
                   </div>
@@ -212,7 +215,7 @@ export default function Home() {
           </div>
           <FadeIn delay={0.4} className="mt-16 text-center">
             <Link to="/catalog" className="inline-flex items-center justify-center px-10 py-4 bg-transparent border border-champagne text-charcoal rounded-full text-[13px] font-medium hover:bg-champagne/5 transition-all duration-300 uppercase tracking-[0.15em]">
-              Смотреть все дизайны
+              {t('home.templates.seeAll')}
             </Link>
           </FadeIn>
         </div>
@@ -222,7 +225,7 @@ export default function Home() {
       <section id="how-it-works" className="py-24 md:py-32 bg-ivory w-full overflow-hidden border-t border-champagne/20">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
           <FadeIn className="text-center mb-20 md:mb-28">
-            <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal leading-tight mb-6">Как это работает</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal leading-tight mb-6">{t('home.howItWorks.title')}</h2>
             <img src="/assets/landing/divider.png" alt="Divider" className="h-3 md:h-4 object-contain opacity-50 mx-auto" />
           </FadeIn>
 
@@ -231,17 +234,17 @@ export default function Home() {
             <div className="hidden md:block absolute top-[2.5rem] left-[15%] right-[15%] h-[1px] bg-champagne/30 -z-10" />
 
             {[
-              { num: '01', title: 'Выберите дизайн', desc: 'Просмотрите нашу коллекцию премиальных шаблонов.' },
-              { num: '02', title: 'Добавьте детали', desc: 'Укажите имена, дату и место проведения торжества.' },
-              { num: '03', title: 'Настройте опции', desc: 'Включите таймер, музыку и подтверждение RSVP.' },
-              { num: '04', title: 'Отправьте гостям', desc: 'Разошлите уникальную ссылку удобным способом.' },
+              { num: '01', id: '1' },
+              { num: '02', id: '2' },
+              { num: '03', id: '3' },
+              { num: '04', id: '4' },
             ].map((step, idx) => (
               <FadeIn key={idx} delay={idx * 0.15} className="flex flex-col items-center text-center">
                 <div className="bg-ivory px-4 mb-6 relative">
                   <span className="font-serif text-[4rem] md:text-[5rem] leading-none text-champagne/30 font-light block">{step.num}</span>
                 </div>
-                <h3 className="text-[17px] md:text-lg font-medium mb-3 text-charcoal tracking-wide">{step.title}</h3>
-                <p className="text-charcoal-light/80 text-[13px] md:text-[14px] font-light leading-relaxed max-w-[220px]">{step.desc}</p>
+                <h3 className="text-[17px] md:text-lg font-medium mb-3 text-charcoal tracking-wide">{t(`home.howItWorks.steps.${step.id}.title`)}</h3>
+                <p className="text-charcoal-light/80 text-[13px] md:text-[14px] font-light leading-relaxed max-w-[220px]">{t(`home.howItWorks.steps.${step.id}.desc`)}</p>
               </FadeIn>
             ))}
           </div>
@@ -255,30 +258,30 @@ export default function Home() {
             
             <div className="flex-1 w-full text-center lg:text-left">
               <FadeIn>
-                <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal mb-6 leading-tight">Всё необходимое <br/> в одном приглашении</h2>
+                <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal mb-6 leading-tight">{t('home.features.titlePart1')} <br/> {t('home.features.titlePart2')}</h2>
                 <p className="text-charcoal-light/80 text-[15px] md:text-lg mb-12 max-w-lg mx-auto lg:mx-0 font-light">
-                  Мы продумали каждую деталь, чтобы ваши гости получили максимум информации, а вы — меньше хлопот.
+                  {t('home.features.desc')}
                 </p>
               </FadeIn>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10 text-left">
                 {[
-                  { icon: Heart, title: 'Персональный сайт', desc: 'Уникальный дизайн вашей личной страницы.' },
-                  { icon: ImageIcon, title: 'Галерея', desc: 'Поделитесь историей вашей любви (Love Story).' },
-                  { icon: MapPin, title: 'Локация', desc: 'Удобная навигация к месту проведения.' },
-                  { icon: Clock, title: 'Таймер', desc: 'Обратный отсчет до важного момента.' },
-                  { icon: Music, title: 'Музыка', desc: 'Создайте настроение с первых секунд.' },
-                  { icon: CheckCircle2, title: 'RSVP', desc: 'Точный список гостей и их предпочтения.' },
-                  { icon: Smartphone, title: 'Адаптивность', desc: 'Идеальное отображение на любых устройствах.' },
-                  { icon: Gift, title: 'Wishlist', desc: 'Мягкий намек на желанные подарки.' },
+                  { icon: Heart, id: 'site' },
+                  { icon: ImageIcon, id: 'gallery' },
+                  { icon: MapPin, id: 'location' },
+                  { icon: Clock, id: 'timer' },
+                  { icon: Music, id: 'music' },
+                  { icon: CheckCircle2, id: 'rsvp' },
+                  { icon: Smartphone, id: 'responsive' },
+                  { icon: Gift, id: 'wishlist' },
                 ].map((feature, idx) => (
                   <FadeIn key={idx} delay={0.05 * idx} className="flex items-start gap-4 group">
                     <div className="mt-1 text-champagne/60 group-hover:text-champagne transition-colors">
                       <feature.icon className="w-5 h-5 md:w-6 md:h-6" strokeWidth={1} />
                     </div>
                     <div>
-                      <h4 className="font-medium mb-1 text-[15px] md:text-base text-charcoal">{feature.title}</h4>
-                      <p className="text-[13px] md:text-sm text-charcoal-light/70 font-light leading-relaxed">{feature.desc}</p>
+                      <h4 className="font-medium mb-1 text-[15px] md:text-base text-charcoal">{t(`home.features.items.${feature.id}.title`)}</h4>
+                      <p className="text-[13px] md:text-sm text-charcoal-light/70 font-light leading-relaxed">{t(`home.features.items.${feature.id}.desc`)}</p>
                     </div>
                   </FadeIn>
                 ))}
@@ -293,16 +296,16 @@ export default function Home() {
                      <div className="absolute inset-0 bg-gradient-to-t from-ivory via-transparent to-transparent h-[60%]" />
                      <div className="flex-1 bg-ivory p-6 flex flex-col items-center text-center -mt-8 relative z-10">
                         <div className="w-10 h-[1px] bg-champagne mb-4" />
-                        <h3 className="font-serif text-3xl mb-2">Детали</h3>
-                        <p className="text-[11px] text-charcoal-light/80 font-light mb-6">Ждём вас на нашем празднике</p>
+                        <h3 className="font-serif text-3xl mb-2">{t('home.features.detailsTitle')}</h3>
+                        <p className="text-[11px] text-charcoal-light/80 font-light mb-6">{t('home.features.detailsDesc')}</p>
                         <div className="flex gap-4 w-full justify-center">
                           <div className="bg-white border border-champagne/20 rounded-lg p-3 w-20 flex flex-col items-center shadow-sm">
                             <span className="font-serif text-2xl text-charcoal">45</span>
-                            <span className="text-[8px] uppercase tracking-widest text-champagne">Дней</span>
+                            <span className="text-[8px] uppercase tracking-widest text-champagne">{t('home.features.days')}</span>
                           </div>
                           <div className="bg-white border border-champagne/20 rounded-lg p-3 w-20 flex flex-col items-center shadow-sm">
                             <span className="font-serif text-2xl text-charcoal">12</span>
-                            <span className="text-[8px] uppercase tracking-widest text-champagne">Часов</span>
+                            <span className="text-[8px] uppercase tracking-widest text-champagne">{t('home.features.hours')}</span>
                           </div>
                         </div>
                      </div>
@@ -317,8 +320,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* 6. FINAL CTA */}
       <section className="py-24 md:py-32 relative bg-ivory overflow-hidden w-full border-t border-champagne/20">
         <div className="absolute inset-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
@@ -331,13 +332,13 @@ export default function Home() {
             <div className="flex justify-center mb-8">
               <img src="/assets/landing/divider.png" alt="Divider" className="h-4 object-contain opacity-60" />
             </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-serif font-medium text-charcoal mb-6 leading-tight">Ваша история <br/> <span className="italic text-champagne font-light">начинается</span> здесь.</h2>
+            <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-serif font-medium text-charcoal mb-6 leading-tight">{t('home.cta.titlePart1')} <br/> <span className="italic text-champagne font-light">{t('home.cta.titlePart2')}</span> {t('home.cta.titlePart3')}</h2>
             <p className="text-[15px] md:text-lg text-charcoal-light/80 mb-12 font-light">
-              Создайте красивое цифровое приглашение для своего особенного дня прямо сейчас.
+              {t('home.cta.desc')}
             </p>
             <Link to={user ? "/dashboard" : "/register"} className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-charcoal text-white rounded-full font-medium text-[15px] hover:bg-black transition-all shadow-[0_10px_30px_rgb(0,0,0,0.1)] hover:shadow-[0_10px_40px_rgb(0,0,0,0.15)] hover:-translate-y-1 duration-300">
               <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert opacity-90" />
-              {user ? "Перейти в кабинет" : "Создать приглашение"}
+              {user ? t('home.cta.goToDashboard') : t('home.cta.createBtn')}
             </Link>
           </FadeIn>
         </div>
