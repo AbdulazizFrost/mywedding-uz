@@ -183,7 +183,7 @@ export default function Home() {
               { name: 'Boho Romance', category: 'Floral', img: 'https://images.pexels.com/photos/1730877/pexels-photo-1730877.jpeg?auto=compress&cs=tinysrgb&w=600&h=900&fit=crop' },
             ].map((template, idx) => (
               <FadeIn key={idx} delay={idx * 0.2} direction="up" className="flex justify-center">
-                <div className="group relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-none aspect-[4/5] md:aspect-[3/4] rounded-sm overflow-hidden cursor-pointer shadow-[0_10px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] transition-all duration-700">
+                <Link to="/catalog" className="group relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-none aspect-[4/5] md:aspect-[3/4] rounded-sm overflow-hidden cursor-pointer shadow-[0_10px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] transition-all duration-700 block">
                   {/* Background Image */}
                   <img src={template.img} alt={template.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.05]" loading="lazy" />
                   
@@ -206,7 +206,7 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               </FadeIn>
             ))}
           </div>
