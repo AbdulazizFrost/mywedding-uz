@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 // Fade in component for scroll animations
 const FadeIn = ({ children, delay = 0, direction = 'up', className = '' }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-10px" });
   const controls = useAnimation();
 
   useEffect(() => {
