@@ -69,7 +69,7 @@ export default function Home() {
           <img 
             src="/assets/landing/hero-bg-left.png" 
             alt="Floral Background" 
-            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 mix-blend-multiply opacity-95" 
+            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain -translate-x-[30%] lg:-translate-x-1/4 mix-blend-multiply opacity-10 lg:opacity-90" 
           />
         </div>
 
@@ -119,7 +119,7 @@ export default function Home() {
                <img 
                  src="/assets/landing/flower-left.png"
                  alt=""
-                 className="w-[140%] max-w-none md:w-[150%] object-contain opacity-90 scale-[1.1] scale-x-[-1]"
+                 className="w-[110%] md:w-[150%] max-w-none object-contain opacity-50 md:opacity-90 scale-[1.1] scale-x-[-1]"
                />
             </div>
 
