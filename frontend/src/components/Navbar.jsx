@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -10,6 +11,7 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
 
   // Handle scroll effect
   useEffect(() => {
@@ -41,9 +43,9 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const navLinks = [
-    { name: 'Шаблоны', href: '/catalog' },
-    { name: 'Как это работает', href: '/#how-it-works' },
-    { name: 'Возможности', href: '/#features' },
+    { name: t('nav.templates'), href: '/catalog' },
+    { name: t('nav.howItWorks'), href: '/#how-it-works' },
+    { name: t('nav.features'), href: '/#features' },
   ];
 
   const handleNavClick = (e, href) => {
@@ -66,6 +68,8 @@ export default function Navbar() {
     }
   };
 
+  const currentLang = i18n.language || 'ru';
+
   return (
     <>
       <header 
@@ -87,7 +91,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8 lg:gap-10">
-            <div className="flex gap-6 lg:gap-8">
+            <div className="flex items-center gap-6 lg:gap-8">
               {navLinks.map((link) => (
                 <a 
                   key={link.name} 
@@ -98,6 +102,19 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
+              
+              {/* Desktop Language Switcher */}
+              <div className="flex items-center gap-2 ml-4">
+                <button 
+                  onClick={() => i18n.changeLanguage('ru')}
+                  className={`text-[13px] uppercase tracking-wider font-semibold transition-colors ${currentLang.startsWith('ru') ? 'text-charcoal' : 'text-charcoal/40 hover:text-champagne'}`}
+                >RU</button>
+                <span className="text-charcoal/40 text-[10px]">·</span>
+                <button 
+                  onClick={() => i18n.changeLanguage('uz')}
+                  className={`text-[13px] uppercase tracking-wider font-semibold transition-colors ${currentLang.startsWith('uz') ? 'text-charcoal' : 'text-charcoal/40 hover:text-champagne'}`}
+                >UZ</button>
+              </div>
             </div>
             
             <div className="flex items-center gap-4 border-l border-champagne/30 pl-6 lg:pl-8">
@@ -116,7 +133,7 @@ export default function Navbar() {
                     className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-white text-sm font-medium rounded-full hover:bg-black transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
                   >
                     <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 brightness-0 invert opacity-90" />
-                    Личный кабинет
+                    {t('nav.dashboard')}
                   </Link>
                 </div>
               ) : (
@@ -125,14 +142,14 @@ export default function Navbar() {
                     to="/login" 
                     className="text-sm text-charcoal hover:text-champagne transition-colors font-medium"
                   >
-                    Войти
+                    {t('nav.login')}
                   </Link>
                   <Link 
                     to="/register" 
                     className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-white text-sm font-medium rounded-full hover:bg-black transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
                   >
                     <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 brightness-0 invert opacity-90" />
-                    Создать приглашение
+                    {t('nav.createInvitation')}
                   </Link>
                 </>
               )}
@@ -184,7 +201,23 @@ export default function Navbar() {
                 ))}
               </div>
               
-              <div className="flex flex-col gap-3 mt-12 pt-6 border-t border-champagne/20">
+              {/* Mobile Language Switcher */}
+              <div className="flex flex-col items-center mt-12 pt-6 border-t border-champagne/20">
+                <span className="text-sm font-serif text-charcoal/60 mb-3">{t('nav.language')}</span>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => i18n.changeLanguage('ru')}
+                    className={`text-lg font-serif transition-colors ${currentLang.startsWith('ru') ? 'text-charcoal font-semibold' : 'text-charcoal/40'}`}
+                  >RU</button>
+                  <span className="text-charcoal/40">·</span>
+                  <button 
+                    onClick={() => i18n.changeLanguage('uz')}
+                    className={`text-lg font-serif transition-colors ${currentLang.startsWith('uz') ? 'text-charcoal font-semibold' : 'text-charcoal/40'}`}
+                  >UZ</button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-champagne/20">
                 {user ? (
                   <>
                     <Link 
@@ -193,7 +226,7 @@ export default function Navbar() {
                       className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-charcoal text-white text-lg font-medium rounded-full shadow-md"
                     >
                       <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert opacity-90" />
-                      Личный кабинет
+                      {t('nav.dashboard')}
                     </Link>
                     {user.role === 'admin' && (
                       <Link 
@@ -212,7 +245,7 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="text-center w-full py-4 text-charcoal text-lg font-medium border border-champagne/50 rounded-full"
                     >
-                      Войти
+                      {t('nav.login')}
                     </Link>
                     <Link 
                       to="/register" 
@@ -220,7 +253,7 @@ export default function Navbar() {
                       className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-charcoal text-white text-lg font-medium rounded-full shadow-md mt-2"
                     >
                       <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert opacity-90" />
-                      Создать приглашение
+                      {t('nav.createInvitation')}
                     </Link>
                   </>
                 )}

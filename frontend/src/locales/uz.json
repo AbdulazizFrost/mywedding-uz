@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "templates": "Shablonlar",
+    "howItWorks": "Qanday ishlaydi",
+    "features": "Imkoniyatlar",
+    "language": "Til",
+    "dashboard": "Shaxsiy kabinet",
+    "login": "Kirish",
+    "createInvitation": "Taklifnoma yaratish"
+  }
+}

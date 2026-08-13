@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "templates": "Шаблоны",
+    "howItWorks": "Как это работает",
+    "features": "Возможности",
+    "language": "Язык",
+    "dashboard": "Личный кабинет",
+    "login": "Войти",
+    "createInvitation": "Создать приглашение"
+  }
+}
