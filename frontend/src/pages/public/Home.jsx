@@ -75,7 +75,7 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10 w-full">
           {/* Left Content */}
-          <div className="flex-1 text-center lg:text-left w-full mt-8 md:mt-0 flex flex-col justify-center">
+          <div className="flex-1 text-center lg:text-left w-full mt-8 lg:-mt-16 block">
             <FadeIn delay={0.1}>
               <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.15em] text-champagne uppercase rounded-full mb-8 bg-white/40 backdrop-blur-md shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
                 <Heart size={12} className="text-champagne" /> Digital Wedding Invitation
