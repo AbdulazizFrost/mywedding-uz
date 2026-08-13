@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Sparkles, Smartphone, Paintbrush, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -10,6 +11,7 @@ export default function TemplateDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { t, i18n } = useTranslation();
   
   const [template, setTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,7 @@ export default function TemplateDetail() {
       try {
         const response = await fetch(`${API_URL}/templates/${slug}`);
         if (!response.ok) {
-          if (response.status === 404) throw new Error('Шаблон не найден');
+          if (response.status === 404) throw new Error(t('templateDetail.notFound'));
           throw new Error('Failed to fetch template');
         }
         const data = await response.json();
@@ -37,7 +39,7 @@ export default function TemplateDetail() {
     };
 
     fetchTemplate();
-  }, [slug]);
+  }, [slug, t]);
 
   const handleBuy = async () => {
     if (!user) {
@@ -79,19 +81,19 @@ export default function TemplateDetail() {
   if (error || !template) {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center text-center px-4">
-        <h2 className="text-4xl font-serif text-charcoal mb-4">Упс, что-то пошло не так</h2>
-        <p className="text-charcoal-light mb-8">{error || 'Шаблон не найден'}</p>
+        <h2 className="text-4xl font-serif text-charcoal mb-4">{t('templateDetail.errorTitle')}</h2>
+        <p className="text-charcoal-light mb-8">{error || t('templateDetail.notFound')}</p>
         <Link to="/catalog" className="px-8 py-3 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all">
-          Вернуться в каталог
+          {t('templateDetail.backToCatalogBtn')}
         </Link>
       </div>
     );
   }
 
   const features = [
-    { icon: Smartphone, title: 'Адаптивный дизайн', desc: 'Идеально смотрится на любых смартфонах' },
-    { icon: Paintbrush, title: 'Полная кастомизация', desc: 'Настраивайте тексты, цвета и шрифты' },
-    { icon: Globe, title: 'Личный домен', desc: 'Уникальная ссылка-приглашение для гостей' },
+    { icon: Smartphone, title: t('templateDetail.featureResponsive'), desc: t('templateDetail.featureResponsiveDesc') },
+    { icon: Paintbrush, title: t('templateDetail.featureCustom'), desc: t('templateDetail.featureCustomDesc') },
+    { icon: Globe, title: t('templateDetail.featureDomain'), desc: t('templateDetail.featureDomainDesc') },
   ];
 
   return (
@@ -101,7 +103,7 @@ export default function TemplateDetail() {
         {/* Back navigation */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
           <Link to="/catalog" className="inline-flex items-center gap-2 text-charcoal-light hover:text-champagne transition-colors font-medium text-sm">
-            <ArrowLeft size={16} /> Назад в каталог
+            <ArrowLeft size={16} /> {t('templateDetail.backToCatalog')}
           </Link>
         </motion.div>
 
@@ -129,7 +131,7 @@ export default function TemplateDetail() {
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-ivory text-charcoal-light p-6 text-center">
                     <Sparkles className="w-12 h-12 mb-4 text-champagne opacity-50" />
-                    <span className="font-serif italic text-lg">Превью формируется</span>
+                    <span className="font-serif italic text-lg">{t('templateDetail.previewGenerating')}</span>
                   </div>
                 )}
                 {/* Gradient overlay for premium feel */}
@@ -153,7 +155,7 @@ export default function TemplateDetail() {
                 {template.name}
               </h1>
               <p className="text-lg text-charcoal-light font-light leading-relaxed max-w-lg">
-                {template.description || 'Элегантный и современный дизайн, созданный для того, чтобы запечатлеть ваши самые теплые моменты.'}
+                {template.description || t('catalog.defaultDesc')}
               </p>
             </div>
 
@@ -163,9 +165,9 @@ export default function TemplateDetail() {
               
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-charcoal-light font-semibold mb-2">Стоимость шаблона</p>
+                  <p className="text-xs uppercase tracking-widest text-charcoal-light font-semibold mb-2">{t('templateDetail.priceTitle')}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-serif text-charcoal">{Number(template.price).toLocaleString('ru-RU')}</span>
+                    <span className="text-4xl font-serif text-charcoal">{Number(template.price).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}</span>
                     <span className="text-lg text-charcoal-light font-medium">{template.currency}</span>
                   </div>
                 </div>
@@ -175,14 +177,14 @@ export default function TemplateDetail() {
                   disabled={buying}
                   className="px-8 py-4 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300 disabled:opacity-70 disabled:hover:translate-y-0 whitespace-nowrap"
                 >
-                  {buying ? 'Оформление...' : (user ? 'Создать приглашение' : 'Войти и Создать')}
+                  {buying ? t('templateDetail.creating') : (user ? t('templateDetail.createBtn') : t('templateDetail.loginAndCreate'))}
                 </button>
               </div>
             </div>
 
             {/* Features List */}
             <div>
-              <h3 className="text-sm uppercase tracking-widest text-charcoal font-semibold mb-6">В стоимость включено:</h3>
+              <h3 className="text-sm uppercase tracking-widest text-charcoal font-semibold mb-6">{t('templateDetail.includedTitle')}</h3>
               <ul className="space-y-4">
                 {features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-4">

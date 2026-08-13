@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, Upload, Trash2, LayoutTemplate, ExternalLink, X, ChevronDown, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -11,6 +12,7 @@ export default function EditorPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   
   const [invitation, setInvitation] = useState(null);
   const [data, setData] = useState(null);
@@ -88,7 +90,7 @@ export default function EditorPage() {
       
       if (!res.ok) {
         if (res.status === 409) {
-          setError('Конфликт сохранения. Данные изменены на другом устройстве.');
+          setError(t('editor.conflict'));
         } else {
           throw new Error(resData.error || 'Failed to save');
         }
@@ -97,7 +99,7 @@ export default function EditorPage() {
 
       setLastUpdated(resData.invitation.updated_at);
       if (isManual) {
-        setMessage('Сохранено');
+        setMessage(t('editor.saved'));
         setTimeout(() => setMessage(null), 2000);
       }
     } catch (err) {
@@ -172,7 +174,7 @@ export default function EditorPage() {
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.error || 'Failed to publish');
       setInvitation(resData.invitation);
-      setMessage('Опубликовано!');
+      setMessage(t('editor.published'));
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
       setError(err.message);
@@ -190,37 +192,37 @@ export default function EditorPage() {
   if (!invitation || !data) {
     return (
       <div className="min-h-[100dvh] bg-ivory flex flex-col items-center justify-center">
-        <p className="font-serif text-charcoal text-xl">Приглашение не найдено</p>
-        <button onClick={() => navigate('/dashboard')} className="mt-4 px-6 py-2 bg-charcoal text-ivory rounded-full">В кабинет</button>
+        <p className="font-serif text-charcoal text-xl">{t('editor.notFound')}</p>
+        <button onClick={() => navigate('/dashboard')} className="mt-4 px-6 py-2 bg-charcoal text-ivory rounded-full">{t('editor.backToCabinet')}</button>
       </div>
     );
   }
 
   const categories = {
     main: {
-      label: 'Основное',
+      label: t('editor.main'),
       icon: LayoutTemplate,
       tabs: [
-        { id: 'couple', label: 'Имена', icon: User },
-        { id: 'date', label: 'Дата и Время', icon: Calendar },
-        { id: 'location', label: 'Место проведения', icon: MapPin },
-        { id: 'design', label: 'Дизайн', icon: Palette }
+        { id: 'couple', label: t('editor.names'), icon: User },
+        { id: 'date', label: t('editor.dateAndTime'), icon: Calendar },
+        { id: 'location', label: t('editor.location'), icon: MapPin },
+        { id: 'design', label: t('editor.design'), icon: Palette }
       ]
     },
     media: {
-      label: 'Медиа',
+      label: t('editor.media'),
       icon: ImageIcon,
       tabs: [
-        { id: 'gallery', label: 'Галерея фото', icon: ImageIcon },
-        { id: 'music', label: 'Музыка', icon: Music }
+        { id: 'gallery', label: t('editor.gallery'), icon: ImageIcon },
+        { id: 'music', label: t('editor.music'), icon: Music }
       ]
     },
     extra: {
-      label: 'Блоки',
+      label: t('editor.blocks'),
       icon: BookOpen,
       tabs: [
-        { id: 'story', label: 'История', icon: BookOpen },
-        { id: 'rsvp', label: 'Форма RSVP', icon: CheckSquare }
+        { id: 'story', label: t('editor.story'), icon: BookOpen },
+        { id: 'rsvp', label: t('editor.rsvpForm'), icon: CheckSquare }
       ]
     }
   };
@@ -232,7 +234,7 @@ export default function EditorPage() {
   };
 
 // --- Extracted Editor Form ---
-const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, handleMediaDelete }) => (
+const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, handleMediaDelete, t }) => (
   <div className="space-y-6 pb-32">
     <AnimatePresence mode="wait">
       <motion.div
@@ -246,52 +248,52 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
         {/* MAIN */}
         {activeTab === 'couple' && (
           <div className="space-y-5">
-            <Input label="Имя жениха" placeholder="Тимур" value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
-            <Input label="Имя невесты" placeholder="Лейла" value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
+            <Input label={t('editor.groomName')} placeholder={t('editor.groomPlaceholder')} value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
+            <Input label={t('editor.brideName')} placeholder={t('editor.bridePlaceholder')} value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
           </div>
         )}
 
         {activeTab === 'date' && (
           <div className="space-y-5">
-            <Input type="date" label="Дата свадьбы" value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
+            <Input type="date" label={t('editor.weddingDate')} value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
             <div className="grid grid-cols-2 gap-4">
-              <Input type="time" label="Сбор гостей" value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
-              <Input type="time" label="Церемония" value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
+              <Input type="time" label={t('editor.gathering')} value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
+              <Input type="time" label={t('editor.ceremony')} value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
             </div>
-            <Input type="time" label="Банкет" value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
+            <Input type="time" label={t('editor.reception')} value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
           </div>
         )}
 
         {activeTab === 'location' && (
           <div className="space-y-5">
-            <Input label="Название заведения" placeholder="Ресторан Navruz" value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
-            <TextArea label="Адрес" placeholder="ул. Амира Темура, 1" value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
-            <Input type="url" label="Ссылка на карту" placeholder="https://yandex.uz/maps/..." value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
+            <Input label={t('editor.venueName')} placeholder={t('editor.venuePlaceholder')} value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
+            <TextArea label={t('editor.address')} placeholder={t('editor.addressPlaceholder')} value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
+            <Input type="url" label={t('editor.mapUrl')} placeholder={t('editor.mapUrlPlaceholder')} value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
           </div>
         )}
         
         {activeTab === 'design' && (
           <div className="space-y-6">
-            <Select label="Цветовая тема" value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
-              {value: 'elegant', label: 'Элегантная (Светлая)'},
-              {value: 'classic', label: 'Классическая'},
-              {value: 'minimal', label: 'Минимализм'},
-              {value: 'dark', label: 'Тёмная (Premium)'}
+            <Select label={t('editor.theme')} value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
+              {value: 'elegant', label: t('editor.themeElegant')},
+              {value: 'classic', label: t('editor.themeClassic')},
+              {value: 'minimal', label: t('editor.themeMinimal')},
+              {value: 'dark', label: t('editor.themeDark')}
             ]} />
-            <Select label="Шрифт" value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
-              {value: 'serif', label: 'С засечками (Cormorant)'},
-              {value: 'sans', label: 'Без засечек (Inter)'},
-              {value: 'script', label: 'Рукописный'}
+            <Select label={t('editor.font')} value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
+              {value: 'serif', label: t('editor.fontSerif')},
+              {value: 'sans', label: t('editor.fontSans')},
+              {value: 'script', label: t('editor.fontScript')}
             ]} />
             <div className="p-4 bg-sand/30 rounded-xl space-y-4">
-              <p className="text-sm font-medium text-charcoal">Кастомные цвета</p>
+              <p className="text-sm font-medium text-charcoal">{t('editor.customColors')}</p>
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="block text-xs text-charcoal-light mb-1">Фон/Текст</label>
+                  <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorBgText')}</label>
                   <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.primary_color || '#000000'} onChange={e => handleChange('design', 'primary_color', e.target.value)} />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs text-charcoal-light mb-1">Акцент</label>
+                  <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorAccent')}</label>
                   <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.secondary_color || '#d4af37'} onChange={e => handleChange('design', 'secondary_color', e.target.value)} />
                 </div>
               </div>
@@ -304,7 +306,7 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
           <div className="space-y-6">
             <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-6 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
               <Upload className="w-8 h-8 text-charcoal mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-medium text-charcoal">Загрузить фото</p>
+              <p className="text-sm font-medium text-charcoal">{t('editor.uploadPhoto')}</p>
               <input type="file" accept="image/jpeg, image/png, image/webp" onChange={handleMediaUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="" />
             </div>
             
@@ -327,11 +329,11 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
 
         {activeTab === 'music' && (
           <div className="space-y-5">
-            <Toggle label="Включить музыку" checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
+            <Toggle label={t('editor.enableMusic')} checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
             {data.music?.enabled && (
               <div className="space-y-5 pt-2">
-                <Input label="Название трека" placeholder="A Thousand Years" value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
-                <Input type="url" label="URL (.mp3)" placeholder="https://example.com/music.mp3" value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
+                <Input label={t('editor.trackName')} placeholder={t('editor.trackPlaceholder')} value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
+                <Input type="url" label={t('editor.trackUrl')} placeholder={t('editor.trackUrlPlaceholder')} value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
               </div>
             )}
           </div>
@@ -340,11 +342,11 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
         {/* EXTRA */}
         {activeTab === 'story' && (
           <div className="space-y-5">
-            <Toggle label="Отображать 'Историю любви'" checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
+            <Toggle label={t('editor.showLoveStory')} checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
             {data.story?.enabled && (
               <div className="space-y-5 pt-2">
-                <Input label="Заголовок" placeholder="Наша история" value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
-                <TextArea label="Текст" rows={6} placeholder="Всё началось..." value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
+                <Input label={t('editor.title')} placeholder={t('editor.storyPlaceholder')} value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
+                <TextArea label={t('editor.text')} rows={6} placeholder={t('editor.textPlaceholder')} value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
               </div>
             )}
           </div>
@@ -352,11 +354,11 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
 
         {activeTab === 'rsvp' && (
           <div className="space-y-5">
-            <Toggle label="Включить форму RSVP" checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
+            <Toggle label={t('editor.enableRsvp')} checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
             {data.rsvp?.enabled && (
               <div className="space-y-5 pt-2">
-                <Input label="Заголовок" placeholder="Ждём ответа" value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
-                <TextArea label="Описание" placeholder="Подтвердите до..." value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
+                <Input label={t('editor.title')} placeholder={t('editor.rsvpPlaceholder')} value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
+                <TextArea label={t('editor.description')} placeholder={t('editor.descPlaceholder')} value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
               </div>
             )}
           </div>
@@ -377,7 +379,7 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
           </button>
           <div className="h-4 w-px bg-sand mx-1" />
           <h1 className="font-serif text-sm sm:text-lg text-charcoal truncate max-w-[120px] sm:max-w-xs">
-            {invitation.template?.name || 'Редактор'}
+            {invitation.template?.name || t('editor.titleEditor')}
           </h1>
         </div>
         
@@ -403,7 +405,7 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
             className="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full sm:rounded-full bg-sand text-charcoal hover:bg-champagne hover:text-white transition-colors"
           >
             <Save size={16} />
-            <span className="hidden sm:inline ml-2 text-sm font-medium">{saving ? '...' : 'Сохранить'}</span>
+            <span className="hidden sm:inline ml-2 text-sm font-medium">{saving ? t('editor.saving') : t('editor.save')}</span>
           </button>
           
           {invitation.status !== 'published' ? (
@@ -412,7 +414,7 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
               className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-charcoal text-ivory rounded-full text-xs sm:text-sm font-medium hover:bg-charcoal-light shadow-md"
             >
               <Globe size={14} className="sm:mr-2" />
-              <span className="hidden sm:inline">Опубликовать</span>
+              <span className="hidden sm:inline">{t('editor.publish')}</span>
             </button>
           ) : (
              <a 
@@ -422,7 +424,7 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
                className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-green-700 text-white rounded-full text-xs sm:text-sm font-medium shadow-md"
              >
                <ExternalLink size={14} className="sm:mr-2" />
-               <span className="hidden sm:inline">Сайт готов</span>
+               <span className="hidden sm:inline">{t('editor.siteReady')}</span>
              </a>
           )}
         </div>
@@ -472,7 +474,8 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
               handleChange={handleChange} 
               media={media} 
               handleMediaUpload={handleMediaUpload} 
-              handleMediaDelete={handleMediaDelete} 
+              handleMediaDelete={handleMediaDelete}
+              t={t}
             />
           </div>
         </div>
@@ -573,7 +576,8 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
                     handleChange={handleChange} 
                     media={media} 
                     handleMediaUpload={handleMediaUpload} 
-                    handleMediaDelete={handleMediaDelete} 
+                    handleMediaDelete={handleMediaDelete}
+                    t={t}
                   />
                 </div>
               </motion.div>
@@ -624,17 +628,20 @@ const Toggle = ({ label, checked, onChange }) => (
   </label>
 );
 
-const Select = ({ label, value, onChange, options }) => (
-  <div>
-    <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
-    <select 
-      value={value || ''} 
-      onChange={onChange} 
-      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
-      style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
-    >
-      <option value="" disabled>Выберите опцию</option>
-      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-    </select>
-  </div>
-);
+const Select = ({ label, value, onChange, options }) => {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
+      <select 
+        value={value || ''} 
+        onChange={onChange} 
+        className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
+        style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
+      >
+        <option value="" disabled>{t('editor.selectOption')}</option>
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </div>
+  );
+};

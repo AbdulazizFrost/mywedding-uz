@@ -13,10 +13,12 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminLayout() {
   const { user, logout, loading } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -41,11 +43,11 @@ export default function AdminLayout() {
   }
 
   const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Пользователи', path: '/admin/users', icon: Users },
-    { name: 'Приглашения', path: '/admin/invitations', icon: Mail },
-    { name: 'Шаблоны', path: '/admin/templates', icon: Copy },
-    { name: 'Заказы', path: '/admin/orders', icon: CreditCard },
+    { name: t('admin.dashboard'), path: '/admin', icon: LayoutDashboard },
+    { name: t('admin.users'), path: '/admin/users', icon: Users },
+    { name: t('admin.invitations'), path: '/admin/invitations', icon: Mail },
+    { name: t('admin.templates'), path: '/admin/templates', icon: Copy },
+    { name: t('admin.orders'), path: '/admin/orders', icon: CreditCard },
   ];
 
   const handleLogout = async () => {
@@ -58,9 +60,9 @@ export default function AdminLayout() {
         <img 
           src="/assets/logo.png" 
           alt="BizningToy Admin Logo" 
-          className="h-10 w-auto object-contain mb-2"
+          className="h-10 w-auto object-contain mb-2" 
         />
-        <p className="text-[10px] uppercase tracking-widest text-champagne font-bold mt-1">Admin Panel</p>
+        <p className="text-[10px] uppercase tracking-widest text-champagne font-bold mt-1">{t('admin.panel')}</p>
       </div>
 
       <nav className="flex-1 px-4 py-6 space-y-2">
@@ -87,14 +89,14 @@ export default function AdminLayout() {
       <div className="p-4 border-t border-sand space-y-2">
         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-charcoal-light hover:bg-sand/50 hover:text-charcoal">
           <Settings size={18} />
-          Настройки
+          {t('admin.settings')}
         </button>
         <button 
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-red-500 hover:bg-red-50"
         >
           <LogOut size={18} />
-          Выйти
+          {t('admin.logout')}
         </button>
       </div>
     </div>

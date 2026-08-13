@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Power, PowerOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -8,6 +9,7 @@ export default function AdminTemplates() {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     fetchTemplates();
@@ -28,7 +30,8 @@ export default function AdminTemplates() {
   };
 
   const toggleTemplate = async (id, currentStatus) => {
-    if (!window.confirm(`Вы уверены, что хотите ${currentStatus ? 'деактивировать' : 'активировать'} этот шаблон?`)) return;
+    const actionText = currentStatus ? t('admin.deactivate') : t('admin.activate');
+    if (!window.confirm(t('admin.confirmToggle', { action: actionText }))) return;
     
     try {
       const res = await fetch(`${API_URL}/admin/templates/${id}/toggle`, {
@@ -47,8 +50,8 @@ export default function AdminTemplates() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">Шаблоны</h1>
-        <p className="text-charcoal-light">Управление каталогом шаблонов.</p>
+        <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">{t('admin.templates')}</h1>
+        <p className="text-charcoal-light">{t('admin.templatesManage')}</p>
       </div>
 
       {error ? (
@@ -70,11 +73,11 @@ export default function AdminTemplates() {
                   {template.preview_image ? (
                     <img src={template.preview_image} alt={template.name} className="w-full h-full object-cover object-top" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-charcoal-light">Нет превью</div>
+                    <div className="w-full h-full flex items-center justify-center text-charcoal-light">{t('admin.noPreview')}</div>
                   )}
                   {!template.is_active && (
                     <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
-                      <span className="bg-charcoal text-white px-4 py-1 rounded-full text-sm font-medium">Отключен</span>
+                      <span className="bg-charcoal text-white px-4 py-1 rounded-full text-sm font-medium">{t('admin.disabled')}</span>
                     </div>
                   )}
                 </div>
@@ -82,15 +85,15 @@ export default function AdminTemplates() {
                 <div className="p-6 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-[10px] uppercase tracking-widest text-champagne font-bold">{template.category || 'Standard'}</span>
-                    <span className="font-serif text-lg text-charcoal">{Number(template.price).toLocaleString('ru-RU')} {template.currency}</span>
+                    <span className="font-serif text-lg text-charcoal">{Number(template.price).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')} {template.currency}</span>
                   </div>
                   
                   <h3 className="text-xl font-medium text-charcoal mb-4">{template.name}</h3>
                   
                   <div className="mt-auto pt-4 border-t border-sand flex items-center justify-between">
                     <div className="text-xs text-charcoal-light space-y-1">
-                      <p>Использований: <b>{template._count?.invitations || 0}</b></p>
-                      <p>Покупок: <b>{template._count?.orders || 0}</b></p>
+                      <p>{t('admin.uses')} <b>{template._count?.invitations || 0}</b></p>
+                      <p>{t('admin.purchases')} <b>{template._count?.orders || 0}</b></p>
                     </div>
                     
                     <button
@@ -100,7 +103,7 @@ export default function AdminTemplates() {
                           ? 'text-red-500 hover:bg-red-50' 
                           : 'text-green-500 hover:bg-green-50'
                       }`}
-                      title={template.is_active ? 'Деактивировать' : 'Активировать'}
+                      title={template.is_active ? t('admin.deactivate') : t('admin.activate')}
                     >
                       {template.is_active ? <PowerOff size={20} /> : <Power size={20} />}
                     </button>
@@ -110,7 +113,7 @@ export default function AdminTemplates() {
             ))
           ) : (
             <div className="col-span-full p-12 text-center text-charcoal-light bg-white rounded-3xl border border-sand">
-              Шаблоны не найдены.
+              {t('admin.noTemplatesFound')}
             </div>
           )}
         </div>

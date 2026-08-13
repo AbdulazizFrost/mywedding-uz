@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5173';
@@ -10,6 +11,7 @@ export default function AdminInvitations() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -32,9 +34,9 @@ export default function AdminInvitations() {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'published': return <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest rounded-full">Опубликован</span>;
-      case 'draft': return <span className="px-3 py-1 bg-gray-100 text-gray-700 text-[10px] font-bold uppercase tracking-widest rounded-full">Черновик</span>;
-      case 'archived': return <span className="px-3 py-1 bg-red-100 text-red-700 text-[10px] font-bold uppercase tracking-widest rounded-full">Архив</span>;
+      case 'published': return <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest rounded-full">{t('admin.publishedBadge')}</span>;
+      case 'draft': return <span className="px-3 py-1 bg-gray-100 text-gray-700 text-[10px] font-bold uppercase tracking-widest rounded-full">{t('admin.draftBadge')}</span>;
+      case 'archived': return <span className="px-3 py-1 bg-red-100 text-red-700 text-[10px] font-bold uppercase tracking-widest rounded-full">{t('admin.archivedBadge')}</span>;
       default: return <span className="px-3 py-1 bg-gray-100 text-gray-700 text-[10px] font-bold uppercase tracking-widest rounded-full">{status}</span>;
     }
   };
@@ -43,8 +45,8 @@ export default function AdminInvitations() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">Приглашения</h1>
-          <p className="text-charcoal-light">Сайты, созданные пользователями.</p>
+          <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">{t('admin.invitations')}</h1>
+          <p className="text-charcoal-light">{t('admin.invitationsCreated')}</p>
         </div>
       </div>
 
@@ -56,7 +58,7 @@ export default function AdminInvitations() {
             {/* Mobile View (Cards) */}
             <div className="block sm:hidden divide-y divide-sand">
               {loading && data.invitations.length === 0 ? (
-                <div className="p-8 text-center text-charcoal-light">Загрузка...</div>
+                <div className="p-8 text-center text-charcoal-light">...</div>
               ) : data.invitations.length > 0 ? (
                 data.invitations.map((inv) => (
                   <motion.div 
@@ -67,7 +69,7 @@ export default function AdminInvitations() {
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <div className="font-medium text-charcoal">{inv.user.full_name || 'Без имени'}</div>
+                        <div className="font-medium text-charcoal">{inv.user.full_name || t('admin.noName')}</div>
                         <div className="text-xs text-charcoal-light">{inv.user.email}</div>
                       </div>
                       <div className="shrink-0 ml-2">
@@ -86,12 +88,12 @@ export default function AdminInvitations() {
                       </a>
                     </div>
                     <div className="flex justify-end items-center text-xs text-charcoal-light border-t border-sand/50 pt-2">
-                      <span>{new Date(inv.created_at).toLocaleDateString('ru-RU')}</span>
+                      <span>{new Date(inv.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}</span>
                     </div>
                   </motion.div>
                 ))
               ) : (
-                <div className="p-8 text-center text-charcoal-light">Приглашения не найдены.</div>
+                <div className="p-8 text-center text-charcoal-light">{t('admin.noInvitationsFound')}</div>
               )}
             </div>
 
@@ -99,17 +101,17 @@ export default function AdminInvitations() {
             <table className="hidden sm:table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-ivory border-b border-sand">
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Пользователь</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Шаблон</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Ссылка</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Статус</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">Дата создания</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.user')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.template')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.link')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">{t('admin.status')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">{t('admin.createdDate')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand">
                 {loading && data.invitations.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-charcoal-light">Загрузка...</td>
+                    <td colSpan="5" className="p-8 text-center text-charcoal-light">...</td>
                   </tr>
                 ) : data.invitations.length > 0 ? (
                   data.invitations.map((inv) => (
@@ -120,7 +122,7 @@ export default function AdminInvitations() {
                       className="hover:bg-ivory/50 transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <div className="font-medium text-charcoal">{inv.user.full_name || 'Без имени'}</div>
+                        <div className="font-medium text-charcoal">{inv.user.full_name || t('admin.noName')}</div>
                         <div className="text-xs text-charcoal-light">{inv.user.email}</div>
                       </td>
                       <td className="px-6 py-4 text-charcoal font-medium">
@@ -140,13 +142,13 @@ export default function AdminInvitations() {
                         {getStatusBadge(inv.status)}
                       </td>
                       <td className="px-6 py-4 text-charcoal-light text-sm hidden md:table-cell">
-                        {new Date(inv.created_at).toLocaleDateString('ru-RU')}
+                        {new Date(inv.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}
                       </td>
                     </motion.tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-charcoal-light">Приглашения не найдены.</td>
+                    <td colSpan="5" className="p-8 text-center text-charcoal-light">{t('admin.noInvitationsFound')}</td>
                   </tr>
                 )}
               </tbody>
@@ -156,7 +158,7 @@ export default function AdminInvitations() {
           {data.pagination && data.pagination.totalPages > 1 && (
             <div className="px-6 py-4 border-t border-sand flex items-center justify-between">
               <span className="text-sm text-charcoal-light">
-                Страница {data.pagination.page} из {data.pagination.totalPages}
+                {t('admin.pageOf', { page: data.pagination.page, totalPages: data.pagination.totalPages })}
               </span>
               <div className="flex gap-2">
                 <button 
@@ -164,14 +166,14 @@ export default function AdminInvitations() {
                   onClick={() => setPage(p => p - 1)}
                   className="px-4 py-2 text-sm bg-ivory text-charcoal rounded-lg hover:bg-sand disabled:opacity-50"
                 >
-                  Назад
+                  {t('admin.prev')}
                 </button>
                 <button 
                   disabled={data.pagination.page === data.pagination.totalPages}
                   onClick={() => setPage(p => p + 1)}
                   className="px-4 py-2 text-sm bg-ivory text-charcoal rounded-lg hover:bg-sand disabled:opacity-50"
                 >
-                  Вперед
+                  {t('admin.next')}
                 </button>
               </div>
             </div>

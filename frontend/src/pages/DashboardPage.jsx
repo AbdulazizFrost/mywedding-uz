@@ -3,12 +3,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { motion } from 'framer-motion';
 import { Settings, LogOut, Plus, Edit2, Eye, ExternalLink, CreditCard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
 export default function DashboardPage() {
   const { user, loading, fetchMe } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   
   const [orders, setOrders] = useState([]);
   const [invitations, setInvitations] = useState([]);
@@ -52,7 +54,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
         <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="font-serif text-charcoal-light italic text-xl">Загрузка студии...</p>
+        <p className="font-serif text-charcoal-light italic text-xl">{t('userDashboard.loading')}</p>
       </div>
     );
   }
@@ -68,7 +70,7 @@ export default function DashboardPage() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-16 border-b border-sand pb-8"
         >
           <div>
-            <h1 className="text-4xl font-serif text-charcoal mb-2">Личный кабинет</h1>
+            <h1 className="text-4xl font-serif text-charcoal mb-2">{t('userDashboard.title')}</h1>
             <p className="text-charcoal-light tracking-wide">{user.full_name || user.email}</p>
           </div>
           <div className="mt-6 sm:mt-0 flex flex-row items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
@@ -76,13 +78,13 @@ export default function DashboardPage() {
               onClick={handleLogout} 
               className="flex items-center justify-center gap-1.5 text-sm font-medium text-charcoal-light/70 hover:text-charcoal transition-colors"
             >
-              <LogOut size={16} strokeWidth={1.5} /> Выйти
+              <LogOut size={16} strokeWidth={1.5} /> {t('userDashboard.logout')}
             </button>
             <Link 
               to="/catalog"
               className="flex items-center justify-center gap-2 px-6 py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg"
             >
-              <Plus size={16} strokeWidth={1.5} /> Создать
+              <Plus size={16} strokeWidth={1.5} /> {t('userDashboard.create')}
             </Link>
           </div>
         </motion.div>
@@ -92,7 +94,7 @@ export default function DashboardPage() {
           {/* Main Content: Invitations */}
           <div className="lg:col-span-8">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-serif text-charcoal">Мои приглашения</h2>
+              <h2 className="text-3xl font-serif text-charcoal">{t('userDashboard.myInvitations')}</h2>
             </div>
             
             {dataLoading ? (
@@ -108,15 +110,15 @@ export default function DashboardPage() {
                 <div className="w-20 h-20 bg-sand rounded-full flex items-center justify-center mx-auto mb-6">
                   <Plus className="text-champagne w-10 h-10" />
                 </div>
-                <h3 className="text-2xl font-serif text-charcoal mb-3">У вас пока нет приглашений</h3>
+                <h3 className="text-2xl font-serif text-charcoal mb-3">{t('userDashboard.noInvitationsTitle')}</h3>
                 <p className="text-charcoal-light mb-8 max-w-md mx-auto">
-                  Создайте свое первое цифровое свадебное приглашение и поделитесь им с гостями.
+                  {t('userDashboard.noInvitationsDesc')}
                 </p>
                 <Link 
                   to="/catalog"
                   className="inline-flex px-8 py-3 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg"
                 >
-                  Выбрать дизайн
+                  {t('userDashboard.selectDesign')}
                 </Link>
               </motion.div>
             ) : (
@@ -134,7 +136,7 @@ export default function DashboardPage() {
                       {inv.template?.thumbnail ? (
                         <img src={inv.template.thumbnail} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center font-serif italic text-charcoal/30">Превью</div>
+                        <div className="w-full h-full flex items-center justify-center font-serif italic text-charcoal/30">{t('userDashboard.preview')}</div>
                       )}
                     </div>
                     
@@ -144,15 +146,15 @@ export default function DashboardPage() {
                         <div className="flex justify-between items-start mb-4">
                           <div>
                             <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold rounded-full border border-champagne/30 text-champagne mb-3">
-                              {inv.status === 'published' ? 'Опубликовано' : 'Черновик'}
+                              {inv.status === 'published' ? t('userDashboard.published') : t('userDashboard.draft')}
                             </span>
                             <h3 className="text-3xl font-serif text-charcoal leading-tight">
-                              {inv.template?.name || 'Моё приглашение'}
+                              {inv.template?.name || t('userDashboard.myInvitation')}
                             </h3>
                           </div>
                         </div>
                         <p className="text-sm text-charcoal-light line-clamp-2">
-                          Последнее изменение: {new Date(inv.updated_at).toLocaleDateString('ru-RU')}
+                          {t('userDashboard.lastChange')} {new Date(inv.updated_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}
                         </p>
                       </div>
                       
@@ -161,7 +163,7 @@ export default function DashboardPage() {
                           to={`/editor/${inv.id}`} 
                           className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all w-full sm:w-auto"
                         >
-                          <Edit2 size={16} /> Редактировать
+                          <Edit2 size={16} /> {t('userDashboard.edit')}
                         </Link>
                         
                         {inv.status === 'published' && (
@@ -171,7 +173,7 @@ export default function DashboardPage() {
                             rel="noreferrer" 
                             className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 border border-charcoal text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all w-full sm:w-auto"
                           >
-                            <ExternalLink size={16} /> Открыть сайт
+                            <ExternalLink size={16} /> {t('userDashboard.openSite')}
                           </a>
                         )}
                         
@@ -180,7 +182,7 @@ export default function DashboardPage() {
                             to={`/preview/${inv.id}`} 
                             className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 border border-charcoal/20 text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all w-full sm:w-auto"
                           >
-                            <Eye size={16} /> Предпросмотр
+                            <Eye size={16} /> {t('userDashboard.previewBtn')}
                           </Link>
                         )}
                       </div>
@@ -193,7 +195,7 @@ export default function DashboardPage() {
 
           {/* Sidebar: Orders */}
           <div className="lg:col-span-4">
-            <h2 className="text-2xl font-serif text-charcoal mb-8">Счета и заказы</h2>
+            <h2 className="text-2xl font-serif text-charcoal mb-8">{t('userDashboard.billsAndOrders')}</h2>
             <div className="bg-white rounded-3xl p-8 border border-sand shadow-sm">
               {dataLoading ? (
                 <div className="flex justify-center py-8">
@@ -202,7 +204,7 @@ export default function DashboardPage() {
               ) : orders.length === 0 ? (
                 <div className="text-center py-8">
                   <CreditCard className="w-12 h-12 text-sand mx-auto mb-4" />
-                  <p className="text-charcoal-light font-serif italic">У вас нет активных заказов.</p>
+                  <p className="text-charcoal-light font-serif italic">{t('userDashboard.noOrders')}</p>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -213,18 +215,18 @@ export default function DashboardPage() {
                           #{order.id.slice(0, 8)}
                         </span>
                         <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider font-semibold rounded-full ${order.status === 'paid' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-orange-50 text-orange-700 border border-orange-200'}`}>
-                          {order.status === 'paid' ? 'Оплачен' : 'Ожидает'}
+                          {order.status === 'paid' ? t('userDashboard.paid') : t('userDashboard.pending')}
                         </span>
                       </div>
                       <p className="font-serif text-lg text-charcoal mb-1">{order.template?.name}</p>
-                      <p className="text-charcoal-light text-sm mb-4">{Number(order.amount).toLocaleString('ru-RU')} {order.currency}</p>
+                      <p className="text-charcoal-light text-sm mb-4">{Number(order.amount).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')} {order.currency}</p>
                       
                       {order.status === 'pending' && (
                         <Link 
                           to={`/checkout/${order.id}`}
                           className="block w-full text-center px-4 py-2 text-sm font-medium text-ivory bg-charcoal hover:bg-champagne rounded-full transition-colors"
                         >
-                          Оплатить
+                          {t('userDashboard.pay')}
                         </Link>
                       )}
                       
@@ -233,7 +235,7 @@ export default function DashboardPage() {
                           to={`/dashboard/rsvp/${order.invitation.id}`} 
                           className="block w-full text-center px-4 py-2 text-sm font-medium text-charcoal border border-charcoal/20 hover:bg-sand rounded-full transition-colors"
                         >
-                          Гости (RSVP)
+                          {t('userDashboard.guestsRsvp')}
                         </Link>
                       )}
                     </div>

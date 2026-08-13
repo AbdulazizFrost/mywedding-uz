@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
 export default function PublicInvitation() {
   const { slug } = useParams();
+  const { t } = useTranslation();
   
   const [invitation, setInvitation] = useState(null);
   const [media, setMedia] = useState([]);
@@ -25,8 +27,6 @@ export default function PublicInvitation() {
         const data = await res.json();
         setInvitation(data.invitation);
         
-        // Also fetch media if needed. Wait, does public API expose media?
-        // We need a public endpoint for media or include it in the invitation response.
         let parsedData = {};
         try {
           if (typeof data.invitation.data === 'string') {
@@ -39,8 +39,6 @@ export default function PublicInvitation() {
           parsedData = {};
         }
         
-        // Note: For step 7, we should fetch media. We'll do it via public API or assume backend provides it.
-        // Actually, let's fetch media if we add a public media endpoint, or rely on invitation.media if returned.
         setMedia(data.invitation.media || []);
         setInvitation(prev => ({ ...prev, parsedData }));
       } catch (err) {
@@ -61,13 +59,13 @@ export default function PublicInvitation() {
     const data = await res.json();
     if (!res.ok) {
       if (res.status === 429) {
-        throw new Error('Слишком много попыток. Пожалуйста, подождите немного.');
+        throw new Error(t('publicInvitation.rateLimit'));
       }
-      throw new Error(data.error || 'Ошибка отправки ответа');
+      throw new Error(data.error || t('publicInvitation.errorSubmit'));
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Загрузка...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-serif text-charcoal-light">{t('publicInvitation.loading')}</div>;
   if (error) return <div className="min-h-screen flex items-center justify-center text-red-500 text-xl font-medium">{error}</div>;
   if (!invitation) return null;
 

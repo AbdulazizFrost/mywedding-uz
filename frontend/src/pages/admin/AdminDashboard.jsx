@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users, Mail, CreditCard, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -8,6 +9,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -45,17 +47,17 @@ export default function AdminDashboard() {
   }
 
   const statCards = [
-    { title: 'Пользователи', value: stats.stats.totalUsers, icon: Users, color: 'text-charcoal' },
-    { title: 'Приглашения', value: stats.stats.totalInvitations, icon: Mail, color: 'text-charcoal' },
-    { title: 'Заказы', value: stats.stats.totalOrders, icon: CreditCard, color: 'text-charcoal' },
-    { title: 'Выручка', value: `${stats.stats.revenue.toLocaleString('ru-RU')} UZS`, icon: DollarSign, color: 'text-champagne' },
+    { title: t('admin.users'), value: stats.stats.totalUsers, icon: Users, color: 'text-charcoal' },
+    { title: t('admin.invitations'), value: stats.stats.totalInvitations, icon: Mail, color: 'text-charcoal' },
+    { title: t('admin.orders'), value: stats.stats.totalOrders, icon: CreditCard, color: 'text-charcoal' },
+    { title: t('admin.revenue'), value: `${stats.stats.revenue.toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')} UZS`, icon: DollarSign, color: 'text-champagne' },
   ];
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">Обзор платформы</h1>
-        <p className="text-charcoal-light">Главная статистика и последние действия.</p>
+        <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">{t('admin.overview')}</h1>
+        <p className="text-charcoal-light">{t('admin.overviewDesc')}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -80,7 +82,7 @@ export default function AdminDashboard() {
 
       <div className="bg-white rounded-2xl border border-sand shadow-sm overflow-hidden">
         <div className="p-6 border-b border-sand">
-          <h2 className="text-lg font-serif text-charcoal font-semibold">Последняя активность</h2>
+          <h2 className="text-lg font-serif text-charcoal font-semibold">{t('admin.recentActivity')}</h2>
         </div>
         <div className="divide-y divide-sand">
           {stats.recentActivity.length > 0 ? (
@@ -88,7 +90,9 @@ export default function AdminDashboard() {
               <div key={activity.id} className="p-6 flex items-center justify-between hover:bg-ivory/50 transition-colors">
                 <div>
                   <p className="font-medium text-charcoal">{activity.user.full_name || activity.user.email}</p>
-                  <p className="text-sm text-charcoal-light mt-1">Оформил заказ на шаблон "{activity.template.name}"</p>
+                  <p className="text-sm text-charcoal-light mt-1">
+                    {t('admin.placedOrder')} "{activity.template.name}"
+                  </p>
                 </div>
                 <div className="text-right">
                   <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
@@ -99,14 +103,14 @@ export default function AdminDashboard() {
                     {activity.status.toUpperCase()}
                   </span>
                   <p className="text-xs text-charcoal-light mt-2">
-                    {new Date(activity.created_at).toLocaleDateString('ru-RU')}
+                    {new Date(activity.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}
                   </p>
                 </div>
               </div>
             ))
           ) : (
             <div className="p-8 text-center text-charcoal-light">
-              Пока нет активности.
+              {t('admin.noActivity')}
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -8,6 +9,7 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -30,8 +32,8 @@ export default function AdminOrders() {
 
   const getStatusBadge = (status) => {
     switch(status) {
-      case 'paid': return <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase tracking-widest rounded-full">Paid</span>;
-      case 'pending': return <span className="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-widest rounded-full">Pending</span>;
+      case 'paid': return <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase tracking-widest rounded-full">{t('userDashboard.paid')}</span>;
+      case 'pending': return <span className="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold uppercase tracking-widest rounded-full">{t('userDashboard.pending')}</span>;
       case 'cancelled': return <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold uppercase tracking-widest rounded-full">Cancelled</span>;
       case 'failed': return <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold uppercase tracking-widest rounded-full">Failed</span>;
       default: return <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold uppercase tracking-widest rounded-full">{status}</span>;
@@ -41,8 +43,8 @@ export default function AdminOrders() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">Заказы</h1>
-        <p className="text-charcoal-light">История покупок шаблонов.</p>
+        <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">{t('admin.orders')}</h1>
+        <p className="text-charcoal-light">{t('admin.ordersHistory')}</p>
       </div>
 
       {error ? (
@@ -53,7 +55,7 @@ export default function AdminOrders() {
             {/* Mobile View (Cards) */}
             <div className="block sm:hidden divide-y divide-sand">
               {loading && data.orders.length === 0 ? (
-                <div className="p-8 text-center text-charcoal-light">Загрузка...</div>
+                <div className="p-8 text-center text-charcoal-light">...</div>
               ) : data.orders.length > 0 ? (
                 data.orders.map((order) => (
                   <motion.div 
@@ -64,7 +66,7 @@ export default function AdminOrders() {
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <div className="font-medium text-charcoal">{order.user.full_name || 'Без имени'}</div>
+                        <div className="font-medium text-charcoal">{order.user.full_name || t('admin.noName')}</div>
                         <div className="text-xs text-charcoal-light">{order.user.email}</div>
                       </div>
                       <div className="shrink-0 ml-2">
@@ -75,13 +77,13 @@ export default function AdminOrders() {
                       <span className="text-sm font-medium text-charcoal">{order.template.name}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs text-charcoal-light border-t border-sand/50 pt-2">
-                      <span className="font-bold text-charcoal text-sm">{Number(order.amount).toLocaleString('ru-RU')} {order.currency}</span>
-                      <span>{new Date(order.created_at).toLocaleDateString('ru-RU')}</span>
+                      <span className="font-bold text-charcoal text-sm">{Number(order.amount).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')} {order.currency}</span>
+                      <span>{new Date(order.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}</span>
                     </div>
                   </motion.div>
                 ))
               ) : (
-                <div className="p-8 text-center text-charcoal-light">Заказы не найдены.</div>
+                <div className="p-8 text-center text-charcoal-light">{t('admin.noOrdersFound')}</div>
               )}
             </div>
 
@@ -89,18 +91,18 @@ export default function AdminOrders() {
             <table className="hidden sm:table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-ivory border-b border-sand">
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">ID Заказа</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Клиент</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Шаблон</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Сумма</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Статус</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">Дата</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.orderId')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.client')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.template')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.amount')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">{t('admin.status')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">{t('admin.date')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand">
                 {loading && data.orders.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="p-8 text-center text-charcoal-light">Загрузка...</td>
+                    <td colSpan="6" className="p-8 text-center text-charcoal-light">...</td>
                   </tr>
                 ) : data.orders.length > 0 ? (
                   data.orders.map((order) => (
@@ -114,24 +116,24 @@ export default function AdminOrders() {
                         {order.id.split('-')[0]}...
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-medium text-charcoal">{order.user.full_name || 'Без имени'}</div>
+                        <div className="font-medium text-charcoal">{order.user.full_name || t('admin.noName')}</div>
                         <div className="text-xs text-charcoal-light">{order.user.email}</div>
                       </td>
                       <td className="px-6 py-4 text-charcoal font-medium">{order.template.name}</td>
                       <td className="px-6 py-4 text-charcoal font-bold">
-                        {Number(order.amount).toLocaleString('ru-RU')} {order.currency}
+                        {Number(order.amount).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')} {order.currency}
                       </td>
                       <td className="px-6 py-4 text-center">
                         {getStatusBadge(order.status)}
                       </td>
                       <td className="px-6 py-4 text-charcoal-light text-sm hidden md:table-cell">
-                        {new Date(order.created_at).toLocaleString('ru-RU')}
+                        {new Date(order.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}
                       </td>
                     </motion.tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="p-8 text-center text-charcoal-light">Заказы не найдены.</td>
+                    <td colSpan="6" className="p-8 text-center text-charcoal-light">{t('admin.noOrdersFound')}</td>
                   </tr>
                 )}
               </tbody>
@@ -141,7 +143,7 @@ export default function AdminOrders() {
           {data.pagination && data.pagination.totalPages > 1 && (
             <div className="px-6 py-4 border-t border-sand flex items-center justify-between">
               <span className="text-sm text-charcoal-light">
-                Страница {data.pagination.page} из {data.pagination.totalPages}
+                {t('admin.pageOf', { page: data.pagination.page, totalPages: data.pagination.totalPages })}
               </span>
               <div className="flex gap-2">
                 <button 
@@ -149,14 +151,14 @@ export default function AdminOrders() {
                   onClick={() => setPage(p => p - 1)}
                   className="px-4 py-2 text-sm bg-ivory text-charcoal rounded-lg hover:bg-sand disabled:opacity-50"
                 >
-                  Назад
+                  {t('admin.prev')}
                 </button>
                 <button 
                   disabled={data.pagination.page === data.pagination.totalPages}
                   onClick={() => setPage(p => p + 1)}
                   className="px-4 py-2 text-sm bg-ivory text-charcoal rounded-lg hover:bg-sand disabled:opacity-50"
                 >
-                  Вперед
+                  {t('admin.next')}
                 </button>
               </div>
             </div>

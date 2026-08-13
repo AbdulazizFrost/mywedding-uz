@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, MoreVertical, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -10,6 +11,7 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [error, setError] = useState(null);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -44,15 +46,15 @@ export default function AdminUsers() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">Пользователи</h1>
-          <p className="text-charcoal-light">Управление зарегистрированными аккаунтами.</p>
+          <h1 className="text-3xl font-serif text-charcoal font-semibold mb-2">{t('admin.users')}</h1>
+          <p className="text-charcoal-light">{t('admin.usersManage')}</p>
         </div>
         
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal-light" size={18} />
           <input
             type="text"
-            placeholder="Поиск по email или имени..."
+            placeholder={t('admin.searchUsersPlaceholder')}
             value={search}
             onChange={handleSearch}
             className="w-full sm:w-80 pl-10 pr-4 py-2 bg-white border border-sand rounded-full focus:outline-none focus:border-champagne focus:ring-1 focus:ring-champagne transition-colors"
@@ -68,7 +70,7 @@ export default function AdminUsers() {
             {/* Mobile View (Cards) */}
             <div className="block sm:hidden divide-y divide-sand">
               {loading && data.users.length === 0 ? (
-                <div className="p-8 text-center text-charcoal-light">Загрузка...</div>
+                <div className="p-8 text-center text-charcoal-light">{t('admin.loading') || '...'}</div>
               ) : data.users.length > 0 ? (
                 data.users.map((u) => (
                   <motion.div 
@@ -79,7 +81,7 @@ export default function AdminUsers() {
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <div className="font-medium text-charcoal">{u.full_name || 'Без имени'}</div>
+                        <div className="font-medium text-charcoal">{u.full_name || t('admin.noName')}</div>
                         <div className="text-sm text-charcoal-light break-all">{u.email}</div>
                       </div>
                       <span className={`shrink-0 ml-2 inline-block px-2 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold ${
@@ -89,13 +91,13 @@ export default function AdminUsers() {
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-xs text-charcoal-light mt-3 border-t border-sand/50 pt-2">
-                      <span>Заказов: <span className="font-medium text-charcoal">{u._count?.orders || 0}</span></span>
-                      <span>{new Date(u.created_at).toLocaleDateString('ru-RU')}</span>
+                      <span>{t('admin.usersCount')} <span className="font-medium text-charcoal">{u._count?.orders || 0}</span></span>
+                      <span>{new Date(u.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}</span>
                     </div>
                   </motion.div>
                 ))
               ) : (
-                <div className="p-8 text-center text-charcoal-light">Пользователи не найдены.</div>
+                <div className="p-8 text-center text-charcoal-light">{t('admin.noUsersFound')}</div>
               )}
             </div>
 
@@ -103,17 +105,17 @@ export default function AdminUsers() {
             <table className="hidden sm:table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-ivory border-b border-sand">
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Пользователь</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">{t('admin.user')}</th>
                   <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light">Email</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">Дата регистрации</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Роль</th>
-                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">Заказы</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light hidden md:table-cell">{t('admin.regDate')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">{t('admin.role')}</th>
+                  <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-charcoal-light text-center">{t('admin.orders')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand">
                 {loading && data.users.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-charcoal-light">Загрузка...</td>
+                    <td colSpan="5" className="p-8 text-center text-charcoal-light">...</td>
                   </tr>
                 ) : data.users.length > 0 ? (
                   data.users.map((u) => (
@@ -124,11 +126,11 @@ export default function AdminUsers() {
                       className="hover:bg-ivory/50 transition-colors"
                     >
                       <td className="px-6 py-4 font-medium text-charcoal">
-                        {u.full_name || 'Без имени'}
+                        {u.full_name || t('admin.noName')}
                       </td>
                       <td className="px-6 py-4 text-charcoal">{u.email}</td>
                       <td className="px-6 py-4 text-charcoal-light hidden md:table-cell">
-                        {new Date(u.created_at).toLocaleDateString('ru-RU')}
+                        {new Date(u.created_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <span className={`inline-block px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold ${
@@ -144,7 +146,7 @@ export default function AdminUsers() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-charcoal-light">Пользователи не найдены.</td>
+                    <td colSpan="5" className="p-8 text-center text-charcoal-light">{t('admin.noUsersFound')}</td>
                   </tr>
                 )}
               </tbody>
@@ -154,7 +156,7 @@ export default function AdminUsers() {
           {data.pagination && data.pagination.totalPages > 1 && (
             <div className="px-6 py-4 border-t border-sand flex items-center justify-between">
               <span className="text-sm text-charcoal-light">
-                Страница {data.pagination.page} из {data.pagination.totalPages}
+                {t('admin.pageOf', { page: data.pagination.page, totalPages: data.pagination.totalPages })}
               </span>
               <div className="flex gap-2">
                 <button 
@@ -162,14 +164,14 @@ export default function AdminUsers() {
                   onClick={() => setPage(p => p - 1)}
                   className="px-4 py-2 text-sm bg-ivory text-charcoal rounded-lg hover:bg-sand disabled:opacity-50"
                 >
-                  Назад
+                  {t('admin.prev')}
                 </button>
                 <button 
                   disabled={data.pagination.page === data.pagination.totalPages}
                   onClick={() => setPage(p => p + 1)}
                   className="px-4 py-2 text-sm bg-ivory text-charcoal rounded-lg hover:bg-sand disabled:opacity-50"
                 >
-                  Вперед
+                  {t('admin.next')}
                 </button>
               </div>
             </div>

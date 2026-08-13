@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Default values to prevent undefined errors for old invitations
 const defaultData = {
@@ -27,6 +28,8 @@ const fadeUp = {
 };
 
 export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug }) {
+  const { t } = useTranslation();
+  
   // Merge defaults with current data
   const mergedData = {
     ...defaultData,
@@ -54,10 +57,10 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
     
     try {
       await onSubmitRsvp(rsvpState);
-      setSubmitMessage(rsvpState.status === 'attending' ? 'С нетерпением ждем вас!' : 'Спасибо, что сообщили нам.');
+      setSubmitMessage(rsvpState.status === 'attending' ? t('previewComponent.successAttending') : t('previewComponent.successNotAttending'));
       setRsvpState({ guest_name: '', status: '', guest_count: 1, comment: '' }); // Reset
     } catch (err) {
-      setSubmitError(err.message || 'Произошла ошибка при отправке.');
+      setSubmitError(err.message || t('previewComponent.errorSubmit'));
     } finally {
       setSubmitting(false);
     }
@@ -110,13 +113,13 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
           className="relative z-10 flex flex-col items-center text-white px-6 mt-16"
         >
           <motion.span variants={fadeUp} className="uppercase tracking-[0.3em] text-xs font-semibold mb-6 text-white/80">
-            Приглашение на свадьбу
+            {t('previewComponent.badge')}
           </motion.span>
           
           <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl md:text-8xl font-serif mb-6 leading-tight drop-shadow-lg text-white">
-            {mergedData.groom_name || 'Тимур'} <br className="sm:hidden"/> 
+            {mergedData.groom_name || t('previewComponent.groomDefault')} <br className="sm:hidden"/> 
             <span className="italic text-[var(--secondary)]">&amp;</span> <br className="sm:hidden"/> 
-            {mergedData.bride_name || 'Лейла'}
+            {mergedData.bride_name || t('previewComponent.brideDefault')}
           </motion.h1>
           
           {mergedData.wedding_date && (
@@ -147,30 +150,30 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
         >
-          <motion.span variants={fadeUp} className="inline-block uppercase tracking-[0.2em] text-xs font-bold mb-4" style={{ color: secondary_color }}>Программа дня</motion.span>
+          <motion.span variants={fadeUp} className="inline-block uppercase tracking-[0.2em] text-xs font-bold mb-4" style={{ color: secondary_color }}>{t('previewComponent.program')}</motion.span>
           
-          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl mb-16" style={{ color: primary_color }}>Когда & Во сколько</motion.h2>
+          <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl mb-16" style={{ color: primary_color }}>{t('previewComponent.whenWhere')}</motion.h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 divide-y md:divide-y-0 md:divide-x divide-[var(--primary)]/20">
             
             {mergedData.wedding_time && (
               <motion.div variants={fadeUp} className="pt-8 md:pt-0 flex flex-col items-center">
                 <span className="text-4xl font-light mb-4" style={{ color: secondary_color }}>{mergedData.wedding_time}</span>
-                <span className="uppercase tracking-widest text-sm font-semibold opacity-80" style={{ color: primary_color }}>Сбор гостей</span>
+                <span className="uppercase tracking-widest text-sm font-semibold opacity-80" style={{ color: primary_color }}>{t('previewComponent.gathering')}</span>
               </motion.div>
             )}
             
             {mergedData.ceremony_time && (
               <motion.div variants={fadeUp} className="pt-8 md:pt-0 flex flex-col items-center">
                 <span className="text-4xl font-light mb-4" style={{ color: secondary_color }}>{mergedData.ceremony_time}</span>
-                <span className="uppercase tracking-widest text-sm font-semibold opacity-80" style={{ color: primary_color }}>Церемония</span>
+                <span className="uppercase tracking-widest text-sm font-semibold opacity-80" style={{ color: primary_color }}>{t('previewComponent.ceremony')}</span>
               </motion.div>
             )}
 
             {mergedData.reception_time && (
               <motion.div variants={fadeUp} className="pt-8 md:pt-0 flex flex-col items-center">
                 <span className="text-4xl font-light mb-4" style={{ color: secondary_color }}>{mergedData.reception_time}</span>
-                <span className="uppercase tracking-widest text-sm font-semibold opacity-80" style={{ color: primary_color }}>Банкет</span>
+                <span className="uppercase tracking-widest text-sm font-semibold opacity-80" style={{ color: primary_color }}>{t('previewComponent.reception')}</span>
               </motion.div>
             )}
           </div>
@@ -182,10 +185,10 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
         <section className="py-24 px-6 bg-black/5 relative overflow-hidden">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={{ visible: { transition: { staggerChildren: 0.2 } } }} className="max-w-3xl mx-auto text-center relative z-10">
             <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl mb-10 italic" style={{ color: primary_color }}>
-              {mergedData.story.story_title || 'Наша история'}
+              {mergedData.story.story_title || t('previewComponent.ourStory')}
             </motion.h2>
             <motion.p variants={fadeUp} className="leading-relaxed text-lg sm:text-xl font-light whitespace-pre-wrap opacity-80" style={{ color: primary_color }}>
-              {mergedData.story.story || 'Текст вашей истории...'}
+              {mergedData.story.story || t('previewComponent.storyPlaceholder')}
             </motion.p>
           </motion.div>
         </section>
@@ -202,9 +205,9 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
           <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-[var(--secondary)]" />
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[var(--secondary)]" />
 
-          <span className="inline-block uppercase tracking-[0.2em] text-xs font-bold mb-6" style={{ color: secondary_color }}>Локация</span>
-          <h2 className="text-4xl sm:text-5xl mb-6" style={{ color: primary_color }}>{mergedData.venue_name || 'Название ресторана'}</h2>
-          <p className="text-lg opacity-80 mb-10 max-w-lg mx-auto" style={{ color: primary_color }}>{mergedData.address || 'Адрес проведения мероприятия'}</p>
+          <span className="inline-block uppercase tracking-[0.2em] text-xs font-bold mb-6" style={{ color: secondary_color }}>{t('previewComponent.location')}</span>
+          <h2 className="text-4xl sm:text-5xl mb-6" style={{ color: primary_color }}>{mergedData.venue_name || t('previewComponent.venueDefault')}</h2>
+          <p className="text-lg opacity-80 mb-10 max-w-lg mx-auto" style={{ color: primary_color }}>{mergedData.address || t('previewComponent.addressDefault')}</p>
           
           {mergedData.map_url && (
             <a 
@@ -214,7 +217,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
               className="inline-block px-10 py-4 border transition-all duration-300 hover:bg-[var(--primary)] hover:text-[var(--primary-foreground,white)]"
               style={{ borderColor: primary_color, color: primary_color }}
             >
-              <span className="uppercase tracking-widest text-sm font-semibold">Открыть на карте</span>
+              <span className="uppercase tracking-widest text-sm font-semibold">{t('previewComponent.openMap')}</span>
             </a>
           )}
         </motion.div>
@@ -250,10 +253,10 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
         <section className="py-24 px-6 text-center bg-black/5">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={{ visible: { transition: { staggerChildren: 0.2 } } }} className="max-w-2xl mx-auto">
             <motion.h2 variants={fadeUp} className="text-4xl sm:text-5xl mb-6 italic" style={{ color: primary_color }}>
-              {mergedData.rsvp.title || 'Присутствие'}
+              {mergedData.rsvp.title || t('previewComponent.rsvpTitle')}
             </motion.h2>
             <motion.p variants={fadeUp} className="mb-12 text-lg opacity-80" style={{ color: primary_color }}>
-              {mergedData.rsvp.description || 'Пожалуйста, подтвердите своё присутствие.'}
+              {mergedData.rsvp.description || t('previewComponent.rsvpDesc')}
             </motion.p>
             
             <motion.div variants={fadeUp} className="text-left bg-white/50 backdrop-blur p-8 sm:p-12 shadow-2xl">
@@ -274,7 +277,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                       required 
                       maxLength={100}
                       className="w-full border-b border-gray-300 bg-transparent py-3 px-0 focus:border-[var(--secondary)] focus:ring-0 outline-none transition-colors text-lg" 
-                      placeholder="Имя и Фамилия" 
+                      placeholder={t('previewComponent.namePlaceholder')}
                       value={rsvpState.guest_name}
                       onChange={e => setRsvpState(prev => ({...prev, guest_name: e.target.value}))}
                       style={{ color: primary_color }}
@@ -295,7 +298,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                         />
                         <div className="absolute w-2.5 h-2.5 rounded-full bg-[var(--secondary)] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                       </div>
-                      <span className="text-lg opacity-80 group-hover:opacity-100 transition-opacity" style={{ color: primary_color }}>Я с удовольствием приду</span>
+                      <span className="text-lg opacity-80 group-hover:opacity-100 transition-opacity" style={{ color: primary_color }}>{t('previewComponent.willAttend')}</span>
                     </label>
                     
                     <label className="flex items-center space-x-4 cursor-pointer group">
@@ -311,7 +314,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                         />
                         <div className="absolute w-2.5 h-2.5 rounded-full bg-[var(--secondary)] opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                       </div>
-                      <span className="text-lg opacity-80 group-hover:opacity-100 transition-opacity" style={{ color: primary_color }}>К сожалению, не смогу</span>
+                      <span className="text-lg opacity-80 group-hover:opacity-100 transition-opacity" style={{ color: primary_color }}>{t('previewComponent.willNotAttend')}</span>
                     </label>
                   </div>
                   
@@ -324,9 +327,9 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                           onChange={e => setRsvpState(prev => ({...prev, guest_count: parseInt(e.target.value, 10)}))}
                           style={{ color: primary_color }}
                         >
-                          <option value="1" disabled>Количество персон</option>
+                          <option value="1" disabled>{t('previewComponent.guestsCount')}</option>
                           {[...Array(10)].map((_, i) => (
-                            <option key={i+1} value={i+1}>{i+1} {i === 0 ? 'человек' : i > 0 && i < 4 ? 'человека' : 'человек'}</option>
+                            <option key={i+1} value={i+1}>{i+1} {i === 0 ? t('previewComponent.person1') : i > 0 && i < 4 ? t('previewComponent.person234') : t('previewComponent.personMany')}</option>
                           ))}
                         </select>
                       </motion.div>
@@ -338,7 +341,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                       type="text"
                       maxLength={100}
                       className="w-full border-b border-gray-300 bg-transparent py-3 px-0 focus:border-[var(--secondary)] outline-none transition-colors text-lg" 
-                      placeholder="Комментарий (необязательно)"
+                      placeholder={t('previewComponent.commentPlaceholder')}
                       value={rsvpState.comment}
                       onChange={e => setRsvpState(prev => ({...prev, comment: e.target.value}))}
                       style={{ color: primary_color }}
@@ -351,7 +354,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                     className="w-full py-5 uppercase tracking-[0.2em] text-sm font-bold transition-all duration-300 disabled:opacity-50 mt-4 hover:scale-[1.02]" 
                     style={{ backgroundColor: primary_color, color: theme === 'dark' ? '#000' : '#fff' }}
                   >
-                    {submitting ? 'Отправка...' : (mergedData.rsvp.button_text || 'Подтвердить')}
+                    {submitting ? t('previewComponent.submitting') : (mergedData.rsvp.button_text || t('previewComponent.submit'))}
                   </button>
                 </form>
               )}
