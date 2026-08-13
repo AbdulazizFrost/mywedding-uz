@@ -488,7 +488,7 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
           </div>
 
           {/* Desktop Mockup Preview Wrapper */}
-          <div className="hidden lg:flex w-full max-w-[400px] aspect-[9/19.5] max-h-full bg-white shadow-2xl rounded-[3rem] overflow-hidden border-[12px] border-charcoal shrink-0 relative flex-col">
+          <div className="hidden lg:flex h-full max-h-[800px] aspect-[9/19.5] bg-white shadow-2xl rounded-[3rem] overflow-hidden border-[12px] border-charcoal shrink-0 relative flex-col">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-charcoal rounded-b-3xl z-30 pointer-events-none" />
             <div className="flex-1 overflow-y-auto no-scrollbar bg-white">
                <PreviewComponent data={data} media={media} />
