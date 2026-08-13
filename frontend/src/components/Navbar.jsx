@@ -69,48 +69,53 @@ export default function Navbar() {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled || isMobileMenuOpen
-            ? 'bg-ivory/90 backdrop-blur-md border-b border-champagne-light py-3 shadow-sm' 
-            : 'bg-transparent py-5'
+            ? 'bg-ivory/80 backdrop-blur-lg border-b border-champagne/20 py-4 shadow-[0_4px_30px_rgb(0,0,0,0.03)]' 
+            : 'bg-transparent py-6'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="text-2xl font-serif text-charcoal font-semibold tracking-wide relative z-50">
-            bizningtoy.uz
+          <Link to="/" className="flex items-center relative z-50 group">
+            <img 
+              src="/assets/logo.png" 
+              alt="BizningToy Logo" 
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            <div className="flex gap-4 lg:gap-6">
+          <nav className="hidden md:flex items-center gap-8 lg:gap-10">
+            <div className="flex gap-6 lg:gap-8">
               {navLinks.map((link) => (
                 <a 
                   key={link.name} 
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="text-sm text-charcoal hover:text-champagne transition-colors font-medium"
+                  className="text-[13px] uppercase tracking-wider text-charcoal/80 hover:text-champagne transition-colors font-medium"
                 >
                   {link.name}
                 </a>
               ))}
             </div>
             
-            <div className="flex items-center gap-4 border-l border-champagne-light pl-4 lg:pl-6">
+            <div className="flex items-center gap-4 border-l border-champagne/30 pl-6 lg:pl-8">
               {user ? (
-                <div className="flex items-center gap-3 lg:gap-4">
+                <div className="flex items-center gap-4">
                   {user.role === 'admin' && (
-                    <Link 
-                      to="/admin" 
-                      className="text-xs lg:text-sm font-semibold text-champagne hover:text-charcoal transition-colors uppercase tracking-widest"
-                    >
-                      Админ-панель
-                    </Link>
+                     <Link 
+                       to="/admin" 
+                       className="text-[11px] font-semibold text-champagne hover:text-charcoal transition-colors uppercase tracking-[0.2em]"
+                     >
+                       Admin
+                     </Link>
                   )}
                   <Link 
                     to="/dashboard" 
-                    className="px-4 py-2 lg:px-5 lg:py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all shadow-md hover:shadow-lg"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-white text-sm font-medium rounded-full hover:bg-black transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
                   >
+                    <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 invert opacity-90" />
                     Личный кабинет
                   </Link>
                 </div>
@@ -124,9 +129,10 @@ export default function Navbar() {
                   </Link>
                   <Link 
                     to="/register" 
-                    className="px-4 py-2 lg:px-5 lg:py-2.5 bg-charcoal text-ivory text-sm font-medium rounded-full hover:bg-charcoal-light transition-all shadow-md hover:shadow-lg"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-charcoal text-white text-sm font-medium rounded-full hover:bg-black transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
                   >
-                    Регистрация
+                    <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 invert opacity-90" />
+                    Создать приглашение
                   </Link>
                 </>
               )}
@@ -171,30 +177,31 @@ export default function Navbar() {
                     key={link.name} 
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="text-2xl font-serif text-charcoal py-2 border-b border-sand/50"
+                    className="text-2xl font-serif text-charcoal py-2 border-b border-champagne/20"
                   >
                     {link.name}
                   </a>
                 ))}
               </div>
               
-              <div className="flex flex-col gap-3 mt-12 pt-6 border-t border-sand">
+              <div className="flex flex-col gap-3 mt-12 pt-6 border-t border-champagne/20">
                 {user ? (
                   <>
                     <Link 
                       to="/dashboard" 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-center w-full px-6 py-4 bg-charcoal text-ivory text-lg font-medium rounded-full shadow-md"
+                      className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-charcoal text-white text-lg font-medium rounded-full shadow-md"
                     >
+                      <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 invert opacity-90" />
                       Личный кабинет
                     </Link>
                     {user.role === 'admin' && (
                       <Link 
                         to="/admin" 
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-center w-full px-6 py-4 border border-champagne text-champagne text-sm font-semibold uppercase tracking-widest rounded-full mt-2"
+                        className="text-center w-full px-6 py-4 border border-champagne text-charcoal text-sm font-semibold uppercase tracking-widest rounded-full mt-2"
                       >
-                        Админ-панель
+                        Admin
                       </Link>
                     )}
                   </>
@@ -203,16 +210,17 @@ export default function Navbar() {
                     <Link 
                       to="/login" 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-center w-full py-4 text-charcoal text-lg font-medium border border-charcoal/20 rounded-full"
+                      className="text-center w-full py-4 text-charcoal text-lg font-medium border border-champagne/50 rounded-full"
                     >
                       Войти
                     </Link>
                     <Link 
                       to="/register" 
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-center w-full px-6 py-4 bg-charcoal text-ivory text-lg font-medium rounded-full shadow-md mt-2"
+                      className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-charcoal text-white text-lg font-medium rounded-full shadow-md mt-2"
                     >
-                      Регистрация
+                      <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 invert opacity-90" />
+                      Создать приглашение
                     </Link>
                   </>
                 )}

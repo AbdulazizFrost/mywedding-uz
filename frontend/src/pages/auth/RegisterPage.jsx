@@ -65,47 +65,51 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex pt-20 md:pt-24 bg-ivory font-sans selection:bg-champagne selection:text-white">
       {/* Left side: Premium Image (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-charcoal">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-ivory">
         <img 
-          src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=1200&h=1600" 
-          alt="Wedding aesthetic" 
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
+          src="/assets/landing/hero-bg-left.png" 
+          alt="Floral background" 
+          className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/20 to-transparent" />
-        <div className="absolute bottom-16 left-16 text-ivory max-w-lg">
-          <h2 className="text-4xl font-serif mb-4">Создайте своё приглашение</h2>
-          <p className="text-ivory/80 text-lg font-light">
+        <div className="absolute bottom-16 left-16 text-charcoal max-w-lg z-10">
+          <h2 className="text-5xl font-serif mb-6 leading-tight">Создайте <br/><span className="italic text-champagne font-light drop-shadow-sm">своё приглашение</span></h2>
+          <p className="text-charcoal-light/90 text-[15px] font-light leading-relaxed">
             Зарегистрируйтесь, чтобы получить доступ к эксклюзивным шаблонам и инструментам для создания идеального приглашения на свадьбу.
           </p>
         </div>
       </div>
 
       {/* Right side: Register Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-10 sm:p-12 lg:p-24 relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-10 sm:p-12 lg:p-24 relative bg-white">
+        <div className="absolute top-0 right-0 w-full h-full bg-[url('/assets/landing/flower-right.png')] bg-no-repeat bg-right-top opacity-5 pointer-events-none" />
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-md"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="w-full max-w-sm relative z-10"
         >
-          {/* Mobile minimal header (since image is hidden) */}
+          {/* Mobile minimal header */}
           <div className="lg:hidden text-center mb-12">
-            <h2 className="text-3xl font-serif text-charcoal mb-2">Создать аккаунт</h2>
-            <p className="text-charcoal-light">Начните историю прямо сейчас</p>
+            <h2 className="text-4xl font-serif text-charcoal mb-3">Создать аккаунт</h2>
+            <div className="flex justify-center mb-4">
+              <div className="w-8 h-[1px] bg-champagne/50" />
+            </div>
+            <p className="text-charcoal-light font-light text-sm">Начните историю прямо сейчас</p>
           </div>
 
           <div className="hidden lg:block mb-12">
-            <h2 className="text-3xl font-serif text-charcoal mb-2">Создать аккаунт</h2>
-            <p className="text-charcoal-light">Начните историю прямо сейчас</p>
+            <h2 className="text-4xl font-serif text-charcoal mb-4">Создать аккаунт</h2>
+            <div className="w-10 h-[1px] bg-champagne/50 mb-6" />
+            <p className="text-charcoal-light font-light text-[15px]">Начните историю прямо сейчас</p>
           </div>
 
-          <form onSubmit={handleRegister} className="space-y-5">
+          <form onSubmit={handleRegister} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-charcoal mb-1">Имя и Фамилия</label>
+              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">Имя и Фамилия</label>
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3 bg-white border border-sand focus:border-champagne outline-none rounded-lg text-charcoal transition-colors shadow-sm"
+                className="w-full px-0 py-3 bg-transparent border-b border-champagne/40 focus:border-charcoal outline-none text-charcoal transition-colors placeholder:text-charcoal-light/30"
                 placeholder="Тимур и Лейла"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -113,11 +117,11 @@ export default function RegisterPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-charcoal mb-1">Email</label>
+              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">Email</label>
               <input
                 type="email"
                 required
-                className="w-full px-4 py-3 bg-white border border-sand focus:border-champagne outline-none rounded-lg text-charcoal transition-colors shadow-sm"
+                className="w-full px-0 py-3 bg-transparent border-b border-champagne/40 focus:border-charcoal outline-none text-charcoal transition-colors placeholder:text-charcoal-light/30"
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -125,11 +129,11 @@ export default function RegisterPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-charcoal mb-1">Пароль (мин. 6 символов)</label>
+              <label className="block text-xs font-semibold tracking-widest text-charcoal-light uppercase mb-2">Пароль (мин. 6 символов)</label>
               <input
                 type="password"
                 required
-                className="w-full px-4 py-3 bg-white border border-sand focus:border-champagne outline-none rounded-lg text-charcoal transition-colors shadow-sm"
+                className="w-full px-0 py-3 bg-transparent border-b border-champagne/40 focus:border-charcoal outline-none text-charcoal transition-colors placeholder:text-charcoal-light/30"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -140,7 +144,7 @@ export default function RegisterPage() {
               <motion.div 
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100"
+                className="text-red-800/80 text-[12px] font-light text-center bg-red-50/50 p-3 rounded-lg border border-red-100/50 backdrop-blur-sm"
               >
                 {error}
               </motion.div>
@@ -148,15 +152,15 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full py-4 mt-6 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne hover:text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300"
+              className="w-full py-4 mt-8 bg-charcoal text-ivory rounded-full font-medium text-sm tracking-wide hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300"
             >
               Зарегистрироваться
             </button>
             
-            <div className="text-center mt-8">
-               <p className="text-charcoal-light text-sm">
+            <div className="text-center mt-10">
+               <p className="text-charcoal-light text-[13px] font-light">
                   Уже есть аккаунт?{' '}
-                  <Link to="/login" className="text-charcoal font-medium hover:text-champagne transition-colors border-b border-charcoal/30 hover:border-champagne">
+                  <Link to="/login" className="text-charcoal font-medium hover:text-champagne transition-colors underline decoration-champagne/30 underline-offset-4">
                     Войти
                   </Link>
                </p>

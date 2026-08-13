@@ -7,10 +7,14 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
         {/* Logo and Description */}
         <div className="flex flex-col gap-4 max-w-sm">
-          <Link to="/" className="text-2xl font-serif text-charcoal font-semibold tracking-wide">
-            bizningtoy.uz
+          <Link to="/" className="flex items-center gap-3">
+            <img 
+              src="/assets/logo.png" 
+              alt="BizningToy Logo" 
+              className="h-10 sm:h-12 w-auto object-contain"
+            />
           </Link>
-          <p className="text-charcoal-light text-sm leading-relaxed">
+          <p className="text-charcoal-light text-sm leading-relaxed mt-2">
             Создайте красивое цифровое приглашение для своего особенного дня и разделите радость с близкими.
           </p>
         </div>

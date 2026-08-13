@@ -55,9 +55,11 @@ export default function AdminLayout() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-ivory border-r border-sand">
       <div className="p-6">
-        <h1 className="text-xl font-serif text-charcoal font-semibold tracking-wide">
-          BIZNINGTOY
-        </h1>
+        <img 
+          src="/assets/logo.png" 
+          alt="BizningToy Admin Logo" 
+          className="h-10 w-auto object-contain mb-2"
+        />
         <p className="text-[10px] uppercase tracking-widest text-champagne font-bold mt-1">Admin Panel</p>
       </div>
 
@@ -108,7 +110,13 @@ export default function AdminLayout() {
 
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-ivory border-b border-sand flex items-center justify-between px-4 z-40">
-        <h1 className="text-lg font-serif text-charcoal font-semibold">BIZNINGTOY ADMIN</h1>
+        <div className="flex items-center gap-2">
+          <img 
+            src="/assets/logo.png" 
+            alt="BizningToy Admin Logo" 
+            className="h-8 w-auto object-contain"
+          />
+        </div>
         <button onClick={() => setIsMobileOpen(true)} className="p-2 text-charcoal">
           <Menu size={24} />
         </button>

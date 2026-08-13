@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Default values to prevent undefined errors for old invitations
 const defaultData = {
@@ -124,10 +124,14 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
               <div className="h-16 w-px bg-white/30 mb-8" />
               <p className="text-xl sm:text-2xl uppercase tracking-[0.2em] font-light">
                 {(() => {
+                  if (!mergedData.wedding_date) return '';
                   try {
-                    const d = new Date(mergedData.wedding_date);
-                    if (isNaN(d.getTime())) return mergedData.wedding_date;
-                    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\./g, ' . ');
+                    const parts = mergedData.wedding_date.split('-');
+                    if (parts.length === 3) {
+                      const [year, month, day] = parts;
+                      return `${day} . ${month} . ${year}`;
+                    }
+                    return mergedData.wedding_date;
                   } catch (e) {
                     return mergedData.wedding_date;
                   }
