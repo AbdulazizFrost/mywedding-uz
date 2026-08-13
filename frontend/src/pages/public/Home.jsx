@@ -63,19 +63,9 @@ export default function Home() {
       
       <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-32 px-4 md:px-8 lg:px-12 w-full flex flex-col justify-center">
         
-        {/* Soft background gradient & Floral Wrappers (Overflow hidden to prevent horizontal scrollbars) */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+        {/* Soft background gradient */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-br from-ivory/90 via-champagne-light/30 to-ivory/90" />
-          <img 
-            src="/assets/landing/hero-bg-left.png" 
-            alt="Floral Background" 
-            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 pointer-events-none mix-blend-multiply opacity-95" 
-          />
-          <img 
-            src="/assets/landing/flower-left.png" 
-            alt="" 
-            className="absolute right-0 top-1/4 md:top-0 h-[60%] md:h-[110%] w-auto object-contain opacity-40 translate-x-1/3 md:translate-x-1/3 pointer-events-none" 
-          />
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10 w-full">
@@ -119,17 +109,12 @@ export default function Home() {
           {/* Right Mockup */}
           <div className="flex-1 w-full flex justify-center relative mt-12 lg:mt-0">
             
-            {/* Dark Floral Backdrop with Soft Edges */}
-            <div className="absolute inset-0 -z-10 flex items-center justify-center opacity-80 scale-[1.4] md:scale-[1.6] pointer-events-none translate-y-[-10%]">
-               <div 
-                 className="w-[120%] aspect-square rounded-full mix-blend-normal"
-                 style={{
-                   backgroundImage: `url('/assets/landing/hero-flowers-right.jpg')`,
-                   backgroundSize: 'cover',
-                   backgroundPosition: 'center',
-                   maskImage: 'radial-gradient(circle, rgba(0,0,0,0.9) 30%, rgba(0,0,0,0) 70%)',
-                   WebkitMaskImage: 'radial-gradient(circle, rgba(0,0,0,0.9) 30%, rgba(0,0,0,0) 70%)'
-                 }}
+            {/* Beautiful Transparent Floral Backdrop */}
+            <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-y-[5%] -translate-x-[5%] md:-translate-x-[10%]">
+               <img 
+                 src="/assets/landing/flower-behind-phone.png"
+                 alt=""
+                 className="w-[140%] max-w-none md:w-[150%] object-contain opacity-90 scale-[1.1]"
                />
             </div>
 
