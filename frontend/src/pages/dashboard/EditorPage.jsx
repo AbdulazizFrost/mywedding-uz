@@ -5,7 +5,7 @@ import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, Upload, Trash2, LayoutTemplate, ExternalLink, X, ChevronDown, Check } from 'lucide-react';
 
-const API_URL = window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`);
+const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
 export default function EditorPage() {
   const { id } = useParams();

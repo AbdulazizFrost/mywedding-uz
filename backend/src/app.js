@@ -21,9 +21,20 @@ export function createApp() {
     crossOriginResourcePolicy: { policy: "cross-origin" } // allow public images from other domains if needed
   }));
 
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const frontendUrls = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',').map(u => u.trim());
   app.use(cors({
-    origin: frontendUrl,
+    origin: function (origin, callback) {
+      if (!origin || frontendUrls.includes(origin) || frontendUrls.includes('*')) {
+        callback(null, true);
+      } else {
+        // Also allow specific custom domain even if not in env for robustness during migration
+        if (origin === 'https://www.bizningtoy.uz' || origin === 'https://bizningtoy.uz') {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      }
+    },
     credentials: true,
   }));
   app.use(express.json());

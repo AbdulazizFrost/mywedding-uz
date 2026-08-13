@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { ArrowLeft, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const API_URL = window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`);
+const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
 export default function PreviewPage() {
   const { id } = useParams();
