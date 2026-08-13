@@ -317,32 +317,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. WOW PRODUCT SHOWCASE */}
-      <section className="py-24 md:py-32 bg-charcoal text-ivory relative w-full overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/assets/landing/flower-left.png')] bg-no-repeat bg-right-top opacity-5 pointer-events-none w-full h-full bg-contain" />
-        
-        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center relative z-10">
-          <FadeIn>
-            <h2 className="text-3xl md:text-5xl lg:text-[4rem] font-serif font-medium mb-6 leading-tight">Больше, чем просто <br/> <span className="italic font-light text-champagne">приглашение</span></h2>
-            <p className="text-ivory/70 max-w-2xl mx-auto text-[15px] md:text-lg mb-16 md:mb-24 px-4 font-light">
-              Один красивый мини-сайт, в котором элегантно собрано всё самое важное о вашем празднике. Никаких бумажных открыток — только современные технологии и безупречный стиль.
-            </p>
-          </FadeIn>
-          
-          <FadeIn delay={0.3} direction="up" className="flex justify-center px-4">
-             <div className="relative w-full max-w-[900px] aspect-video rounded-2xl md:rounded-[2rem] overflow-hidden shadow-[0_20px_80px_rgb(0,0,0,0.3)] group cursor-pointer border border-white/10">
-                <img src="https://images.pexels.com/photos/2959196/pexels-photo-2959196.jpeg?auto=compress&cs=tinysrgb&w=1600&h=900&fit=crop" alt="Platform Showcase" className="w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-champagne/90 backdrop-blur-md rounded-full flex items-center justify-center text-charcoal hover:scale-110 transition-transform duration-300 shadow-[0_0_40px_rgba(212,195,163,0.4)]">
-                    <svg className="w-6 h-6 md:w-8 md:h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                  </div>
-                  <p className="mt-6 text-[11px] md:text-xs uppercase tracking-[0.3em] font-medium text-champagne">Посмотреть видео-тур</p>
-                </div>
-             </div>
-          </FadeIn>
-        </div>
-      </section>
+
 
       {/* 6. FINAL CTA */}
       <section className="py-24 md:py-32 relative bg-ivory overflow-hidden w-full border-t border-champagne/20">
