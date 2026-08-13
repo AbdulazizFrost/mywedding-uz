@@ -176,22 +176,35 @@ export default function Home() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
             {[
-              { name: 'Classic Elegance', category: 'Elegant', img: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=600&h=900' },
-              { name: 'Minimalist White', category: 'Minimal', img: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80&w=600&h=900' },
+              { name: 'Classic Elegance', category: 'Elegant', img: 'https://images.pexels.com/photos/2253870/pexels-photo-2253870.jpeg?auto=compress&cs=tinysrgb&w=600&h=900&fit=crop' },
+              { name: 'Minimalist White', category: 'Minimal', img: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=600&h=900&fit=crop' },
+              { name: 'Boho Romance', category: 'Floral', img: 'https://images.pexels.com/photos/1730877/pexels-photo-1730877.jpeg?auto=compress&cs=tinysrgb&w=600&h=900&fit=crop' },
             ].map((template, idx) => (
               <FadeIn key={idx} delay={idx * 0.2} direction="up">
-                <div className="group relative w-full aspect-[3/4] lg:aspect-[4/5] rounded-[2px] overflow-hidden cursor-pointer bg-sand/30 shadow-[0_20px_40px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.08)] transition-all duration-700">
-                  <img src={template.img} alt={template.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]" loading="lazy" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent opacity-90 transition-opacity duration-700 group-hover:opacity-100" />
-                  <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                    <span className="text-champagne text-[10px] md:text-[11px] uppercase tracking-[0.2em] font-medium">{template.category}</span>
-                    <h3 className="text-white font-serif text-3xl md:text-4xl mt-3 mb-6 font-medium tracking-wide">{template.name}</h3>
-                    <div className="w-12 h-[1px] bg-champagne/50 mb-6 group-hover:w-24 transition-all duration-700" />
-                    <Link to={user ? "/dashboard" : "/register"} className="inline-flex items-center gap-2 text-white/90 hover:text-white font-light text-sm tracking-widest uppercase transition-colors group/btn">
-                      Выбрать <span className="text-champagne transition-transform group-hover/btn:translate-x-2">→</span>
-                    </Link>
+                <div className="group relative w-full aspect-[3/4] rounded-sm overflow-hidden cursor-pointer shadow-[0_10px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.15)] transition-all duration-700">
+                  {/* Background Image */}
+                  <img src={template.img} alt={template.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.05]" loading="lazy" />
+                  
+                  {/* Subtle Dark Overlay */}
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors duration-500" />
+                  
+                  {/* The Invitation Card (White box in the center) */}
+                  <div className="absolute inset-5 bg-white/95 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center opacity-90 group-hover:opacity-100 transition-opacity duration-500 shadow-xl">
+                    <div className="w-full h-full border border-champagne/40 p-4 flex flex-col items-center justify-center relative">
+                      <span className="text-[9px] md:text-[10px] font-semibold tracking-[0.3em] uppercase text-charcoal/50 mb-3 block">
+                        {template.category}
+                      </span>
+                      <h3 className="text-2xl md:text-3xl font-serif font-medium mb-6 text-charcoal px-2 leading-tight">
+                        {template.name}
+                      </h3>
+                      <div className="w-8 h-[1px] bg-champagne mb-6 transition-all duration-700 group-hover:w-16" />
+                      
+                      <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-charcoal hover:text-champagne transition-colors">
+                        Выбрать <ArrowRight size={12} />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </FadeIn>
