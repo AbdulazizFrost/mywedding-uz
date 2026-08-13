@@ -71,18 +71,18 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-serif text-charcoal mb-2">Личный кабинет</h1>
             <p className="text-charcoal-light tracking-wide">{user.full_name || user.email}</p>
           </div>
-          <div className="mt-6 sm:mt-0 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="mt-6 sm:mt-0 flex flex-row items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
             <button 
               onClick={handleLogout} 
-              className="flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 border border-charcoal/20 rounded-full text-sm font-medium text-charcoal hover:bg-sand transition-colors w-full sm:w-auto"
+              className="flex items-center justify-center gap-1.5 text-sm font-medium text-charcoal-light/70 hover:text-charcoal transition-colors"
             >
-              <LogOut size={16} /> Выйти
+              <LogOut size={16} strokeWidth={1.5} /> Выйти
             </button>
             <Link 
               to="/catalog"
-              className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg"
             >
-              <Plus size={16} /> Создать
+              <Plus size={16} strokeWidth={1.5} /> Создать
             </Link>
           </div>
         </motion.div>
