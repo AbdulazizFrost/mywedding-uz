@@ -22,7 +22,7 @@ export default function RsvpDashboard() {
     window.scrollTo(0, 0);
     const fetchData = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
+        const API_URL = window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`);
         const [invRes, rsvpRes] = await Promise.all([
           fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' }),
           fetch(`${API_URL}/invitations/${id}/rsvp`, { credentials: 'include' })
@@ -50,7 +50,7 @@ export default function RsvpDashboard() {
     if (!window.confirm('Вы уверены, что хотите удалить этот ответ?')) return;
     
     try {
-      const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
+      const API_URL = window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`);
       const res = await fetch(`${API_URL}/invitations/${id}/rsvp/${responseId}`, {
         method: 'DELETE',
         credentials: 'include'

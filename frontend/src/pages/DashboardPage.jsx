@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { motion } from 'framer-motion';
 import { Settings, LogOut, Plus, Edit2, Eye, ExternalLink, CreditCard } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
+const API_URL = window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`);
 
 export default function DashboardPage() {
   const { user, loading, fetchMe } = useAuth();

@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { normalizeApiError } from '../../utils/apiUtils.js';
 import { motion } from 'framer-motion';
 
-const API_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`;
+const API_URL = window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('localhost', window.location.hostname) : `http://${window.location.hostname}:5000/api`);
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -56,15 +56,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex pt-20 md:pt-24 bg-ivory font-sans selection:bg-champagne selection:text-white">
       {/* Left side: Premium Image (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-ivory">
-        <img 
-          src="/assets/landing/hero-bg-left.png" 
-          alt="Floral background" 
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-        />
-        <div className="absolute bottom-16 left-16 text-charcoal max-w-lg z-10">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-charcoal">
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent" />
+        <div className="absolute bottom-16 left-16 text-ivory max-w-lg z-10">
           <h2 className="text-5xl font-serif mb-6 leading-tight">Начните <br/><span className="italic text-champagne font-light drop-shadow-sm">вашу историю</span></h2>
-          <p className="text-charcoal-light/90 text-[15px] font-light leading-relaxed">
+          <p className="text-ivory/90 text-[15px] font-light leading-relaxed">
             Войдите в личный кабинет, чтобы продолжить работу над вашим идеальным свадебным приглашением.
           </p>
         </div>
