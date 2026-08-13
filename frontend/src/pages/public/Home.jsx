@@ -112,9 +112,9 @@ export default function Home() {
             {/* Beautiful Transparent Floral Backdrop */}
             <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-y-[5%] -translate-x-[5%] md:-translate-x-[10%]">
                <img 
-                 src="/assets/landing/flower-behind-phone.png"
+                 src="/assets/landing/flower-left.png"
                  alt=""
-                 className="w-[140%] max-w-none md:w-[150%] object-contain opacity-90 scale-[1.1]"
+                 className="w-[140%] max-w-none md:w-[150%] object-contain opacity-90 scale-[1.1] scale-x-[-1]"
                />
             </div>
 
