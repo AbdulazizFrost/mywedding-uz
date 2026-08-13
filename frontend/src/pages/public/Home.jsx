@@ -331,7 +331,7 @@ export default function Home() {
           
           <FadeIn delay={0.3} direction="up" className="flex justify-center px-4">
              <div className="relative w-full max-w-[900px] aspect-video rounded-2xl md:rounded-[2rem] overflow-hidden shadow-[0_20px_80px_rgb(0,0,0,0.3)] group cursor-pointer border border-white/10">
-                <img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=1600&h=900" alt="Platform Showcase" className="w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-105" />
+                <img src="https://images.pexels.com/photos/2959196/pexels-photo-2959196.jpeg?auto=compress&cs=tinysrgb&w=1600&h=900&fit=crop" alt="Platform Showcase" className="w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/30 to-transparent" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <div className="w-16 h-16 md:w-20 md:h-20 bg-champagne/90 backdrop-blur-md rounded-full flex items-center justify-center text-charcoal hover:scale-110 transition-transform duration-300 shadow-[0_0_40px_rgba(212,195,163,0.4)]">
