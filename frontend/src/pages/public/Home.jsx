@@ -127,22 +127,35 @@ export default function Home() {
               <PhoneMockup className="relative transform lg:rotate-[2deg] hover:rotate-0 transition-transform duration-700 shadow-[0_20px_60px_rgb(0,0,0,0.15)]">
                 <div className="h-full w-full bg-ivory flex flex-col items-center justify-center relative overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80&w=400&h=800" 
+                    src="https://images.unsplash.com/photo-1519225421980-b2866eb85387?auto=format&fit=crop&q=80&w=400&h=800" 
                     alt="Wedding Couple" 
-                    className="absolute inset-0 w-full h-full object-cover opacity-80"
+                    className="absolute inset-0 w-full h-full object-cover opacity-90"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/90 via-[#1A1A1A]/40 to-[#1A1A1A]/10" />
                   
-                  <div className="absolute bottom-10 text-center text-white px-6 w-full flex flex-col items-center">
-                    <p className="font-sans text-[8px] md:text-[9px] tracking-[0.3em] uppercase mb-4 opacity-90 font-medium">Сохраните дату</p>
-                    <Heart size={14} className="mb-4 text-champagne opacity-90" strokeWidth={1.5} />
-                    <h2 className="font-serif text-3xl md:text-4xl mb-4 leading-tight">Азамат <br/><span className="italic font-light text-champagne drop-shadow-md">&</span> Мадина</h2>
-                    <p className="font-sans text-[11px] md:text-xs font-light mt-2 tracking-wide">24 Сентября 2026</p>
-                    
-                    <div className="mt-6 flex gap-2 opacity-80">
-                       <img src="/assets/landing/divider.png" alt="" className="h-2 invert opacity-50" />
-                    </div>
+                  {/* Overlay Content */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-8 pb-14 text-white">
+                    <FadeIn delay={0.8} className="text-center w-full">
+                      <p className="text-[11px] uppercase tracking-[0.4em] font-semibold mb-4 text-white/90 drop-shadow-md">
+                        Приглашение на свадьбу
+                      </p>
+                      <div className="flex items-center justify-center gap-4 mb-6">
+                        <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-champagne/80"></div>
+                        <Heart size={14} className="text-champagne drop-shadow-md" />
+                        <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-champagne/80"></div>
+                      </div>
+                      <h3 className="text-[2.75rem] leading-[1.1] font-serif mb-2 font-medium text-white drop-shadow-lg">
+                        Азамат <br />
+                        <span className="text-[2rem] text-champagne italic font-light my-2 block">&</span> 
+                        Мадина
+                      </h3>
+                      <p className="text-xs uppercase tracking-[0.3em] mt-8 text-white/90 font-medium drop-shadow-md">
+                        24 Сентября 2026
+                      </p>
+                      <p className="text-[10px] uppercase tracking-widest mt-3 text-white/70 font-light">
+                        Ташкент, Узбекистан
+                      </p>
+                    </FadeIn>
                   </div>
                 </div>
               </PhoneMockup>
