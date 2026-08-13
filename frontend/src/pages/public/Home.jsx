@@ -70,7 +70,7 @@ export default function Home() {
           <img 
             src="/assets/landing/hero-bg-left.png" 
             alt="Floral Background" 
-            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 pointer-events-none mix-blend-multiply opacity-90" 
+            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain md:-translate-x-1/4 pointer-events-none opacity-90" 
           />
           <img 
             src="/assets/landing/flower-left.png" 

@@ -60,7 +60,7 @@ export default function LoginPage() {
         <img 
           src="/assets/landing/hero-bg-left.png" 
           alt="Floral background" 
-          className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-90"
+          className="absolute inset-0 w-full h-full object-cover opacity-90"
         />
         <div className="absolute bottom-16 left-16 text-charcoal max-w-lg z-10">
           <h2 className="text-5xl font-serif mb-6 leading-tight">Начните <br/><span className="italic text-champagne font-light drop-shadow-sm">вашу историю</span></h2>
