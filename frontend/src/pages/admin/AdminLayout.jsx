@@ -52,7 +52,7 @@ export default function AdminLayout() {
     await logout();
   };
 
-  const SidebarContent = () => (
+  const renderSidebarContent = () => (
     <div className="flex flex-col h-full bg-ivory border-r border-sand">
       <div className="p-6">
         <img 
@@ -105,7 +105,7 @@ export default function AdminLayout() {
       
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block w-72 h-screen sticky top-0">
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
 
       {/* Mobile Header */}
@@ -146,7 +146,7 @@ export default function AdminLayout() {
               >
                 <X size={20} />
               </button>
-              <SidebarContent />
+              {renderSidebarContent()}
             </motion.aside>
           </>
         )}

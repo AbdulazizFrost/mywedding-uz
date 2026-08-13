@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MessageCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Footer() {
+  const { user } = useAuth();
   return (
     <footer className="bg-ivory border-t border-champagne-light py-16 px-6">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 md:gap-8 text-left">
@@ -42,8 +44,14 @@ export default function Footer() {
           </div>
           <div className="flex flex-col items-start gap-4">
             <h4 className="font-serif font-medium text-charcoal text-lg mb-1">Поддержка</h4>
-            <Link to="/login" className="text-[13px] text-charcoal-light/80 hover:text-champagne transition-colors font-light">Войти</Link>
-            <Link to="/register" className="text-[13px] text-charcoal-light/80 hover:text-champagne transition-colors font-light">Регистрация</Link>
+            {user ? (
+              <Link to="/dashboard" className="text-[13px] text-charcoal-light/80 hover:text-champagne transition-colors font-light">Личный кабинет</Link>
+            ) : (
+              <>
+                <Link to="/login" className="text-[13px] text-charcoal-light/80 hover:text-champagne transition-colors font-light">Войти</Link>
+                <Link to="/register" className="text-[13px] text-charcoal-light/80 hover:text-champagne transition-colors font-light">Регистрация</Link>
+              </>
+            )}
             <a href="#" className="text-[13px] text-charcoal-light/80 hover:text-champagne transition-colors font-light">Контакты</a>
           </div>
         </div>
