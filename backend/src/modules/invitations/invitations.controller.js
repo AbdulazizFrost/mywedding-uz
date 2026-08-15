@@ -72,12 +72,12 @@ export const updateInvitation = async (req, res, next) => {
       ? JSON.parse(invitation.data) 
       : (invitation.data || {});
 
-    // Expanded allowlist for Step 7 & 8
+    // Expanded allowlist for all 8 premium templates
     const allowedFields = [
       'groom_name', 'bride_name', 'groom_description', 'bride_description',
       'wedding_date', 'wedding_time', 'ceremony_time', 'reception_time',
       'venue_name', 'address', 'map_url',
-      'story', 'music', 'rsvp', 'design'
+      'story', 'music', 'rsvp', 'design', 'schedule', 'quote', 'timeline', 'closing'
     ];
 
     const newData = { ...currentData };
@@ -91,8 +91,8 @@ export const updateInvitation = async (req, res, next) => {
           };
           
           if (key === 'design') {
-            const validThemes = ['elegant', 'classic', 'minimal', 'dark'];
-            const validFonts = ['serif', 'sans', 'script'];
+            const validThemes = ['elegant', 'classic', 'minimal', 'dark', 'rose', 'botanical', 'editorial', 'silk', 'emerald'];
+            const validFonts = ['serif', 'sans', 'script', 'cormorant', 'playfair', 'montserrat'];
             
             if (newData.design.theme && !validThemes.includes(newData.design.theme)) newData.design.theme = 'elegant';
             if (newData.design.font && !validFonts.includes(newData.design.font)) newData.design.font = 'serif';

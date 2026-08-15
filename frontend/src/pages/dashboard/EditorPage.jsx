@@ -98,6 +98,12 @@ function EditorForm({
             value={data.bride_name} 
             onChange={e => handleChange(null, 'bride_name', e.target.value)} 
           />
+          <TextArea 
+            label={t('editor.quote') || 'Текст приглашения / Послание гостям'} 
+            placeholder="Мы счастливы пригласить вас разделить с нами этот особенный день..." 
+            value={data.quote} 
+            onChange={e => handleChange(null, 'quote', e.target.value)} 
+          />
         </div>
       )}
 
@@ -162,6 +168,22 @@ function EditorForm({
       {activeTab === 'design' && (
         <div className="space-y-6">
           <Select 
+            label={t('editor.templateDesign') || 'Стиль шаблона'} 
+            value={data.design?.template || 'royal-ivory'} 
+            onChange={e => handleChange('design', 'template', e.target.value)} 
+            selectOptionText={t('editor.selectOption')}
+            options={[
+              {value: 'royal-ivory', label: 'Royal Ivory (Luxury European)'},
+              {value: 'dark-luxury', label: 'Dark Luxury (Cinematic Night)'},
+              {value: 'romantic-blush', label: 'Romantic Blush (Rose Gold)'},
+              {value: 'editorial', label: 'Editorial Vogue (Magazine)'},
+              {value: 'botanical', label: 'Botanical Garden (Stationery)'},
+              {value: 'minimal', label: 'Ultra Minimal (Pure Whitespace)'},
+              {value: 'silk', label: 'Silk Luxury (Soft Champagne)'},
+              {value: 'uzbek-luxury', label: 'Modern Uzbek Luxury (Emerald & Gold)'}
+            ]} 
+          />
+          <Select 
             label={t('editor.theme')} 
             value={data.design?.theme} 
             onChange={e => handleChange('design', 'theme', e.target.value)} 
@@ -170,7 +192,12 @@ function EditorForm({
               {value: 'elegant', label: t('editor.themeElegant')},
               {value: 'classic', label: t('editor.themeClassic')},
               {value: 'minimal', label: t('editor.themeMinimal')},
-              {value: 'dark', label: t('editor.themeDark')}
+              {value: 'dark', label: t('editor.themeDark')},
+              {value: 'rose', label: 'Rose Gold'},
+              {value: 'botanical', label: 'Botanical Sage'},
+              {value: 'editorial', label: 'Editorial Black'},
+              {value: 'silk', label: 'Silk Champagne'},
+              {value: 'emerald', label: 'Uzbek Emerald'}
             ]} 
           />
           <Select 
@@ -808,7 +835,7 @@ export default function EditorPage() {
           
           {/* Mobile Full Screen Preview Wrapper */}
           <div className="w-full h-full lg:hidden relative bg-white overflow-y-auto overflow-x-hidden no-scrollbar">
-            <PreviewComponent data={data} media={media} />
+            <PreviewComponent data={data} media={media} template_slug={data?.design?.template || invitation?.template?.slug || 'royal-ivory'} />
             {/* Overlay gradient at bottom so buttons are visible */}
             <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/90 to-transparent pointer-events-none z-10" />
           </div>
@@ -816,7 +843,7 @@ export default function EditorPage() {
           {/* Desktop Elegant Mockup Preview Wrapper (Clean, no huge black notch protruding, perfectly fits height) */}
           <div className="hidden lg:flex w-[380px] h-[calc(100%-1.5rem)] max-h-[720px] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)] rounded-[2.5rem] overflow-hidden border-[6px] border-charcoal/80 shrink-0 relative flex-col">
             <div className="flex-1 overflow-y-auto no-scrollbar bg-white">
-               <PreviewComponent data={data} media={media} />
+               <PreviewComponent data={data} media={media} template_slug={data?.design?.template || invitation?.template?.slug || 'royal-ivory'} />
             </div>
           </div>
 

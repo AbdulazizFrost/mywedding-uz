@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check, Sparkles, Smartphone, Paintbrush, Globe } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Smartphone, Paintbrush, Globe, Eye, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import TemplatePreviewModal from '../../components/preview/TemplatePreviewModal.jsx';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
 
@@ -17,16 +18,16 @@ export default function TemplateDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [buying, setBuying] = useState(false);
+  const [showLivePreview, setShowLivePreview] = useState(false);
 
   useEffect(() => {
-    // Scroll to top on load
     window.scrollTo(0, 0);
     
     const fetchTemplate = async () => {
       try {
         const response = await fetch(`${API_URL}/templates/${slug}`);
         if (!response.ok) {
-          if (response.status === 404) throw new Error(t('templateDetail.notFound'));
+          if (response.status === 404) throw new Error(t('templateDetail.notFound') || 'Шаблон не найден');
           throw new Error('Failed to fetch template');
         }
         const data = await response.json();
@@ -81,29 +82,38 @@ export default function TemplateDetail() {
   if (error || !template) {
     return (
       <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center text-center px-4">
-        <h2 className="text-4xl font-serif text-charcoal mb-4">{t('templateDetail.errorTitle')}</h2>
+        <h2 className="text-4xl font-serif text-charcoal mb-4">{t('templateDetail.errorTitle') || 'Дизайн не найден'}</h2>
         <p className="text-charcoal-light mb-8">{error || t('templateDetail.notFound')}</p>
         <Link to="/catalog" className="px-8 py-3 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all">
-          {t('templateDetail.backToCatalogBtn')}
+          {t('templateDetail.backToCatalogBtn') || 'Вернуться в каталог'}
         </Link>
       </div>
     );
   }
 
   const features = [
-    { icon: Smartphone, title: t('templateDetail.featureResponsive'), desc: t('templateDetail.featureResponsiveDesc') },
-    { icon: Paintbrush, title: t('templateDetail.featureCustom'), desc: t('templateDetail.featureCustomDesc') },
-    { icon: Globe, title: t('templateDetail.featureDomain'), desc: t('templateDetail.featureDomainDesc') },
+    { icon: Smartphone, title: t('templateDetail.featureResponsive') || 'Адаптивен для всех смартфонов', desc: t('templateDetail.featureResponsiveDesc') || 'Идеально отображается на iPhone, Android и компьютерах.' },
+    { icon: Paintbrush, title: t('templateDetail.featureCustom') || 'Полная кастомизация', desc: t('templateDetail.featureCustomDesc') || 'Настраивайте тексты, фото, музыку, шрифты и цвета в онлайн-редакторе.' },
+    { icon: Globe, title: t('templateDetail.featureDomain') || 'Персональная ссылка и RSVP', desc: t('templateDetail.featureDomainDesc') || 'Мгновенная публикация и удобный сбор ответов гостей.' },
   ];
 
   return (
     <div className="min-h-screen bg-ivory font-sans pt-24 pb-24 selection:bg-champagne selection:text-white">
+      
+      {/* Live Demo Modal */}
+      <TemplatePreviewModal
+        isOpen={showLivePreview}
+        onClose={() => setShowLivePreview(false)}
+        template={template}
+        onSelectTemplate={handleBuy}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Back navigation */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
           <Link to="/catalog" className="inline-flex items-center gap-2 text-charcoal-light hover:text-champagne transition-colors font-medium text-sm">
-            <ArrowLeft size={16} /> {t('templateDetail.backToCatalog')}
+            <ArrowLeft size={16} /> {t('templateDetail.backToCatalog') || 'Назад в каталог'}
           </Link>
         </motion.div>
 
@@ -114,19 +124,16 @@ export default function TemplateDetail() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="relative"
+            className="relative flex flex-col items-center"
           >
-            {/* Soft decorative background element */}
-            <div className="absolute -inset-4 bg-sand/30 rounded-[3rem] -z-10 rotate-3 transform-gpu" />
-            
-            <div className="relative w-full max-w-[400px] mx-auto aspect-[9/19.5] bg-white rounded-[2.5rem] p-3 shadow-2xl border border-sand">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-ivory rounded-b-xl z-20" />
+            <div className="relative w-full max-w-[380px] mx-auto aspect-[9/19] bg-white rounded-[2.5rem] p-3 shadow-2xl border border-sand group cursor-pointer"
+                 onClick={() => setShowLivePreview(true)}>
               <div className="w-full h-full rounded-[2rem] overflow-hidden bg-sand relative">
                 {template.preview_image ? (
                   <img
                     src={template.preview_image}
                     alt={template.name}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-ivory text-charcoal-light p-6 text-center">
@@ -134,10 +141,24 @@ export default function TemplateDetail() {
                     <span className="font-serif italic text-lg">{t('templateDetail.previewGenerating')}</span>
                   </div>
                 )}
-                {/* Gradient overlay for premium feel */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                
+                {/* Live Demo Trigger Overlay */}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="px-6 py-3 bg-white text-charcoal rounded-full text-xs uppercase tracking-widest font-semibold flex items-center gap-2 shadow-xl">
+                    <Eye size={16} />
+                    <span>{t('catalog.liveDemo') || 'Открыть живой показ'}</span>
+                  </span>
+                </div>
               </div>
             </div>
+
+            <button
+              onClick={() => setShowLivePreview(true)}
+              className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-champagne hover:text-charcoal transition-colors"
+            >
+              <Eye size={16} />
+              <span>{t('catalog.liveDemo') || 'Интерактивный предпросмотр сайта'}</span>
+            </button>
           </motion.div>
 
           {/* Right Column: Template Details */}
@@ -148,43 +169,58 @@ export default function TemplateDetail() {
             className="flex flex-col"
           >
             <div className="mb-8">
-              <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold rounded-full border border-champagne text-champagne mb-6">
+              <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold rounded-full border border-champagne text-champagne mb-6 bg-white/50">
                 {template.category || 'Premium Design'}
               </span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-charcoal mb-6 leading-tight">
                 {template.name}
               </h1>
-              <p className="text-lg text-charcoal-light font-light leading-relaxed max-w-lg">
+              <p className="text-base sm:text-lg text-charcoal-light font-light leading-relaxed max-w-lg">
                 {template.description || t('catalog.defaultDesc')}
               </p>
             </div>
 
             {/* Price & Action */}
-            <div className="bg-white p-8 rounded-3xl border border-sand shadow-sm mb-12 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-champagne/10 rounded-bl-full -mr-16 -mt-16" />
-              
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-sand shadow-sm mb-10 relative overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-charcoal-light font-semibold mb-2">{t('templateDetail.priceTitle')}</p>
+                  <p className="text-xs uppercase tracking-widest text-charcoal-light font-semibold mb-2">{t('templateDetail.priceTitle') || 'Стоимость дизайна:'}</p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-serif text-charcoal">{Number(template.price).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}</span>
                     <span className="text-lg text-charcoal-light font-medium">{template.currency}</span>
                   </div>
                 </div>
                 
-                <button
-                  onClick={handleBuy}
-                  disabled={buying}
-                  className="px-8 py-4 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300 disabled:opacity-70 disabled:hover:translate-y-0 whitespace-nowrap"
-                >
-                  {buying ? t('templateDetail.creating') : (user ? t('templateDetail.createBtn') : t('templateDetail.loginAndCreate'))}
-                </button>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <button
+                    onClick={() => setShowLivePreview(true)}
+                    className="px-6 py-3.5 border border-sand hover:border-champagne text-charcoal rounded-full font-medium text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Eye size={15} />
+                    <span>{t('catalog.preview') || 'Демо'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleBuy}
+                    disabled={buying}
+                    className="px-8 py-4 bg-charcoal text-ivory rounded-full font-medium text-xs uppercase tracking-widest hover:bg-champagne transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 duration-300 disabled:opacity-70 disabled:hover:translate-y-0 whitespace-nowrap flex items-center justify-center gap-2"
+                  >
+                    {buying ? (
+                      <span>{t('templateDetail.creating') || 'Создание...'}</span>
+                    ) : (
+                      <>
+                        <span>{user ? (t('templateDetail.createBtn') || 'Создать приглашение') : (t('templateDetail.loginAndCreate') || 'Войти и создать')}</span>
+                        <ArrowRight size={15} />
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Features List */}
             <div>
-              <h3 className="text-sm uppercase tracking-widest text-charcoal font-semibold mb-6">{t('templateDetail.includedTitle')}</h3>
+              <h3 className="text-xs uppercase tracking-widest text-charcoal font-semibold mb-6">{t('templateDetail.includedTitle') || 'Что входит в этот шаблон:'}</h3>
               <ul className="space-y-4">
                 {features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-4">
@@ -192,8 +228,8 @@ export default function TemplateDetail() {
                       <feature.icon size={18} />
                     </div>
                     <div>
-                      <h4 className="text-charcoal font-medium">{feature.title}</h4>
-                      <p className="text-sm text-charcoal-light">{feature.desc}</p>
+                      <h4 className="text-charcoal font-medium text-sm">{feature.title}</h4>
+                      <p className="text-xs sm:text-sm text-charcoal-light leading-relaxed">{feature.desc}</p>
                     </div>
                   </li>
                 ))}

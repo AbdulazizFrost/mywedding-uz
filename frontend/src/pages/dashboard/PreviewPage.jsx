@@ -146,7 +146,7 @@ export default function PreviewPage() {
       {/* True WYSIWYG Invitation Container */}
       <div className="w-full flex-1 flex flex-col items-center">
         <div className="w-full max-w-2xl bg-white shadow-2xl overflow-hidden min-h-screen">
-          <PreviewComponent data={data} media={media} />
+          <PreviewComponent data={data} media={media} template_slug={data?.design?.template || invitation.template?.slug || 'royal-ivory'} />
         </div>
       </div>
     </div>

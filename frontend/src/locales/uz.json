@@ -86,7 +86,25 @@
     "details": "Tafsilotlarni ko'rish",
     "free": "Bepul",
     "defaultCategory": "Elegant",
-    "defaultDesc": "Sizning maxsus kuningiz uchun mukammal tanlov."
+    "defaultDesc": "Sizning maxsus kuningiz uchun mukammal tanlov.",
+    "filterAll": "Barcha uslublar",
+    "filterLuxury": "Luxury",
+    "filterRomantic": "Romantic",
+    "filterEditorial": "Editorial",
+    "filterMinimal": "Minimal",
+    "filterModern": "Modern",
+    "filterTraditional": "Traditional",
+    "liveDemo": "Jonli ko'rish",
+    "preview": "Demo",
+    "select": "Tanlash",
+    "useDesign": "Dizaynni tanlash"
+  },
+  "countdown": {
+    "title": "To'ygacha qolgan vaqt",
+    "days": "Kun",
+    "hours": "Soat",
+    "minutes": "Daqiqa",
+    "seconds": "Soniya"
   },
   "auth": {
     "login": {

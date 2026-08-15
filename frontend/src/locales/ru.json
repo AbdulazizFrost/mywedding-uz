@@ -86,7 +86,25 @@
     "details": "Смотреть детали",
     "free": "Бесплатно",
     "defaultCategory": "Элегантный",
-    "defaultDesc": "Идеальный выбор для вашего особенного дня."
+    "defaultDesc": "Идеальный выбор для вашего особенного дня.",
+    "filterAll": "Все стили",
+    "filterLuxury": "Luxury",
+    "filterRomantic": "Romantic",
+    "filterEditorial": "Editorial",
+    "filterMinimal": "Minimal",
+    "filterModern": "Modern",
+    "filterTraditional": "Traditional",
+    "liveDemo": "Живой показ",
+    "preview": "Демо",
+    "select": "Выбрать",
+    "useDesign": "Выбрать дизайн"
+  },
+  "countdown": {
+    "title": "До торжества осталось",
+    "days": "Дней",
+    "hours": "Часов",
+    "minutes": "Минут",
+    "seconds": "Секунд"
   },
   "auth": {
     "login": {

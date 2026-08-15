@@ -99,6 +99,7 @@ export default function PublicInvitation() {
       data={invitation.parsedData} 
       media={media} 
       slug={slug}
+      template_slug={invitation.template?.slug || invitation.parsedData?.design?.template || 'royal-ivory'}
       onSubmitRsvp={handleRsvpSubmit} 
     />
   );
