@@ -7,11 +7,372 @@ import {
   ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, 
   BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, 
   Upload, Trash2, LayoutTemplate, ExternalLink, X, ChevronDown, 
-  Check, Copy, Loader2, RefreshCw, Eye
+  Check, Copy, Loader2, RefreshCw
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
+
+// PREMIUM UI HELPERS DECLARED AT MODULE LEVEL SO REACT NEVER REMOUNTS INPUTS
+const Input = ({ label, type="text", value, onChange, placeholder }) => (
+  <div>
+    <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
+    <input 
+      type={type} 
+      value={value || ''} 
+      onChange={onChange} 
+      placeholder={placeholder}
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm placeholder:text-sand" 
+    />
+  </div>
+);
+
+const TextArea = ({ label, value, onChange, placeholder, rows=3 }) => (
+  <div>
+    <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
+    <textarea 
+      rows={rows} 
+      value={value || ''} 
+      onChange={onChange} 
+      placeholder={placeholder}
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm placeholder:text-sand custom-scrollbar resize-none" 
+    />
+  </div>
+);
+
+const Toggle = ({ label, checked, onChange }) => (
+  <label className="flex items-center justify-between cursor-pointer p-4 border border-sand rounded-xl bg-white shadow-sm hover:border-champagne/30 transition-colors">
+    <div className="text-[16px] font-medium text-charcoal">{label}</div>
+    <div className="relative shrink-0">
+      <input type="checkbox" className="sr-only" checked={Boolean(checked)} onChange={onChange} />
+      <div className={`block w-12 h-7 rounded-full transition-colors ${checked ? 'bg-champagne' : 'bg-sand'}`}></div>
+      <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform shadow-sm ${checked ? 'transform translate-x-5' : ''}`}></div>
+    </div>
+  </label>
+);
+
+const Select = ({ label, value, onChange, options, selectOptionText = "Выберите опцию" }) => (
+  <div>
+    <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
+    <select 
+      value={value || ''} 
+      onChange={onChange} 
+      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
+      style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
+    >
+      <option value="" disabled>{selectOptionText}</option>
+      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+    </select>
+  </div>
+);
+
+// EDITOR FORM DECLARED AT MODULE LEVEL TO PREVENT REMOUNTING ON KEYSTROKES
+function EditorForm({ 
+  activeTab, 
+  data, 
+  handleChange, 
+  media, 
+  handleMediaUpload, 
+  handleMediaDelete, 
+  handleMusicUpload,
+  uploadingMusic,
+  uploadingPhoto,
+  t 
+}) {
+  if (!data) return null;
+
+  return (
+    <div className="space-y-6 pb-28">
+      {/* MAIN - COUPLE */}
+      {activeTab === 'couple' && (
+        <div className="space-y-5">
+          <Input 
+            label={t('editor.groomName')} 
+            placeholder={t('editor.groomPlaceholder')} 
+            value={data.groom_name} 
+            onChange={e => handleChange(null, 'groom_name', e.target.value)} 
+          />
+          <Input 
+            label={t('editor.brideName')} 
+            placeholder={t('editor.bridePlaceholder')} 
+            value={data.bride_name} 
+            onChange={e => handleChange(null, 'bride_name', e.target.value)} 
+          />
+        </div>
+      )}
+
+      {/* MAIN - DATE & TIME */}
+      {activeTab === 'date' && (
+        <div className="space-y-5">
+          <Input 
+            type="date" 
+            label={t('editor.weddingDate')} 
+            value={data.wedding_date} 
+            onChange={e => handleChange(null, 'wedding_date', e.target.value)} 
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <Input 
+              type="time" 
+              label={t('editor.gathering')} 
+              value={data.wedding_time} 
+              onChange={e => handleChange(null, 'wedding_time', e.target.value)} 
+            />
+            <Input 
+              type="time" 
+              label={t('editor.ceremony')} 
+              value={data.ceremony_time} 
+              onChange={e => handleChange(null, 'ceremony_time', e.target.value)} 
+            />
+          </div>
+          <Input 
+            type="time" 
+            label={t('editor.reception')} 
+            value={data.reception_time} 
+            onChange={e => handleChange(null, 'reception_time', e.target.value)} 
+          />
+        </div>
+      )}
+
+      {/* MAIN - LOCATION */}
+      {activeTab === 'location' && (
+        <div className="space-y-5">
+          <Input 
+            label={t('editor.venueName')} 
+            placeholder={t('editor.venuePlaceholder')} 
+            value={data.venue_name} 
+            onChange={e => handleChange(null, 'venue_name', e.target.value)} 
+          />
+          <TextArea 
+            label={t('editor.address')} 
+            placeholder={t('editor.addressPlaceholder')} 
+            value={data.address} 
+            onChange={e => handleChange(null, 'address', e.target.value)} 
+          />
+          <Input 
+            type="url" 
+            label={t('editor.mapUrl')} 
+            placeholder={t('editor.mapUrlPlaceholder')} 
+            value={data.map_url} 
+            onChange={e => handleChange(null, 'map_url', e.target.value)} 
+          />
+        </div>
+      )}
+      
+      {/* MAIN - DESIGN */}
+      {activeTab === 'design' && (
+        <div className="space-y-6">
+          <Select 
+            label={t('editor.theme')} 
+            value={data.design?.theme} 
+            onChange={e => handleChange('design', 'theme', e.target.value)} 
+            selectOptionText={t('editor.selectOption')}
+            options={[
+              {value: 'elegant', label: t('editor.themeElegant')},
+              {value: 'classic', label: t('editor.themeClassic')},
+              {value: 'minimal', label: t('editor.themeMinimal')},
+              {value: 'dark', label: t('editor.themeDark')}
+            ]} 
+          />
+          <Select 
+            label={t('editor.font')} 
+            value={data.design?.font} 
+            onChange={e => handleChange('design', 'font', e.target.value)} 
+            selectOptionText={t('editor.selectOption')}
+            options={[
+              {value: 'serif', label: t('editor.fontSerif')},
+              {value: 'sans', label: t('editor.fontSans')},
+              {value: 'script', label: t('editor.fontScript')}
+            ]} 
+          />
+          <div className="p-4 bg-sand/30 rounded-xl space-y-4 border border-sand">
+            <p className="text-sm font-medium text-charcoal">{t('editor.customColors')}</p>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorBgText')}</label>
+                <input 
+                  type="color" 
+                  className="w-full h-10 rounded cursor-pointer border border-sand" 
+                  value={data.design?.primary_color || '#000000'} 
+                  onChange={e => handleChange('design', 'primary_color', e.target.value)} 
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorAccent')}</label>
+                <input 
+                  type="color" 
+                  className="w-full h-10 rounded cursor-pointer border border-sand" 
+                  value={data.design?.secondary_color || '#d4af37'} 
+                  onChange={e => handleChange('design', 'secondary_color', e.target.value)} 
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MEDIA - GALLERY */}
+      {activeTab === 'gallery' && (
+        <div className="space-y-6">
+          <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-6 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
+            {uploadingPhoto ? (
+              <Loader2 className="w-8 h-8 text-champagne mx-auto mb-2 animate-spin" />
+            ) : (
+              <Upload className="w-8 h-8 text-charcoal mx-auto mb-2 opacity-50" />
+            )}
+            <p className="text-sm font-medium text-charcoal">
+              {uploadingPhoto ? (t('editor.uploading') || 'Загрузка...') : t('editor.uploadPhoto')}
+            </p>
+            <input 
+              type="file" 
+              accept="image/jpeg, image/png, image/webp" 
+              disabled={uploadingPhoto}
+              onChange={handleMediaUpload} 
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+              title="" 
+            />
+          </div>
+          
+          {media.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              {media.map((img) => (
+                <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-square border border-sand shadow-sm">
+                  <img src={img.url} className="w-full h-full object-cover" alt="gallery" />
+                  <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button onClick={() => handleMediaDelete(img.id)} className="bg-white text-red-500 rounded-full p-2 shadow-lg hover:scale-110 transition-transform">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* MEDIA - MUSIC */}
+      {activeTab === 'music' && (
+        <div className="space-y-5">
+          <Toggle 
+            label={t('editor.enableMusic')} 
+            checked={data.music?.enabled} 
+            onChange={e => handleChange('music', 'enabled', e.target.checked)} 
+          />
+          {data.music?.enabled && (
+            <div className="space-y-5 pt-2">
+              
+              {/* Upload MP3 File */}
+              <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-5 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
+                {uploadingMusic ? (
+                  <Loader2 className="w-7 h-7 text-champagne mx-auto mb-2 animate-spin" />
+                ) : (
+                  <Music className="w-7 h-7 text-charcoal mx-auto mb-2 opacity-60" />
+                )}
+                <p className="text-sm font-medium text-charcoal">
+                  {uploadingMusic ? (t('editor.uploading') || 'Загрузка музыки...') : (t('editor.uploadAudioBtn') || 'Загрузить MP3 с устройства')}
+                </p>
+                <p className="text-xs text-charcoal-light/70 mt-1">MP3, WAV, M4A, OGG (до 25 MB)</p>
+                <input 
+                  type="file" 
+                  accept="audio/*,.mp3,.wav,.ogg,.m4a" 
+                  disabled={uploadingMusic}
+                  onChange={handleMusicUpload} 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+                />
+              </div>
+
+              <Input 
+                label={t('editor.trackName')} 
+                placeholder={t('editor.trackPlaceholder')} 
+                value={data.music?.title} 
+                onChange={e => handleChange('music', 'title', e.target.value)} 
+              />
+              <Input 
+                type="url" 
+                label={t('editor.trackUrl')} 
+                placeholder={t('editor.trackUrlPlaceholder')} 
+                value={data.music?.url} 
+                onChange={e => handleChange('music', 'url', e.target.value)} 
+              />
+              
+              {data.music?.url && (
+                <div className="p-3 bg-sand/30 rounded-xl border border-sand flex items-center justify-between text-xs text-charcoal">
+                  <div className="flex items-center gap-2 truncate">
+                    <Music size={14} className="text-champagne shrink-0" />
+                    <span className="truncate">{data.music.title || 'Трек выбран'}</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      handleChange('music', 'url', '');
+                      handleChange('music', 'title', '');
+                    }}
+                    className="text-red-500 hover:text-red-700 ml-2 font-medium shrink-0"
+                  >
+                    {t('editor.remove') || 'Удалить'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* EXTRA - STORY */}
+      {activeTab === 'story' && (
+        <div className="space-y-5">
+          <Toggle 
+            label={t('editor.showLoveStory')} 
+            checked={data.story?.enabled} 
+            onChange={e => handleChange('story', 'enabled', e.target.checked)} 
+          />
+          {data.story?.enabled && (
+            <div className="space-y-5 pt-2">
+              <Input 
+                label={t('editor.title')} 
+                placeholder={t('editor.storyPlaceholder')} 
+                value={data.story?.story_title} 
+                onChange={e => handleChange('story', 'story_title', e.target.value)} 
+              />
+              <TextArea 
+                label={t('editor.text')} 
+                rows={6} 
+                placeholder={t('editor.textPlaceholder')} 
+                value={data.story?.story} 
+                onChange={e => handleChange('story', 'story', e.target.value)} 
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* EXTRA - RSVP */}
+      {activeTab === 'rsvp' && (
+        <div className="space-y-5">
+          <Toggle 
+            label={t('editor.enableRsvp')} 
+            checked={data.rsvp?.enabled} 
+            onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} 
+          />
+          {data.rsvp?.enabled && (
+            <div className="space-y-5 pt-2">
+              <Input 
+                label={t('editor.title')} 
+                placeholder={t('editor.rsvpPlaceholder')} 
+                value={data.rsvp?.title} 
+                onChange={e => handleChange('rsvp', 'title', e.target.value)} 
+              />
+              <TextArea 
+                label={t('editor.description')} 
+                placeholder={t('editor.descPlaceholder')} 
+                value={data.rsvp?.description} 
+                onChange={e => handleChange('rsvp', 'description', e.target.value)} 
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function EditorPage() {
   const { id } = useParams();
@@ -123,7 +484,7 @@ export default function EditorPage() {
     }, 1500);
   }, [lastUpdated]);
 
-  const handleChange = (section, field, value) => {
+  const handleChange = useCallback((section, field, value) => {
     setData(prev => {
       if (!prev) return prev;
       let nextData = { ...prev };
@@ -135,7 +496,7 @@ export default function EditorPage() {
       return nextData;
     });
     triggerAutosave();
-  };
+  }, [triggerAutosave]);
 
   const handleMediaUpload = async (e) => {
     const file = e.target.files[0];
@@ -309,214 +670,11 @@ export default function EditorPage() {
     setMobileSheetOpen(true);
   };
 
-  // Extracted Editor Form
-  const EditorForm = ({ 
-    activeTab, 
-    data, 
-    handleChange, 
-    media, 
-    handleMediaUpload, 
-    handleMediaDelete, 
-    handleMusicUpload,
-    uploadingMusic,
-    uploadingPhoto,
-    t 
-  }) => (
-    <div className="space-y-6 pb-32">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 10 }}
-          transition={{ duration: 0.2 }}
-          className="w-full"
-        >
-          {/* MAIN - COUPLE */}
-          {activeTab === 'couple' && (
-            <div className="space-y-5">
-              <Input label={t('editor.groomName')} placeholder={t('editor.groomPlaceholder')} value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
-              <Input label={t('editor.brideName')} placeholder={t('editor.bridePlaceholder')} value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
-            </div>
-          )}
-
-          {/* MAIN - DATE & TIME */}
-          {activeTab === 'date' && (
-            <div className="space-y-5">
-              <Input type="date" label={t('editor.weddingDate')} value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
-              <div className="grid grid-cols-2 gap-4">
-                <Input type="time" label={t('editor.gathering')} value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
-                <Input type="time" label={t('editor.ceremony')} value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
-              </div>
-              <Input type="time" label={t('editor.reception')} value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
-            </div>
-          )}
-
-          {/* MAIN - LOCATION */}
-          {activeTab === 'location' && (
-            <div className="space-y-5">
-              <Input label={t('editor.venueName')} placeholder={t('editor.venuePlaceholder')} value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
-              <TextArea label={t('editor.address')} placeholder={t('editor.addressPlaceholder')} value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
-              <Input type="url" label={t('editor.mapUrl')} placeholder={t('editor.mapUrlPlaceholder')} value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
-            </div>
-          )}
-          
-          {/* MAIN - DESIGN */}
-          {activeTab === 'design' && (
-            <div className="space-y-6">
-              <Select label={t('editor.theme')} value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
-                {value: 'elegant', label: t('editor.themeElegant')},
-                {value: 'classic', label: t('editor.themeClassic')},
-                {value: 'minimal', label: t('editor.themeMinimal')},
-                {value: 'dark', label: t('editor.themeDark')}
-              ]} />
-              <Select label={t('editor.font')} value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
-                {value: 'serif', label: t('editor.fontSerif')},
-                {value: 'sans', label: t('editor.fontSans')},
-                {value: 'script', label: t('editor.fontScript')}
-              ]} />
-              <div className="p-4 bg-sand/30 rounded-xl space-y-4">
-                <p className="text-sm font-medium text-charcoal">{t('editor.customColors')}</p>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorBgText')}</label>
-                    <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.primary_color || '#000000'} onChange={e => handleChange('design', 'primary_color', e.target.value)} />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorAccent')}</label>
-                    <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.secondary_color || '#d4af37'} onChange={e => handleChange('design', 'secondary_color', e.target.value)} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* MEDIA - GALLERY */}
-          {activeTab === 'gallery' && (
-            <div className="space-y-6">
-              <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-6 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
-                {uploadingPhoto ? (
-                  <Loader2 className="w-8 h-8 text-champagne mx-auto mb-2 animate-spin" />
-                ) : (
-                  <Upload className="w-8 h-8 text-charcoal mx-auto mb-2 opacity-50" />
-                )}
-                <p className="text-sm font-medium text-charcoal">
-                  {uploadingPhoto ? (t('editor.uploading') || 'Загрузка...') : t('editor.uploadPhoto')}
-                </p>
-                <input 
-                  type="file" 
-                  accept="image/jpeg, image/png, image/webp" 
-                  disabled={uploadingPhoto}
-                  onChange={handleMediaUpload} 
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
-                  title="" 
-                />
-              </div>
-              
-              {media.length > 0 && (
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  {media.map((img) => (
-                    <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-square border border-sand shadow-sm">
-                      <img src={img.url} className="w-full h-full object-cover" alt="gallery" />
-                      <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button onClick={() => handleMediaDelete(img.id)} className="bg-white text-red-500 rounded-full p-2 shadow-lg hover:scale-110 transition-transform">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* MEDIA - MUSIC */}
-          {activeTab === 'music' && (
-            <div className="space-y-5">
-              <Toggle label={t('editor.enableMusic')} checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
-              {data.music?.enabled && (
-                <div className="space-y-5 pt-2">
-                  
-                  {/* Upload MP3 File */}
-                  <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-5 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
-                    {uploadingMusic ? (
-                      <Loader2 className="w-7 h-7 text-champagne mx-auto mb-2 animate-spin" />
-                    ) : (
-                      <Music className="w-7 h-7 text-charcoal mx-auto mb-2 opacity-60" />
-                    )}
-                    <p className="text-sm font-medium text-charcoal">
-                      {uploadingMusic ? (t('editor.uploading') || 'Загрузка музыки...') : (t('editor.uploadAudioBtn') || 'Загрузить MP3 с устройства')}
-                    </p>
-                    <p className="text-xs text-charcoal-light/70 mt-1">MP3, WAV, M4A, OGG (до 25 MB)</p>
-                    <input 
-                      type="file" 
-                      accept="audio/*,.mp3,.wav,.ogg,.m4a" 
-                      disabled={uploadingMusic}
-                      onChange={handleMusicUpload} 
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
-                    />
-                  </div>
-
-                  <Input label={t('editor.trackName')} placeholder={t('editor.trackPlaceholder')} value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
-                  <Input type="url" label={t('editor.trackUrl')} placeholder={t('editor.trackUrlPlaceholder')} value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
-                  
-                  {data.music?.url && (
-                    <div className="p-3 bg-sand/30 rounded-xl border border-sand flex items-center justify-between text-xs text-charcoal">
-                      <div className="flex items-center gap-2 truncate">
-                        <Music size={14} className="text-champagne shrink-0" />
-                        <span className="truncate">{data.music.title || 'Трек выбран'}</span>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          handleChange('music', 'url', '');
-                          handleChange('music', 'title', '');
-                        }}
-                        className="text-red-500 hover:text-red-700 ml-2 font-medium shrink-0"
-                      >
-                        {t('editor.remove') || 'Удалить'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* EXTRA - STORY */}
-          {activeTab === 'story' && (
-            <div className="space-y-5">
-              <Toggle label={t('editor.showLoveStory')} checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
-              {data.story?.enabled && (
-                <div className="space-y-5 pt-2">
-                  <Input label={t('editor.title')} placeholder={t('editor.storyPlaceholder')} value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
-                  <TextArea label={t('editor.text')} rows={6} placeholder={t('editor.textPlaceholder')} value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* EXTRA - RSVP */}
-          {activeTab === 'rsvp' && (
-            <div className="space-y-5">
-              <Toggle label={t('editor.enableRsvp')} checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
-              {data.rsvp?.enabled && (
-                <div className="space-y-5 pt-2">
-                  <Input label={t('editor.title')} placeholder={t('editor.rsvpPlaceholder')} value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
-                  <TextArea label={t('editor.description')} placeholder={t('editor.descPlaceholder')} value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
-                </div>
-              )}
-            </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-
   return (
     <div className="flex flex-col h-[100dvh] bg-ivory font-sans overflow-hidden w-full relative">
       
       {/* GLOBAL HEADER */}
-      <header className="flex-shrink-0 h-[60px] bg-white border-b border-sand px-3 sm:px-6 flex items-center justify-between z-40 relative">
+      <header className="flex-shrink-0 h-[60px] bg-white border-b border-sand px-3 sm:px-6 flex items-center justify-between z-40 relative shadow-sm">
         <div className="flex items-center gap-2 sm:gap-4">
           <button onClick={() => navigate('/dashboard')} className="p-2 text-charcoal-light hover:text-charcoal rounded-full hover:bg-sand transition-colors">
             <ArrowLeft size={20} />
@@ -645,8 +803,8 @@ export default function EditorPage() {
           </div>
         </div>
 
-        {/* PREVIEW AREA (Full screen on mobile, right panel on desktop) */}
-        <div className="flex-1 bg-sand/30 relative h-full flex flex-col items-center justify-center lg:p-8 overflow-hidden">
+        {/* PREVIEW AREA (Full screen on mobile, cleanly scaled inside mockup on desktop) */}
+        <div className="flex-1 bg-sand/30 relative h-full flex flex-col items-center justify-center p-4 lg:p-6 overflow-hidden">
           
           {/* Mobile Full Screen Preview Wrapper */}
           <div className="w-full h-full lg:hidden relative bg-white overflow-y-auto overflow-x-hidden no-scrollbar">
@@ -655,9 +813,8 @@ export default function EditorPage() {
             <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/90 to-transparent pointer-events-none z-10" />
           </div>
 
-          {/* Desktop Mockup Preview Wrapper */}
-          <div className="hidden lg:flex h-full max-h-[800px] aspect-[9/19.5] bg-white shadow-2xl rounded-[3rem] overflow-hidden border-[12px] border-charcoal shrink-0 relative flex-col">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-charcoal rounded-b-3xl z-30 pointer-events-none" />
+          {/* Desktop Elegant Mockup Preview Wrapper (Clean, no huge black notch protruding, perfectly fits height) */}
+          <div className="hidden lg:flex w-[380px] h-[calc(100%-1.5rem)] max-h-[720px] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)] rounded-[2.5rem] overflow-hidden border-[6px] border-charcoal/80 shrink-0 relative flex-col">
             <div className="flex-1 overflow-y-auto no-scrollbar bg-white">
                <PreviewComponent data={data} media={media} />
             </div>
@@ -757,59 +914,3 @@ export default function EditorPage() {
     </div>
   );
 }
-
-// PREMIUM UI HELPERS
-const Input = ({ label, type="text", value, onChange, placeholder }) => (
-  <div>
-    <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
-    <input 
-      type={type} 
-      value={value || ''} 
-      onChange={onChange} 
-      placeholder={placeholder}
-      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm placeholder:text-sand" 
-    />
-  </div>
-);
-
-const TextArea = ({ label, value, onChange, placeholder, rows=3 }) => (
-  <div>
-    <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
-    <textarea 
-      rows={rows} 
-      value={value || ''} 
-      onChange={onChange} 
-      placeholder={placeholder}
-      className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm placeholder:text-sand custom-scrollbar resize-none" 
-    />
-  </div>
-);
-
-const Toggle = ({ label, checked, onChange }) => (
-  <label className="flex items-center justify-between cursor-pointer p-4 border border-sand rounded-xl bg-white shadow-sm hover:border-champagne/30 transition-colors">
-    <div className="text-[16px] font-medium text-charcoal">{label}</div>
-    <div className="relative shrink-0">
-      <input type="checkbox" className="sr-only" checked={Boolean(checked)} onChange={onChange} />
-      <div className={`block w-12 h-7 rounded-full transition-colors ${checked ? 'bg-champagne' : 'bg-sand'}`}></div>
-      <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform shadow-sm ${checked ? 'transform translate-x-5' : ''}`}></div>
-    </div>
-  </label>
-);
-
-const Select = ({ label, value, onChange, options }) => {
-  const { t } = useTranslation();
-  return (
-    <div>
-      <label className="block text-sm font-medium text-charcoal mb-1.5">{label}</label>
-      <select 
-        value={value || ''} 
-        onChange={onChange} 
-        className="w-full bg-white border border-sand focus:border-champagne rounded-xl px-4 py-3 text-charcoal text-[16px] outline-none transition-all shadow-sm appearance-none cursor-pointer"
-        style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
-      >
-        <option value="" disabled>{t('editor.selectOption')}</option>
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-    </div>
-  );
-};
