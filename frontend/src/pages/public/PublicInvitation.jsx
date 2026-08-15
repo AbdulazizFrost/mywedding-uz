@@ -41,6 +41,15 @@ export default function PublicInvitation() {
         
         setMedia(data.invitation.media || []);
         setInvitation(prev => ({ ...prev, parsedData }));
+
+        // Dynamic Document Title
+        const groom = parsedData.groom_name;
+        const bride = parsedData.bride_name;
+        if (groom && bride) {
+          document.title = `${groom} & ${bride} — BizningToy.uz`;
+        } else {
+          document.title = 'BizningToy.uz — Свадебное приглашение';
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -65,8 +74,24 @@ export default function PublicInvitation() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-serif text-charcoal-light">{t('publicInvitation.loading')}</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500 text-xl font-medium">{error}</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ivory flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="font-serif text-charcoal-light italic text-xl">{t('publicInvitation.loading')}</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ivory flex flex-col items-center justify-center px-4 text-center">
+        <h2 className="text-3xl font-serif text-charcoal mb-2">404</h2>
+        <p className="text-charcoal-light font-serif text-lg">{error === 'Invitation not found or draft' ? t('publicInvitation.notFound') || 'Приглашение не найдено или снято с публикации.' : error}</p>
+      </div>
+    );
+  }
+
   if (!invitation) return null;
 
   return (

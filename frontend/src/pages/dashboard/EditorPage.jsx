@@ -3,7 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, Upload, Trash2, LayoutTemplate, ExternalLink, X, ChevronDown, Check } from 'lucide-react';
+import { 
+  ArrowLeft, Save, Globe, Smartphone, User, Calendar, MapPin, 
+  BookOpen, Image as ImageIcon, Music, CheckSquare, Palette, 
+  Upload, Trash2, LayoutTemplate, ExternalLink, X, ChevronDown, 
+  Check, Copy, Loader2, RefreshCw, Eye
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
@@ -20,6 +25,8 @@ export default function EditorPage() {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingMusic, setUploadingMusic] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   
@@ -29,7 +36,6 @@ export default function EditorPage() {
   
   // Mobile specific state
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
-  const [showDesktopPreview, setShowDesktopPreview] = useState(true); // Toggle for desktop small screens
 
   const dataRef = useRef(data);
   useEffect(() => { dataRef.current = data; }, [data]);
@@ -135,6 +141,7 @@ export default function EditorPage() {
     const file = e.target.files[0];
     if (!file) return;
     
+    setUploadingPhoto(true);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', 'gallery_item');
@@ -148,8 +155,51 @@ export default function EditorPage() {
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.error || 'Upload failed');
       setMedia(prev => [...prev, resData.media]);
+      setMessage(t('editor.photoUploaded') || 'Фото добавлено');
+      setTimeout(() => setMessage(null), 2000);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleMusicUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setUploadingMusic(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'music');
+
+    try {
+      const res = await fetch(`${API_URL}/invitations/${id}/media`, {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || 'Audio upload failed');
+      
+      const trackTitle = file.name.replace(/\.[^/.]+$/, "");
+      setData(prev => {
+        const next = { ...prev };
+        next.music = {
+          ...(next.music || {}),
+          enabled: true,
+          title: next.music?.title || trackTitle,
+          url: resData.media.url
+        };
+        return next;
+      });
+      triggerAutosave();
+      setMessage(t('editor.musicUploaded') || 'Аудиофайл успешно загружен');
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploadingMusic(false);
     }
   };
 
@@ -179,6 +229,32 @@ export default function EditorPage() {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleUnpublish = async () => {
+    try {
+      const res = await fetch(`${API_URL}/invitations/${id}/unpublish`, {
+        method: 'POST', credentials: 'include'
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || 'Failed to unpublish');
+      setInvitation(resData.invitation);
+      setMessage(t('editor.unpublished') || 'Снято с публикации');
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCopyLink = () => {
+    if (!invitation?.slug) return;
+    const url = `${window.location.origin}/w/${invitation.slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setMessage(t('editor.linkCopied') || 'Ссылка скопирована');
+      setTimeout(() => setMessage(null), 2500);
+    }).catch(() => {
+      prompt('Ссылка на приглашение:', url);
+    });
   };
 
   if (loading || authLoading) {
@@ -233,140 +309,208 @@ export default function EditorPage() {
     setMobileSheetOpen(true);
   };
 
-// --- Extracted Editor Form ---
-const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, handleMediaDelete, t }) => (
-  <div className="space-y-6 pb-32">
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={activeTab}
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: 10 }}
-        transition={{ duration: 0.2 }}
-        className="w-full"
-      >
-        {/* MAIN */}
-        {activeTab === 'couple' && (
-          <div className="space-y-5">
-            <Input label={t('editor.groomName')} placeholder={t('editor.groomPlaceholder')} value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
-            <Input label={t('editor.brideName')} placeholder={t('editor.bridePlaceholder')} value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
-          </div>
-        )}
-
-        {activeTab === 'date' && (
-          <div className="space-y-5">
-            <Input type="date" label={t('editor.weddingDate')} value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
-            <div className="grid grid-cols-2 gap-4">
-              <Input type="time" label={t('editor.gathering')} value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
-              <Input type="time" label={t('editor.ceremony')} value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
+  // Extracted Editor Form
+  const EditorForm = ({ 
+    activeTab, 
+    data, 
+    handleChange, 
+    media, 
+    handleMediaUpload, 
+    handleMediaDelete, 
+    handleMusicUpload,
+    uploadingMusic,
+    uploadingPhoto,
+    t 
+  }) => (
+    <div className="space-y-6 pb-32">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 10 }}
+          transition={{ duration: 0.2 }}
+          className="w-full"
+        >
+          {/* MAIN - COUPLE */}
+          {activeTab === 'couple' && (
+            <div className="space-y-5">
+              <Input label={t('editor.groomName')} placeholder={t('editor.groomPlaceholder')} value={data.groom_name} onChange={e => handleChange(null, 'groom_name', e.target.value)} />
+              <Input label={t('editor.brideName')} placeholder={t('editor.bridePlaceholder')} value={data.bride_name} onChange={e => handleChange(null, 'bride_name', e.target.value)} />
             </div>
-            <Input type="time" label={t('editor.reception')} value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
-          </div>
-        )}
+          )}
 
-        {activeTab === 'location' && (
-          <div className="space-y-5">
-            <Input label={t('editor.venueName')} placeholder={t('editor.venuePlaceholder')} value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
-            <TextArea label={t('editor.address')} placeholder={t('editor.addressPlaceholder')} value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
-            <Input type="url" label={t('editor.mapUrl')} placeholder={t('editor.mapUrlPlaceholder')} value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
-          </div>
-        )}
-        
-        {activeTab === 'design' && (
-          <div className="space-y-6">
-            <Select label={t('editor.theme')} value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
-              {value: 'elegant', label: t('editor.themeElegant')},
-              {value: 'classic', label: t('editor.themeClassic')},
-              {value: 'minimal', label: t('editor.themeMinimal')},
-              {value: 'dark', label: t('editor.themeDark')}
-            ]} />
-            <Select label={t('editor.font')} value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
-              {value: 'serif', label: t('editor.fontSerif')},
-              {value: 'sans', label: t('editor.fontSans')},
-              {value: 'script', label: t('editor.fontScript')}
-            ]} />
-            <div className="p-4 bg-sand/30 rounded-xl space-y-4">
-              <p className="text-sm font-medium text-charcoal">{t('editor.customColors')}</p>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorBgText')}</label>
-                  <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.primary_color || '#000000'} onChange={e => handleChange('design', 'primary_color', e.target.value)} />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorAccent')}</label>
-                  <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.secondary_color || '#d4af37'} onChange={e => handleChange('design', 'secondary_color', e.target.value)} />
+          {/* MAIN - DATE & TIME */}
+          {activeTab === 'date' && (
+            <div className="space-y-5">
+              <Input type="date" label={t('editor.weddingDate')} value={data.wedding_date} onChange={e => handleChange(null, 'wedding_date', e.target.value)} />
+              <div className="grid grid-cols-2 gap-4">
+                <Input type="time" label={t('editor.gathering')} value={data.wedding_time} onChange={e => handleChange(null, 'wedding_time', e.target.value)} />
+                <Input type="time" label={t('editor.ceremony')} value={data.ceremony_time} onChange={e => handleChange(null, 'ceremony_time', e.target.value)} />
+              </div>
+              <Input type="time" label={t('editor.reception')} value={data.reception_time} onChange={e => handleChange(null, 'reception_time', e.target.value)} />
+            </div>
+          )}
+
+          {/* MAIN - LOCATION */}
+          {activeTab === 'location' && (
+            <div className="space-y-5">
+              <Input label={t('editor.venueName')} placeholder={t('editor.venuePlaceholder')} value={data.venue_name} onChange={e => handleChange(null, 'venue_name', e.target.value)} />
+              <TextArea label={t('editor.address')} placeholder={t('editor.addressPlaceholder')} value={data.address} onChange={e => handleChange(null, 'address', e.target.value)} />
+              <Input type="url" label={t('editor.mapUrl')} placeholder={t('editor.mapUrlPlaceholder')} value={data.map_url} onChange={e => handleChange(null, 'map_url', e.target.value)} />
+            </div>
+          )}
+          
+          {/* MAIN - DESIGN */}
+          {activeTab === 'design' && (
+            <div className="space-y-6">
+              <Select label={t('editor.theme')} value={data.design?.theme} onChange={e => handleChange('design', 'theme', e.target.value)} options={[
+                {value: 'elegant', label: t('editor.themeElegant')},
+                {value: 'classic', label: t('editor.themeClassic')},
+                {value: 'minimal', label: t('editor.themeMinimal')},
+                {value: 'dark', label: t('editor.themeDark')}
+              ]} />
+              <Select label={t('editor.font')} value={data.design?.font} onChange={e => handleChange('design', 'font', e.target.value)} options={[
+                {value: 'serif', label: t('editor.fontSerif')},
+                {value: 'sans', label: t('editor.fontSans')},
+                {value: 'script', label: t('editor.fontScript')}
+              ]} />
+              <div className="p-4 bg-sand/30 rounded-xl space-y-4">
+                <p className="text-sm font-medium text-charcoal">{t('editor.customColors')}</p>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorBgText')}</label>
+                    <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.primary_color || '#000000'} onChange={e => handleChange('design', 'primary_color', e.target.value)} />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorAccent')}</label>
+                    <input type="color" className="w-full h-10 rounded cursor-pointer border border-sand" value={data.design?.secondary_color || '#d4af37'} onChange={e => handleChange('design', 'secondary_color', e.target.value)} />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* MEDIA */}
-        {activeTab === 'gallery' && (
-          <div className="space-y-6">
-            <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-6 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
-              <Upload className="w-8 h-8 text-charcoal mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-medium text-charcoal">{t('editor.uploadPhoto')}</p>
-              <input type="file" accept="image/jpeg, image/png, image/webp" onChange={handleMediaUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="" />
+          {/* MEDIA - GALLERY */}
+          {activeTab === 'gallery' && (
+            <div className="space-y-6">
+              <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-6 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
+                {uploadingPhoto ? (
+                  <Loader2 className="w-8 h-8 text-champagne mx-auto mb-2 animate-spin" />
+                ) : (
+                  <Upload className="w-8 h-8 text-charcoal mx-auto mb-2 opacity-50" />
+                )}
+                <p className="text-sm font-medium text-charcoal">
+                  {uploadingPhoto ? (t('editor.uploading') || 'Загрузка...') : t('editor.uploadPhoto')}
+                </p>
+                <input 
+                  type="file" 
+                  accept="image/jpeg, image/png, image/webp" 
+                  disabled={uploadingPhoto}
+                  onChange={handleMediaUpload} 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+                  title="" 
+                />
+              </div>
+              
+              {media.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {media.map((img) => (
+                    <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-square border border-sand shadow-sm">
+                      <img src={img.url} className="w-full h-full object-cover" alt="gallery" />
+                      <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button onClick={() => handleMediaDelete(img.id)} className="bg-white text-red-500 rounded-full p-2 shadow-lg hover:scale-110 transition-transform">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            
-            {media.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                {media.map((img) => (
-                  <div key={img.id} className="relative group rounded-xl overflow-hidden aspect-square border border-sand">
-                    <img src={img.url} className="w-full h-full object-cover" alt="gallery" />
-                    <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button onClick={() => handleMediaDelete(img.id)} className="bg-white text-red-500 rounded-full p-2 shadow-lg">
-                        <Trash2 size={16} />
+          )}
+
+          {/* MEDIA - MUSIC */}
+          {activeTab === 'music' && (
+            <div className="space-y-5">
+              <Toggle label={t('editor.enableMusic')} checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
+              {data.music?.enabled && (
+                <div className="space-y-5 pt-2">
+                  
+                  {/* Upload MP3 File */}
+                  <div className="border-2 border-dashed border-charcoal/20 bg-ivory/50 rounded-2xl p-5 text-center hover:bg-sand/30 transition-colors relative cursor-pointer group">
+                    {uploadingMusic ? (
+                      <Loader2 className="w-7 h-7 text-champagne mx-auto mb-2 animate-spin" />
+                    ) : (
+                      <Music className="w-7 h-7 text-charcoal mx-auto mb-2 opacity-60" />
+                    )}
+                    <p className="text-sm font-medium text-charcoal">
+                      {uploadingMusic ? (t('editor.uploading') || 'Загрузка музыки...') : (t('editor.uploadAudioBtn') || 'Загрузить MP3 с устройства')}
+                    </p>
+                    <p className="text-xs text-charcoal-light/70 mt-1">MP3, WAV, M4A, OGG (до 25 MB)</p>
+                    <input 
+                      type="file" 
+                      accept="audio/*,.mp3,.wav,.ogg,.m4a" 
+                      disabled={uploadingMusic}
+                      onChange={handleMusicUpload} 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed" 
+                    />
+                  </div>
+
+                  <Input label={t('editor.trackName')} placeholder={t('editor.trackPlaceholder')} value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
+                  <Input type="url" label={t('editor.trackUrl')} placeholder={t('editor.trackUrlPlaceholder')} value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
+                  
+                  {data.music?.url && (
+                    <div className="p-3 bg-sand/30 rounded-xl border border-sand flex items-center justify-between text-xs text-charcoal">
+                      <div className="flex items-center gap-2 truncate">
+                        <Music size={14} className="text-champagne shrink-0" />
+                        <span className="truncate">{data.music.title || 'Трек выбран'}</span>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          handleChange('music', 'url', '');
+                          handleChange('music', 'title', '');
+                        }}
+                        className="text-red-500 hover:text-red-700 ml-2 font-medium shrink-0"
+                      >
+                        {t('editor.remove') || 'Удалить'}
                       </button>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
-        {activeTab === 'music' && (
-          <div className="space-y-5">
-            <Toggle label={t('editor.enableMusic')} checked={data.music?.enabled} onChange={e => handleChange('music', 'enabled', e.target.checked)} />
-            {data.music?.enabled && (
-              <div className="space-y-5 pt-2">
-                <Input label={t('editor.trackName')} placeholder={t('editor.trackPlaceholder')} value={data.music?.title} onChange={e => handleChange('music', 'title', e.target.value)} />
-                <Input type="url" label={t('editor.trackUrl')} placeholder={t('editor.trackUrlPlaceholder')} value={data.music?.url} onChange={e => handleChange('music', 'url', e.target.value)} />
-              </div>
-            )}
-          </div>
-        )}
+          {/* EXTRA - STORY */}
+          {activeTab === 'story' && (
+            <div className="space-y-5">
+              <Toggle label={t('editor.showLoveStory')} checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
+              {data.story?.enabled && (
+                <div className="space-y-5 pt-2">
+                  <Input label={t('editor.title')} placeholder={t('editor.storyPlaceholder')} value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
+                  <TextArea label={t('editor.text')} rows={6} placeholder={t('editor.textPlaceholder')} value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* EXTRA */}
-        {activeTab === 'story' && (
-          <div className="space-y-5">
-            <Toggle label={t('editor.showLoveStory')} checked={data.story?.enabled} onChange={e => handleChange('story', 'enabled', e.target.checked)} />
-            {data.story?.enabled && (
-              <div className="space-y-5 pt-2">
-                <Input label={t('editor.title')} placeholder={t('editor.storyPlaceholder')} value={data.story?.story_title} onChange={e => handleChange('story', 'story_title', e.target.value)} />
-                <TextArea label={t('editor.text')} rows={6} placeholder={t('editor.textPlaceholder')} value={data.story?.story} onChange={e => handleChange('story', 'story', e.target.value)} />
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'rsvp' && (
-          <div className="space-y-5">
-            <Toggle label={t('editor.enableRsvp')} checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
-            {data.rsvp?.enabled && (
-              <div className="space-y-5 pt-2">
-                <Input label={t('editor.title')} placeholder={t('editor.rsvpPlaceholder')} value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
-                <TextArea label={t('editor.description')} placeholder={t('editor.descPlaceholder')} value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
-              </div>
-            )}
-          </div>
-        )}
-      </motion.div>
-    </AnimatePresence>
-  </div>
-);
+          {/* EXTRA - RSVP */}
+          {activeTab === 'rsvp' && (
+            <div className="space-y-5">
+              <Toggle label={t('editor.enableRsvp')} checked={data.rsvp?.enabled} onChange={e => handleChange('rsvp', 'enabled', e.target.checked)} />
+              {data.rsvp?.enabled && (
+                <div className="space-y-5 pt-2">
+                  <Input label={t('editor.title')} placeholder={t('editor.rsvpPlaceholder')} value={data.rsvp?.title} onChange={e => handleChange('rsvp', 'title', e.target.value)} />
+                  <TextArea label={t('editor.description')} placeholder={t('editor.descPlaceholder')} value={data.rsvp?.description} onChange={e => handleChange('rsvp', 'description', e.target.value)} />
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
 
   return (
     <div className="flex flex-col h-[100dvh] bg-ivory font-sans overflow-hidden w-full relative">
@@ -402,30 +546,48 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
           <button 
             onClick={() => saveToServer(data, true)} 
             disabled={saving} 
-            className="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full sm:rounded-full bg-sand text-charcoal hover:bg-champagne hover:text-white transition-colors"
+            className="flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-sand text-charcoal hover:bg-champagne hover:text-white transition-colors text-xs sm:text-sm font-medium"
           >
-            <Save size={16} />
-            <span className="hidden sm:inline ml-2 text-sm font-medium">{saving ? t('editor.saving') : t('editor.save')}</span>
+            {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+            <span className="hidden sm:inline ml-1.5">{saving ? t('editor.saving') : t('editor.save')}</span>
           </button>
           
           {invitation.status !== 'published' ? (
             <button 
               onClick={handlePublish} 
-              className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-charcoal text-ivory rounded-full text-xs sm:text-sm font-medium hover:bg-charcoal-light shadow-md"
+              className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-charcoal text-ivory rounded-full text-xs sm:text-sm font-medium hover:bg-charcoal-light shadow-md transition-colors"
             >
-              <Globe size={14} className="sm:mr-2" />
+              <Globe size={14} className="sm:mr-1.5" />
               <span className="hidden sm:inline">{t('editor.publish')}</span>
             </button>
           ) : (
-             <a 
-               href={`/w/${invitation.slug}`} 
-               target="_blank" 
-               rel="noreferrer" 
-               className="flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2 bg-green-700 text-white rounded-full text-xs sm:text-sm font-medium shadow-md"
-             >
-               <ExternalLink size={14} className="sm:mr-2" />
-               <span className="hidden sm:inline">{t('editor.siteReady')}</span>
-             </a>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button
+                onClick={handleCopyLink}
+                title={t('editor.copyLink') || 'Скопировать ссылку'}
+                className="p-2 bg-sand text-charcoal hover:bg-champagne hover:text-white rounded-full transition-colors"
+              >
+                <Copy size={15} />
+              </button>
+              
+              <a 
+                href={`/w/${invitation.slug}`} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 bg-green-700 text-white rounded-full text-xs sm:text-sm font-medium shadow-md hover:bg-green-800 transition-colors"
+              >
+                <ExternalLink size={14} className="sm:mr-1.5" />
+                <span className="hidden sm:inline">{t('editor.siteReady')}</span>
+              </a>
+
+              <button
+                onClick={handleUnpublish}
+                title={t('editor.unpublish') || 'Снять с публикации'}
+                className="p-2 text-charcoal-light hover:text-red-600 rounded-full hover:bg-sand transition-colors"
+              >
+                <RefreshCw size={15} />
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -475,6 +637,9 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
               media={media} 
               handleMediaUpload={handleMediaUpload} 
               handleMediaDelete={handleMediaDelete}
+              handleMusicUpload={handleMusicUpload}
+              uploadingMusic={uploadingMusic}
+              uploadingPhoto={uploadingPhoto}
               t={t}
             />
           </div>
@@ -577,6 +742,9 @@ const EditorForm = ({ activeTab, data, handleChange, media, handleMediaUpload, h
                     media={media} 
                     handleMediaUpload={handleMediaUpload} 
                     handleMediaDelete={handleMediaDelete}
+                    handleMusicUpload={handleMusicUpload}
+                    uploadingMusic={uploadingMusic}
+                    uploadingPhoto={uploadingPhoto}
                     t={t}
                   />
                 </div>

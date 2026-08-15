@@ -218,6 +218,11 @@
     "colorBgText": "Фон/Текст",
     "colorAccent": "Акцент",
     "uploadPhoto": "Загрузить фото",
+    "uploading": "Загрузка...",
+    "photoUploaded": "Фото добавлено",
+    "uploadAudioBtn": "Загрузить MP3 с устройства",
+    "musicUploaded": "Аудиофайл успешно загружен",
+    "remove": "Удалить",
     "enableMusic": "Включить музыку",
     "trackName": "Название трека",
     "trackPlaceholder": "A Thousand Years",
@@ -236,7 +241,11 @@
     "save": "Сохранить",
     "saving": "...",
     "publish": "Опубликовать",
+    "unpublished": "Снято с публикации",
+    "unpublish": "Снять с публикации",
     "siteReady": "Сайт готов",
+    "copyLink": "Скопировать ссылку",
+    "linkCopied": "Ссылка скопирована",
     "selectOption": "Выберите опцию"
   },
   "previewComponent": {

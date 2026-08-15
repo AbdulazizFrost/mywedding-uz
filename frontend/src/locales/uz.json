@@ -218,6 +218,11 @@
     "colorBgText": "Fon/Matn",
     "colorAccent": "Urg'u",
     "uploadPhoto": "Rasm yuklash",
+    "uploading": "Yuklanmoqda...",
+    "photoUploaded": "Rasm yuklandi",
+    "uploadAudioBtn": "Qurilmadan MP3 yuklash",
+    "musicUploaded": "Musiqa muvaffaqiyatli yuklandi",
+    "remove": "O'chirish",
     "enableMusic": "Musiqani yoqish",
     "trackName": "Trek nomi",
     "trackPlaceholder": "A Thousand Years",
@@ -236,7 +241,11 @@
     "save": "Saqlash",
     "saving": "...",
     "publish": "Chop etish",
+    "unpublished": "Qoralamaga qaytarildi",
+    "unpublish": "Qoralamaga qaytarish",
     "siteReady": "Sayt tayyor",
+    "copyLink": "Havolani nusxalash",
+    "linkCopied": "Havola nusxalandi",
     "selectOption": "Variantni tanlang"
   },
   "previewComponent": {

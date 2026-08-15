@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { ArrowLeft, Edit2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import PreviewComponent from '../../components/preview/PreviewComponent.jsx';
+import { ArrowLeft, Edit2, Globe, ExternalLink, Copy } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
@@ -13,9 +14,12 @@ export default function PreviewPage() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useTranslation();
   
+  const [invitation, setInvitation] = useState(null);
   const [data, setData] = useState(null);
+  const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/login');
@@ -25,21 +29,33 @@ export default function PreviewPage() {
     window.scrollTo(0, 0);
     const fetchInvitation = async () => {
       try {
-        const res = await fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Failed to fetch invitation');
-        const resData = await res.json();
+        const [invRes, mediaRes] = await Promise.all([
+          fetch(`${API_URL}/invitations/${id}`, { credentials: 'include' }),
+          fetch(`${API_URL}/invitations/${id}/media`, { credentials: 'include' })
+        ]);
+
+        if (!invRes.ok) throw new Error('Failed to fetch invitation');
+        const resData = await invRes.json();
+        const inv = resData.invitation;
+        setInvitation(inv);
+
         let parsedData = {};
         try {
-          if (typeof resData.invitation.data === 'string') {
-            parsedData = resData.invitation.data.trim() ? JSON.parse(resData.invitation.data) : {};
+          if (typeof inv.data === 'string') {
+            parsedData = inv.data.trim() ? JSON.parse(inv.data) : {};
           } else {
-            parsedData = resData.invitation.data || {};
+            parsedData = inv.data || {};
           }
         } catch(e) {
           console.error("JSON parse error:", e);
           parsedData = {};
         }
         setData(parsedData);
+
+        if (mediaRes.ok) {
+          const mediaData = await mediaRes.json();
+          setMedia(mediaData.media || []);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -48,6 +64,15 @@ export default function PreviewPage() {
     };
     if (user) fetchInvitation();
   }, [id, user]);
+
+  const handleCopyLink = () => {
+    if (!invitation?.slug) return;
+    const url = `${window.location.origin}/w/${invitation.slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setMessage(t('editor.linkCopied') || 'Ссылка скопирована');
+      setTimeout(() => setMessage(null), 2500);
+    });
+  };
 
   if (loading || authLoading) {
     return (
@@ -67,81 +92,63 @@ export default function PreviewPage() {
     );
   }
 
-  if (!data) return null;
+  if (!data || !invitation) return null;
 
   return (
-    <div className="min-h-screen bg-sand flex flex-col items-center pt-20 pb-12 px-0 md:px-6 lg:px-8 relative selection:bg-champagne selection:text-white">
-      {/* Dev Toolbar */}
-      <div className="fixed top-0 left-0 right-0 bg-charcoal text-ivory px-4 py-3 flex justify-between items-center z-50 shadow-md">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-champagne animate-pulse" />
-          <span className="text-xs md:text-sm font-medium tracking-wide uppercase">{t('preview.mode')}</span>
+    <div className="min-h-screen bg-sand/30 flex flex-col items-center pt-14 selection:bg-champagne selection:text-white">
+      
+      {/* Sticky Top Toolbar */}
+      <div className="fixed top-0 left-0 right-0 bg-charcoal/95 backdrop-blur-md text-ivory px-4 py-2.5 flex justify-between items-center z-50 shadow-md">
+        <div className="flex items-center gap-3">
+          <Link to="/dashboard" className="flex items-center gap-1 text-xs text-ivory/70 hover:text-ivory transition-colors">
+            <ArrowLeft size={14} /> <span className="hidden sm:inline">{t('preview.cabinet')}</span>
+          </Link>
+          <div className="h-4 w-px bg-white/20" />
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-champagne animate-pulse" />
+            <span className="text-xs font-medium tracking-wide uppercase">{t('preview.mode')}</span>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => navigate('/dashboard')} className="hidden sm:flex text-xs items-center gap-1 text-ivory/70 hover:text-ivory px-3 py-1.5 transition-colors">
-            <ArrowLeft size={14} /> {t('preview.cabinet')}
-          </button>
-          <button onClick={() => navigate(`/editor/${id}`)} className="text-xs md:text-sm flex items-center gap-2 bg-champagne hover:bg-champagne-light text-charcoal px-4 py-1.5 rounded-full font-medium transition-colors">
-            <Edit2 size={14} /> <span className="hidden sm:inline">{t('preview.backToEditor')}</span> {t('preview.editor')}
+
+        {/* Toast */}
+        <AnimatePresence>
+          {message && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="bg-green-50 text-green-800 text-xs px-3 py-1 rounded-full border border-green-200"
+            >
+              {message}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex items-center gap-2">
+          {invitation.status === 'published' && (
+            <button
+              onClick={handleCopyLink}
+              className="p-1.5 bg-white/10 hover:bg-white/20 text-ivory rounded-full transition-colors"
+              title="Копировать ссылку"
+            >
+              <Copy size={14} />
+            </button>
+          )}
+          <button 
+            onClick={() => navigate(`/editor/${id}`)} 
+            className="text-xs flex items-center gap-1.5 bg-champagne hover:bg-champagne-light text-charcoal px-3.5 py-1.5 rounded-full font-medium transition-colors"
+          >
+            <Edit2 size={13} /> <span>{t('preview.editor')}</span>
           </button>
         </div>
       </div>
 
-      {/* Mockup Container to force mobile-like aspect ratio on desktop */}
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full h-full md:max-w-md md:h-[800px] bg-ivory md:rounded-[2.5rem] shadow-2xl md:overflow-y-auto md:border-8 md:border-charcoal hide-scrollbar relative"
-      >
-        <div className="p-8 md:p-10 text-center space-y-10">
-          <div>
-            <p className="text-champagne uppercase tracking-widest text-xs font-semibold mb-3">{t('preview.invitationTo')}</p>
-            <h1 className="text-5xl font-serif text-charcoal mb-2 leading-none">
-              {data.groom_name || t('preview.groom')} <br/>
-              <span className="italic text-champagne">&</span><br/>
-              {data.bride_name || t('preview.bride')}
-            </h1>
-          </div>
-
-          <div className="py-6 border-y border-sand flex justify-center gap-8 text-charcoal-light">
-            <div className="text-center">
-              <span className="block text-xs uppercase tracking-widest mb-2 font-semibold">{t('preview.date')}</span>
-              <span className="text-xl font-serif text-charcoal">{data.wedding_date || t('preview.datePlaceholder')}</span>
-            </div>
-            <div className="w-px bg-sand/80"></div>
-            <div className="text-center">
-              <span className="block text-xs uppercase tracking-widest mb-2 font-semibold">{t('preview.time')}</span>
-              <span className="text-xl font-serif text-charcoal">{data.wedding_time || t('preview.timePlaceholder')}</span>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-champagne mb-3">{t('preview.location')}</h3>
-            <p className="text-charcoal-light">{data.location || t('preview.locationPlaceholder')}</p>
-          </div>
-
-          {data.story && (
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-champagne mb-3">{t('preview.ourStory')}</h3>
-              <p className="text-charcoal-light italic font-serif text-lg leading-relaxed">"{data.story}"</p>
-            </div>
-          )}
-
-          {data.rsvp?.enabled && (
-            <div className="bg-sand/30 border border-sand rounded-2xl p-6 mt-8 text-left">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-charcoal mb-2 text-center">{t('preview.rsvpTitle')}</h3>
-              <p className="text-charcoal-light text-sm mb-6 text-center">{t('preview.rsvpDesc')}</p>
-              
-              <div className="space-y-3">
-                <input type="text" placeholder={t('preview.rsvpName')} className="w-full bg-white border border-sand rounded-lg px-4 py-3 text-sm outline-none cursor-not-allowed opacity-70" disabled />
-                <button disabled className="w-full bg-charcoal text-ivory px-6 py-3 rounded-full text-sm font-medium opacity-50 cursor-not-allowed">
-                  {t('preview.rsvpSubmit')}
-                </button>
-              </div>
-            </div>
-          )}
+      {/* True WYSIWYG Invitation Container */}
+      <div className="w-full flex-1 flex flex-col items-center">
+        <div className="w-full max-w-2xl bg-white shadow-2xl overflow-hidden min-h-screen">
+          <PreviewComponent data={data} media={media} />
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

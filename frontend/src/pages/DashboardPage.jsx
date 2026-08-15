@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
-import { motion } from 'framer-motion';
-import { Settings, LogOut, Plus, Edit2, Eye, ExternalLink, CreditCard } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Settings, LogOut, Plus, Edit2, Eye, ExternalLink, CreditCard, Users, Copy, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const API_URL = (import.meta.env.VITE_API_URL && !import.meta.env.VITE_API_URL.includes('localhost')) ? import.meta.env.VITE_API_URL : (window.location.protocol === 'https:' ? `https://${window.location.hostname}/api` : `http://${window.location.hostname}:5000/api`);
@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState([]);
   const [invitations, setInvitations] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -50,139 +51,174 @@ export default function DashboardPage() {
     navigate('/login');
   };
 
-  if (loading || !user) {
+  const handleCopyLink = (invId, slug) => {
+    if (!slug) return;
+    const url = `${window.location.origin}/w/${slug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(invId);
+      setTimeout(() => setCopiedId(null), 2500);
+    });
+  };
+
+  if (loading || dataLoading) {
     return (
-      <div className="min-h-screen bg-ivory pt-32 flex flex-col items-center justify-center">
-        <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
+      <div className="min-h-screen bg-ivory pt-32 pb-16 flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-2 border-champagne border-t-transparent rounded-full animate-spin mb-4" />
         <p className="font-serif text-charcoal-light italic text-xl">{t('userDashboard.loading')}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-ivory font-sans pt-24 pb-24 selection:bg-champagne selection:text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-ivory font-sans pt-24 sm:pt-28 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-12 selection:bg-champagne selection:text-white">
+      <div className="max-w-7xl mx-auto">
         
-        {/* Profile Header */}
+        {/* Header Profile Info */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-16 border-b border-sand pb-8"
+          className="bg-white rounded-[2rem] border border-sand p-6 sm:p-8 lg:p-10 mb-8 sm:mb-12 shadow-[0_10px_30px_rgb(0,0,0,0.03)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
         >
-          <div>
-            <h1 className="text-4xl font-serif text-charcoal mb-2">{t('userDashboard.title')}</h1>
-            <p className="text-charcoal-light tracking-wide">{user.full_name || user.email}</p>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-champagne-light/40 border border-champagne/40 flex items-center justify-center font-serif text-2xl sm:text-3xl text-champagne shrink-0">
+              {user?.full_name ? user.full_name[0].toUpperCase() : 'U'}
+            </div>
+            <div>
+              <span className="text-[10px] sm:text-xs font-semibold tracking-widest text-champagne uppercase">{t('userDashboard.personalCabinet')}</span>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-charcoal">{user?.full_name || t('userDashboard.dearUser')}</h1>
+              <p className="text-xs sm:text-sm text-charcoal-light font-light">{user?.email}</p>
+            </div>
           </div>
-          <div className="mt-6 sm:mt-0 flex flex-row items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+          
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            {user?.role === 'admin' && (
+              <Link 
+                to="/admin" 
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-champagne/10 border border-champagne text-charcoal rounded-full text-sm font-medium hover:bg-champagne hover:text-white transition-all duration-300"
+              >
+                <Settings size={16} /> {t('userDashboard.adminPanel')}
+              </Link>
+            )}
             <button 
-              onClick={handleLogout} 
-              className="flex items-center justify-center gap-1.5 text-sm font-medium text-charcoal-light/70 hover:text-charcoal transition-colors"
+              onClick={handleLogout}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 border border-sand text-charcoal-light rounded-full text-sm font-medium hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all duration-300"
             >
-              <LogOut size={16} strokeWidth={1.5} /> {t('userDashboard.logout')}
+              <LogOut size={16} /> {t('userDashboard.logout')}
             </button>
-            <Link 
-              to="/catalog"
-              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg"
-            >
-              <Plus size={16} strokeWidth={1.5} /> {t('userDashboard.create')}
-            </Link>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* Main Grid: Invitations & Recent Orders */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Main Content: Invitations */}
-          <div className="lg:col-span-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-serif text-charcoal">{t('userDashboard.myInvitations')}</h2>
-            </div>
-            
-            {dataLoading ? (
-              <div className="flex justify-center py-24">
-                <div className="w-8 h-8 border-2 border-champagne border-t-transparent rounded-full animate-spin" />
-              </div>
-            ) : invitations.length === 0 ? (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="bg-white rounded-3xl p-12 text-center border border-sand shadow-sm"
+          {/* Left 2 Cols: My Invitations */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl sm:text-3xl font-serif text-charcoal">{t('userDashboard.myInvitations')}</h2>
+              <Link 
+                to="/catalog"
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-wider text-champagne uppercase hover:text-charcoal transition-colors"
               >
-                <div className="w-20 h-20 bg-sand rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Plus className="text-champagne w-10 h-10" />
-                </div>
-                <h3 className="text-2xl font-serif text-charcoal mb-3">{t('userDashboard.noInvitationsTitle')}</h3>
-                <p className="text-charcoal-light mb-8 max-w-md mx-auto">
-                  {t('userDashboard.noInvitationsDesc')}
-                </p>
+                <Plus size={16} /> {t('userDashboard.newInvitation')}
+              </Link>
+            </div>
+
+            {invitations.length === 0 ? (
+              <div className="bg-white rounded-[2rem] border border-sand p-10 sm:p-14 text-center">
+                <p className="font-serif italic text-xl text-charcoal-light mb-6">{t('userDashboard.noInvitations')}</p>
                 <Link 
                   to="/catalog"
-                  className="inline-flex px-8 py-3 bg-charcoal text-ivory rounded-full font-medium hover:bg-champagne transition-all shadow-md hover:shadow-lg"
+                  className="inline-flex items-center justify-center px-8 py-3.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-black transition-all shadow-md"
                 >
-                  {t('userDashboard.selectDesign')}
+                  {t('userDashboard.chooseTemplate')}
                 </Link>
-              </motion.div>
+              </div>
             ) : (
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 gap-6">
                 {invitations.map((inv, idx) => (
                   <motion.div 
+                    key={inv.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    key={inv.id} 
-                    className="bg-white rounded-3xl p-6 border border-sand shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-6 group"
+                    className="bg-white rounded-[2rem] border border-sand p-6 sm:p-8 flex flex-col md:flex-row gap-6 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all"
                   >
                     {/* Thumbnail */}
-                    <div className="relative w-full sm:w-48 h-64 sm:h-auto aspect-[3/4] rounded-2xl overflow-hidden bg-sand shrink-0">
-                      {inv.template?.thumbnail ? (
-                        <img src={inv.template.thumbnail} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="w-full md:w-48 aspect-[3/4] rounded-2xl overflow-hidden bg-sand/30 shrink-0 relative">
+                      {inv.template?.thumbnail || inv.template?.preview_image ? (
+                        <img 
+                          src={inv.template?.thumbnail || inv.template?.preview_image} 
+                          alt={inv.template?.name} 
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center font-serif italic text-charcoal/30">{t('userDashboard.preview')}</div>
+                        <div className="w-full h-full flex items-center justify-center font-serif text-charcoal/30 italic">
+                          {t('userDashboard.noPreview')}
+                        </div>
                       )}
                     </div>
                     
                     {/* Content */}
-                    <div className="flex-1 flex flex-col justify-between py-2">
+                    <div className="flex-1 flex flex-col justify-between py-1">
                       <div>
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex justify-between items-start mb-3">
                           <div>
-                            <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold rounded-full border border-champagne/30 text-champagne mb-3">
+                            <span className={`inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold rounded-full border mb-2 ${
+                              inv.status === 'published' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-sand/40 text-charcoal-light border-sand'
+                            }`}>
                               {inv.status === 'published' ? t('userDashboard.published') : t('userDashboard.draft')}
                             </span>
-                            <h3 className="text-3xl font-serif text-charcoal leading-tight">
+                            <h3 className="text-2xl sm:text-3xl font-serif text-charcoal leading-tight">
                               {inv.template?.name || t('userDashboard.myInvitation')}
                             </h3>
                           </div>
                         </div>
-                        <p className="text-sm text-charcoal-light line-clamp-2">
+                        <p className="text-xs sm:text-sm text-charcoal-light">
                           {t('userDashboard.lastChange')} {new Date(inv.updated_at).toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')}
                         </p>
                       </div>
                       
-                      <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 mt-6 sm:mt-8">
+                      <div className="flex flex-wrap gap-2.5 mt-6 pt-4 border-t border-sand/60">
                         <Link 
                           to={`/editor/${inv.id}`} 
-                          className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 bg-charcoal text-ivory rounded-full text-sm font-medium hover:bg-champagne transition-all w-full sm:w-auto"
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-charcoal text-ivory rounded-full text-xs sm:text-sm font-medium hover:bg-champagne transition-all"
                         >
-                          <Edit2 size={16} /> {t('userDashboard.edit')}
+                          <Edit2 size={14} /> {t('userDashboard.edit')}
                         </Link>
                         
-                        {inv.status === 'published' && (
-                          <a 
-                            href={`/w/${inv.slug}`} 
-                            target="_blank" 
-                            rel="noreferrer" 
-                            className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 border border-charcoal text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all w-full sm:w-auto"
-                          >
-                            <ExternalLink size={16} /> {t('userDashboard.openSite')}
-                          </a>
-                        )}
-                        
-                        {inv.status !== 'published' && (
+                        <Link 
+                          to={`/dashboard/rsvp/${inv.id}`} 
+                          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-sand/60 text-charcoal rounded-full text-xs sm:text-sm font-medium hover:bg-sand transition-all"
+                        >
+                          <Users size={14} /> {t('rsvp.title') || 'Гости (RSVP)'}
+                        </Link>
+
+                        {inv.status === 'published' ? (
+                          <>
+                            <a 
+                              href={`/w/${inv.slug}`} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 border border-charcoal text-charcoal rounded-full text-xs sm:text-sm font-medium hover:bg-sand transition-all"
+                            >
+                              <ExternalLink size={14} /> {t('userDashboard.openSite')}
+                            </a>
+
+                            <button
+                              onClick={() => handleCopyLink(inv.id, inv.slug)}
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-sand text-charcoal rounded-full text-xs font-medium hover:bg-sand transition-all"
+                              title="Копировать ссылку"
+                            >
+                              {copiedId === inv.id ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
+                              <span>{copiedId === inv.id ? (t('editor.linkCopied') || 'Скопировано') : (t('editor.copyLink') || 'Ссылка')}</span>
+                            </button>
+                          </>
+                        ) : (
                           <Link 
                             to={`/preview/${inv.id}`} 
-                            className="flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 border border-charcoal/20 text-charcoal rounded-full text-sm font-medium hover:bg-sand transition-all w-full sm:w-auto"
+                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 border border-charcoal/20 text-charcoal rounded-full text-xs sm:text-sm font-medium hover:bg-sand transition-all"
                           >
-                            <Eye size={16} /> {t('userDashboard.previewBtn')}
+                            <Eye size={14} /> {t('userDashboard.previewBtn')}
                           </Link>
                         )}
                       </div>
@@ -193,51 +229,43 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Sidebar: Orders */}
-          <div className="lg:col-span-4">
-            <h2 className="text-2xl font-serif text-charcoal mb-8">{t('userDashboard.billsAndOrders')}</h2>
-            <div className="bg-white rounded-3xl p-8 border border-sand shadow-sm">
-              {dataLoading ? (
-                <div className="flex justify-center py-8">
-                  <div className="w-6 h-6 border-2 border-champagne border-t-transparent rounded-full animate-spin" />
-                </div>
-              ) : orders.length === 0 ? (
-                <div className="text-center py-8">
-                  <CreditCard className="w-12 h-12 text-sand mx-auto mb-4" />
-                  <p className="text-charcoal-light font-serif italic">{t('userDashboard.noOrders')}</p>
-                </div>
+          {/* Right 1 Col: Orders & Invoices */}
+          <div className="space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-serif text-charcoal">{t('userDashboard.billsAndOrders')}</h2>
+            
+            <div className="bg-white rounded-[2rem] border border-sand p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.02)] space-y-6">
+              {orders.length === 0 ? (
+                <p className="text-center text-charcoal-light font-serif italic py-8">{t('userDashboard.noOrders')}</p>
               ) : (
-                <div className="space-y-6">
+                <div className="divide-y divide-sand">
                   {orders.map(order => (
-                    <div key={order.id} className="pb-6 border-b border-sand last:border-0 last:pb-0">
-                      <div className="flex justify-between items-start mb-3">
-                        <span className="font-mono text-[10px] text-charcoal-light/70 tracking-wider">
-                          #{order.id.slice(0, 8)}
-                        </span>
-                        <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider font-semibold rounded-full ${order.status === 'paid' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-orange-50 text-orange-700 border border-orange-200'}`}>
-                          {order.status === 'paid' ? t('userDashboard.paid') : t('userDashboard.pending')}
+                    <div key={order.id} className="py-4 first:pt-0 last:pb-0">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h4 className="font-serif text-lg text-charcoal">{order.template?.name || t('userDashboard.orderTemplate')}</h4>
+                          <span className="text-[10px] font-mono text-charcoal-light">#{order.id.slice(0, 8)}</span>
+                        </div>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase ${
+                          order.status === 'paid' ? 'bg-green-50 text-green-700' : 'bg-sand text-charcoal-light'
+                        }`}>
+                          {order.status === 'paid' ? t('userDashboard.paid') : t('userDashboard.awaitingPayment')}
                         </span>
                       </div>
-                      <p className="font-serif text-lg text-charcoal mb-1">{order.template?.name}</p>
-                      <p className="text-charcoal-light text-sm mb-4">{Number(order.amount).toLocaleString(i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU')} {order.currency}</p>
                       
-                      {order.status === 'pending' && (
-                        <Link 
-                          to={`/checkout/${order.id}`}
-                          className="block w-full text-center px-4 py-2 text-sm font-medium text-ivory bg-charcoal hover:bg-champagne rounded-full transition-colors"
-                        >
-                          {t('userDashboard.pay')}
-                        </Link>
-                      )}
-                      
-                      {order.status === 'paid' && order.invitation && (
-                        <Link 
-                          to={`/dashboard/rsvp/${order.invitation.id}`} 
-                          className="block w-full text-center px-4 py-2 text-sm font-medium text-charcoal border border-charcoal/20 hover:bg-sand rounded-full transition-colors"
-                        >
-                          {t('userDashboard.guestsRsvp')}
-                        </Link>
-                      )}
+                      <div className="flex justify-between items-center text-sm mt-3">
+                        <span className="font-medium text-charcoal">
+                          {Number(order.amount).toLocaleString('ru-RU')} {order.currency}
+                        </span>
+                        
+                        {order.status === 'pending' && (
+                          <Link 
+                            to={`/checkout/${order.id}`}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-champagne hover:underline"
+                          >
+                            <CreditCard size={12} /> {t('userDashboard.pay')}
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

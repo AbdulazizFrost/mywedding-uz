@@ -323,7 +323,7 @@ export default function Home() {
       {/* 6. FINAL CTA */}
       <section className="py-24 md:py-32 relative bg-ivory overflow-hidden w-full border-t border-champagne/20">
         <div className="absolute inset-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-           <img src="/assets/landing/flower-right.png" className="absolute left-0 top-1/2 h-[120%] w-auto object-contain opacity-20 -translate-x-1/2 -translate-y-1/2" alt="" />
+           <img src="/assets/landing/flower-left.png" className="absolute left-0 top-1/2 h-[120%] w-auto object-contain opacity-20 -translate-x-1/2 -translate-y-1/2 scale-x-[-1]" alt="" />
            <img src="/assets/landing/flower-left.png" className="absolute right-0 top-1/2 h-[120%] w-auto object-contain opacity-20 translate-x-1/2 -translate-y-1/2" alt="" />
         </div>
         

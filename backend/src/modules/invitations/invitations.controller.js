@@ -91,7 +91,7 @@ export const updateInvitation = async (req, res, next) => {
           };
           
           if (key === 'design') {
-            const validThemes = ['elegant', 'classic', 'minimal'];
+            const validThemes = ['elegant', 'classic', 'minimal', 'dark'];
             const validFonts = ['serif', 'sans', 'script'];
             
             if (newData.design.theme && !validThemes.includes(newData.design.theme)) newData.design.theme = 'elegant';

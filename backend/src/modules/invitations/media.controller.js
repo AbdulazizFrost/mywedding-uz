@@ -14,7 +14,7 @@ export const uploadMedia = async (req, res, next) => {
     const { id } = req.params;
     const user_id = req.user.id;
     const file = req.file;
-    const type = req.body.type || 'gallery_item';
+    const type = req.body.type || (file?.mimetype?.startsWith('audio/') ? 'music' : 'gallery_item');
 
     if (!file) {
       return res.status(400).json({ error: 'No file uploaded' });

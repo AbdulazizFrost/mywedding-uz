@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Play, Pause, Disc, Volume2, VolumeX } from 'lucide-react';
 
 // Default values to prevent undefined errors for old invitations
 const defaultData = {
@@ -47,6 +48,30 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
   const [submitMessage, setSubmitMessage] = useState(null);
   const [submitError, setSubmitError] = useState(null);
 
+  // Audio Player State
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioError, setAudioError] = useState(false);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setAudioError(false);
+        })
+        .catch((err) => {
+          console.warn('Audio playback error / blocked:', err);
+          setIsPlaying(false);
+          setAudioError(true);
+        });
+    }
+  };
+
   const handleRsvpSubmit = async (e) => {
     e.preventDefault();
     if (!onSubmitRsvp) return; // Only visual in editor
@@ -87,6 +112,19 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
   return (
     <div className={containerClass} style={{ '--primary': primary_color, '--secondary': secondary_color }}>
       
+      {/* Hidden Audio Element */}
+      {mergedData.music.enabled && mergedData.music.url && (
+        <audio 
+          ref={audioRef} 
+          src={mergedData.music.url} 
+          loop 
+          preload="auto"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onError={() => setAudioError(true)}
+        />
+      )}
+
       {/* HERO SECTION - Cinematic fullscreen */}
       <section className="relative h-[100svh] w-full flex flex-col items-center justify-center text-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -305,7 +343,7 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
                       <div className="relative flex items-center justify-center">
                         <input 
                           type="radio" 
-                          name="attending"
+                          name="attending" 
                           value="not_attending"
                           required
                           className="peer appearance-none w-5 h-5 border border-gray-400 rounded-full checked:border-[var(--secondary)] transition-colors cursor-pointer" 
@@ -366,21 +404,45 @@ export default function PreviewComponent({ data, media = [], onSubmitRsvp, slug 
       {/* FINAL SPACER */}
       <div className="h-32" />
 
-      {/* MUSIC - Minimal floating player */}
+      {/* MUSIC - Interactive Floating Player */}
       {mergedData.music.enabled && mergedData.music.url && (
-        <div className="fixed bottom-8 right-8 z-50">
+        <div className="fixed bottom-6 right-6 z-50">
           <div className="relative group">
-            <div className="absolute inset-0 rounded-full opacity-20 blur-md group-hover:opacity-40 transition-opacity" style={{ backgroundColor: secondary_color }} />
-            <a 
-              href={mergedData.music.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="relative flex items-center justify-center w-14 h-14 rounded-full bg-white shadow-xl hover:scale-105 transition-transform"
+            {/* Animated Glow Pulse when playing */}
+            {isPlaying && (
+              <div 
+                className="absolute inset-0 rounded-full opacity-40 blur-lg animate-pulse" 
+                style={{ backgroundColor: secondary_color }} 
+              />
+            )}
+            
+            <button 
+              onClick={togglePlay}
+              type="button"
+              aria-label={isPlaying ? "Pause music" : "Play music"}
+              className="relative flex items-center justify-center w-14 h-14 rounded-full bg-white shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 border border-sand"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={primary_color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </a>
+              {/* Disc with spin animation when playing */}
+              <div className={`flex items-center justify-center ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '4s' }}>
+                <Disc size={28} style={{ color: isPlaying ? secondary_color : primary_color }} />
+              </div>
+              
+              {/* Center icon indicator */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                {isPlaying ? (
+                  <Pause size={12} className="text-charcoal bg-white/90 p-0.5 rounded-full shadow-sm" />
+                ) : (
+                  <Play size={12} className="text-charcoal bg-white/90 p-0.5 rounded-full shadow-sm ml-0.5" />
+                )}
+              </div>
+            </button>
+
+            {/* Optional Song Title Tooltip */}
+            {mergedData.music.title && (
+              <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-charcoal/90 backdrop-blur-sm text-ivory text-xs rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-md">
+                🎵 {mergedData.music.title}
+              </div>
+            )}
           </div>
         </div>
       )}

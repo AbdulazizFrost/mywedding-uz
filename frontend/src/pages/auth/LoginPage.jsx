@@ -70,7 +70,7 @@ export default function LoginPage() {
 
       {/* Right side: Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-10 sm:p-12 lg:p-24 relative bg-white">
-        <div className="absolute top-0 right-0 w-full h-full bg-[url('/assets/landing/flower-right.png')] bg-no-repeat bg-right-top opacity-5 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-full h-full bg-[url('/assets/landing/flower-left.png')] bg-no-repeat bg-right-top opacity-5 pointer-events-none scale-x-[-1]" />
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
