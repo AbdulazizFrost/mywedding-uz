@@ -41,8 +41,11 @@ export function createApp() {
   app.use(cookieParser());
   app.use(requestLogger);
 
-  // Serve uploads statically in dev
-  app.use('/uploads', express.static(path.resolve(process.cwd(), 'public/uploads')));
+  // Serve uploads statically with caching (7 days, etag)
+  app.use('/uploads', express.static(path.resolve(process.cwd(), 'public/uploads'), {
+    maxAge: '7d',
+    etag: true
+  }));
 
   app.get('/api/health', (req, res) => {
     res.status(200).json({
