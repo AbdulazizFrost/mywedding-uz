@@ -401,6 +401,25 @@ function EditorForm({
   );
 }
 
+// Single unified Tab Bar component used identically across desktop and mobile
+const EditorTabBar = ({ tabs, activeTab, setActiveTab, className = '' }) => (
+  <div className={`flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar w-full py-1 ${className}`}>
+    {tabs.map(tab => (
+      <button
+        key={tab.id}
+        onClick={() => setActiveTab(tab.id)}
+        className={`px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-[13px] font-medium rounded-full transition-all whitespace-nowrap shrink-0 ${
+          activeTab === tab.id 
+            ? 'bg-charcoal text-ivory shadow-sm' 
+            : 'bg-white border border-sand text-charcoal hover:bg-sand/60'
+        }`}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+);
+
 export default function EditorPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -781,7 +800,7 @@ export default function EditorPage() {
       <div className="flex flex-1 overflow-hidden relative w-full h-[calc(100dvh-60px)]">
         
         {/* DESKTOP SIDEBAR (Hidden on mobile) */}
-        <div className="hidden lg:flex w-[400px] flex-col bg-white border-r border-sand h-full z-10 shrink-0">
+        <div className="hidden lg:flex w-[420px] xl:w-[450px] flex-col bg-white border-r border-sand h-full z-10 shrink-0">
           <div className="flex p-4 gap-2 border-b border-sand">
             {Object.entries(categories).map(([key, cat]) => (
               <button
@@ -799,19 +818,12 @@ export default function EditorPage() {
             ))}
           </div>
 
-          <div className="px-4 pt-4 shrink-0">
-            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-              {categories[activeCategory].tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap shrink-0
-                    ${activeTab === tab.id ? 'bg-champagne/10 text-charcoal border border-charcoal/20' : 'text-charcoal-light hover:bg-sand'}`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+          <div className="px-4 pt-3 pb-3 shrink-0 bg-ivory/30 border-b border-sand/60">
+            <EditorTabBar 
+              tabs={categories[activeCategory].tabs} 
+              activeTab={activeTab} 
+              setActiveTab={setActiveTab} 
+            />
           </div>
           
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
@@ -903,18 +915,11 @@ export default function EditorPage() {
 
                 {/* Tabs */}
                 <div className="px-4 py-3 shrink-0 bg-ivory/50 border-b border-sand">
-                  <div className="flex gap-2 overflow-x-auto no-scrollbar">
-                    {categories[activeCategory].tabs.map(tab => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors whitespace-nowrap shrink-0
-                          ${activeTab === tab.id ? 'bg-charcoal text-ivory shadow-sm' : 'bg-white border border-sand text-charcoal'}`}
-                      >
-                        {tab.label}
-                      </button>
-                    ))}
-                  </div>
+                  <EditorTabBar 
+                    tabs={categories[activeCategory].tabs} 
+                    activeTab={activeTab} 
+                    setActiveTab={setActiveTab} 
+                  />
                 </div>
 
                 {/* Form Content */}
