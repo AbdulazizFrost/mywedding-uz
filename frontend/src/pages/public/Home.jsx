@@ -68,11 +68,17 @@ export default function Home() {
         
         {/* Soft background gradient & Floral Wrappers */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-ivory/90 via-champagne-light/30 to-ivory/90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-ivory via-champagne-light/20 to-ivory" />
+          
+          {/* Subtle Ambient Floral Bouquet (Desktop only, with smooth fade mask so there are zero hard cut edges) */}
           <img 
             src="/assets/landing/hero-bg-left.png" 
-            alt="Floral Background" 
-            className="absolute left-0 top-0 h-[60%] sm:h-[75%] lg:h-[90%] max-w-[320px] lg:max-w-[420px] w-auto object-contain -translate-x-[15%] lg:-translate-x-[10%] mix-blend-multiply opacity-25 lg:opacity-60 pointer-events-none" 
+            alt="" 
+            style={{ 
+              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%), linear-gradient(to right, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%)'
+            }}
+            className="hidden lg:block absolute left-0 top-0 h-[85%] max-w-[380px] w-auto object-contain -translate-x-[12%] mix-blend-multiply opacity-40 pointer-events-none" 
           />
         </div>
 
