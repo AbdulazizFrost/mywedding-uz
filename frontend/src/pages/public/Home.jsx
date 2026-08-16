@@ -72,7 +72,7 @@ export default function Home() {
           <img 
             src="/assets/landing/hero-bg-left.png" 
             alt="Floral Background" 
-            className="absolute left-0 top-0 h-[80%] md:h-[100%] w-auto object-contain -translate-x-[30%] lg:-translate-x-1/4 mix-blend-multiply opacity-10 lg:opacity-90" 
+            className="absolute left-0 top-0 h-[60%] sm:h-[75%] lg:h-[90%] max-w-[320px] lg:max-w-[420px] w-auto object-contain -translate-x-[15%] lg:-translate-x-[10%] mix-blend-multiply opacity-25 lg:opacity-60 pointer-events-none" 
           />
         </div>
 
@@ -93,8 +93,8 @@ export default function Home() {
               </h1>
             </FadeIn>
             
-            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative">
-              <img src="/assets/landing/divider.png" alt="Divider" className="w-[180px] sm:w-[220px] md:w-[280px] lg:w-[320px] object-contain opacity-80 -my-4 md:-my-8 lg:-my-12 relative z-0 pointer-events-none" />
+            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-3 sm:my-4">
+              <img src="/assets/landing/divider.png" alt="Divider" className="w-[180px] sm:w-[220px] md:w-[260px] h-auto object-contain opacity-80 pointer-events-none" />
             </FadeIn>
 
             <FadeIn delay={0.5}>
@@ -226,7 +226,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
           <FadeIn className="text-center mb-20 md:mb-28">
             <h2 className="text-3xl md:text-5xl font-serif font-medium text-charcoal leading-tight mb-6">{t('home.howItWorks.title')}</h2>
-            <img src="/assets/landing/divider.png" alt="Divider" className="h-3 md:h-4 object-contain opacity-50 mx-auto" />
+            <img src="/assets/landing/divider.png" alt="Divider" className="w-36 sm:w-48 h-auto object-contain opacity-70 mx-auto" />
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8 relative">
@@ -330,7 +330,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto px-4 md:px-8 text-center relative z-10">
           <FadeIn>
             <div className="flex justify-center mb-8">
-              <img src="/assets/landing/divider.png" alt="Divider" className="h-4 object-contain opacity-60" />
+              <img src="/assets/landing/divider.png" alt="Divider" className="w-36 sm:w-48 h-auto object-contain opacity-70" />
             </div>
             <h2 className="text-4xl sm:text-5xl lg:text-[4rem] font-serif font-medium text-charcoal mb-6 leading-tight">{t('home.cta.titlePart1')} <br/> <span className="italic text-champagne font-light">{t('home.cta.titlePart2')}</span> {t('home.cta.titlePart3')}</h2>
             <p className="text-[15px] md:text-lg text-charcoal-light/80 mb-12 font-light">
