@@ -66,45 +66,38 @@ export default function Home() {
       
       <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-32 px-4 md:px-8 lg:px-12 w-full flex flex-col justify-center">
         
-        {/* Soft background gradient & Floral Wrappers */}
+        {/* Soft luxury ambient background gradient */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-ivory via-champagne-light/20 to-ivory" />
+          <div className="absolute inset-0 bg-gradient-to-br from-ivory via-[#faf8f5] to-sand/30" />
           
-          {/* Subtle Ambient Floral Bouquet (Desktop only, with smooth fade mask so there are zero hard cut edges) */}
-          <img 
-            src="/assets/landing/hero-bg-left.png" 
-            alt="" 
-            style={{ 
-              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%), linear-gradient(to right, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 95%)'
-            }}
-            className="hidden lg:block absolute left-0 top-0 h-[85%] max-w-[380px] w-auto object-contain -translate-x-[12%] mix-blend-multiply opacity-40 pointer-events-none" 
-          />
+          {/* Subtle Champagne Ambient Glow Orbs */}
+          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-champagne/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-champagne/15 rounded-full blur-[140px]" />
         </div>
 
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10 w-full">
           {/* Left Content */}
-          <div className="flex-1 text-center lg:text-left w-full mt-8 lg:-mt-16 block">
+          <div className="flex-1 text-center lg:text-left w-full mt-4 lg:mt-0 block">
             <FadeIn delay={0.1}>
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.15em] text-champagne uppercase rounded-full mb-8 bg-white/40 backdrop-blur-md shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.2em] text-champagne uppercase rounded-full mb-8 bg-white/60 backdrop-blur-md shadow-sm">
                 <Heart size={12} className="text-champagne" /> {t('home.hero.badge')}
               </span>
             </FadeIn>
             
             <FadeIn delay={0.3}>
-              <h1 className="text-[2.5rem] leading-[1.1] sm:text-5xl lg:text-[clamp(3.5rem,5vw,5.5rem)] font-serif font-medium mb-6 text-charcoal">
+              <h1 className="text-[2.5rem] leading-[1.1] sm:text-5xl lg:text-[clamp(3.2rem,4.8vw,5rem)] font-serif font-normal mb-4 text-charcoal tracking-tight">
                 {t('home.hero.titlePart1')} <br />
                 <span className="italic text-champagne font-light drop-shadow-sm">{t('home.hero.titlePart2')}</span> <br />
                 {t('home.hero.titlePart3')} <br className="hidden lg:block"/> {t('home.hero.titlePart4')}
               </h1>
             </FadeIn>
             
-            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-3 sm:my-4">
-              <img src="/assets/landing/divider.png" alt="Divider" className="w-[180px] sm:w-[220px] md:w-[260px] h-auto object-contain opacity-80 pointer-events-none" />
+            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-4">
+              <img src="/assets/landing/divider.png" alt="Divider" className="w-[180px] sm:w-[220px] md:w-[260px] h-auto object-contain opacity-85 pointer-events-none" />
             </FadeIn>
 
             <FadeIn delay={0.5}>
-              <p className="text-[15px] md:text-lg text-charcoal-light/80 mb-10 max-w-[22rem] sm:max-w-md lg:max-w-md mx-auto lg:mx-0 leading-relaxed px-4 lg:px-0 font-light">
+              <p className="text-[15px] md:text-lg text-charcoal-light/80 mb-10 max-w-[22rem] sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
                 {t('home.hero.desc')}
               </p>
             </FadeIn>
@@ -114,26 +107,23 @@ export default function Home() {
                 <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert object-contain opacity-90" />
                 {user ? t('home.hero.goToDashboard') : t('home.hero.createBtn')}
               </Link>
-              <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-white/50 border border-champagne text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-white/70 border border-champagne/60 text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-sm">
                 {t('home.hero.seeExamples')}
               </a>
             </FadeIn>
           </div>
 
           {/* Right Mockup */}
-          <div className="flex-1 w-full flex justify-center relative mt-12 lg:mt-0">
+          <div className="flex-1 w-full flex justify-center relative mt-8 lg:mt-0">
             
-            {/* Beautiful Transparent Floral Backdrop */}
-            <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-y-[5%] -translate-x-[5%] md:-translate-x-[10%]">
-               <img 
-                 src="/assets/landing/flower-left.png"
-                 alt=""
-                 className="w-[110%] md:w-[150%] max-w-none object-contain opacity-50 md:opacity-90 scale-[1.1] scale-x-[-1]"
-               />
+            {/* Elegant Ambient Champagne Aura behind the Mockup */}
+            <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
+              <div className="w-[320px] sm:w-[420px] h-[320px] sm:h-[420px] bg-gradient-to-tr from-champagne/20 via-champagne-light/30 to-transparent rounded-full blur-3xl" />
+              <div className="absolute w-[360px] sm:w-[460px] h-[360px] sm:h-[460px] border border-champagne/20 rounded-full -rotate-6" />
             </div>
 
             <FadeIn delay={0.8} direction="up" className="relative z-10 w-full max-w-[280px] md:max-w-[320px]">
-              <PhoneMockup className="relative transform lg:rotate-[2deg] hover:rotate-0 transition-transform duration-700 shadow-[0_20px_60px_rgb(0,0,0,0.15)]">
+              <PhoneMockup className="relative transform lg:rotate-[1.5deg] hover:rotate-0 transition-transform duration-700 shadow-[0_25px_60px_rgba(0,0,0,0.12)]">
                 <div className="h-full w-full bg-ivory flex flex-col items-center justify-center relative overflow-hidden">
                   <img 
                     src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=400&h=800&q=80" 
