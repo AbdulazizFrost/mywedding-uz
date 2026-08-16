@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { Heart, Image as ImageIcon, MapPin, Clock, Music, CheckCircle2, Smartphone, Gift, CalendarHeart, ArrowRight } from 'lucide-react';
@@ -36,17 +36,29 @@ const FadeIn = ({ children, delay = 0, direction = 'up', className = '' }) => {
   );
 };
 
-// Responsive Smartphone CSS Mockup Component
+// Responsive Smartphone CSS Mockup Component with Titanium Bezel and Glass Glare
 const PhoneMockup = ({ children, className = '' }) => (
-  <div className={`relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[6px] md:border-[8px] rounded-[2rem] md:rounded-[2.5rem] w-[280px] h-[560px] sm:w-[300px] sm:h-[600px] shadow-2xl overflow-hidden shrink-0 ${className}`}>
-    {/* Notch */}
-    <div className="w-[120px] md:w-[148px] h-[16px] md:h-[18px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-20"></div>
+  <div 
+    className={`relative mx-auto border-[#1E1D1B] bg-[#1E1D1B] border-[6px] md:border-[7px] rounded-[2.4rem] md:rounded-[2.8rem] w-[280px] h-[550px] sm:w-[295px] sm:h-[580px] overflow-hidden shrink-0 transition-transform duration-500 ${className}`}
+    style={{
+      boxShadow: '0 30px 80px rgba(35, 30, 20, 0.16), 0 10px 30px rgba(35, 30, 20, 0.08)'
+    }}
+  >
+    {/* Dynamic Island / Speaker */}
+    <div className="w-[90px] md:w-[105px] h-[20px] bg-[#1E1D1B] top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute z-30 flex items-center justify-center">
+      <div className="w-10 h-1 bg-[#2C2A28] rounded-full" />
+    </div>
+
+    {/* Subtle Glass Reflection Glare Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.08] to-transparent pointer-events-none z-20" />
+
     {/* Buttons */}
-    <div className="h-[40px] md:h-[46px] w-[2px] md:w-[3px] bg-gray-800 absolute -left-[8px] md:-left-[11px] top-[100px] md:top-[124px] rounded-l-lg"></div>
-    <div className="h-[40px] md:h-[46px] w-[2px] md:w-[3px] bg-gray-800 absolute -left-[8px] md:-left-[11px] top-[150px] md:top-[178px] rounded-l-lg"></div>
-    <div className="h-[50px] md:h-[64px] w-[2px] md:w-[3px] bg-gray-800 absolute -right-[8px] md:-right-[11px] top-[120px] md:top-[142px] rounded-r-lg"></div>
+    <div className="h-[36px] md:h-[40px] w-[2px] bg-[#1E1D1B] absolute -left-[7px] md:-left-[9px] top-[95px] md:top-[115px] rounded-l-lg" />
+    <div className="h-[36px] md:h-[40px] w-[2px] bg-[#1E1D1B] absolute -left-[7px] md:-left-[9px] top-[140px] md:top-[165px] rounded-l-lg" />
+    <div className="h-[46px] md:h-[55px] w-[2px] bg-[#1E1D1B] absolute -right-[7px] md:-right-[9px] top-[110px] md:top-[130px] rounded-r-lg" />
+
     {/* Screen */}
-    <div className="rounded-[1.5rem] md:rounded-[2rem] overflow-hidden w-full h-full bg-white relative">
+    <div className="rounded-[1.9rem] md:rounded-[2.3rem] overflow-hidden w-full h-full bg-[#1E1D1B] relative">
       {children}
     </div>
   </div>
@@ -55,115 +67,180 @@ const PhoneMockup = ({ children, className = '' }) => (
 export default function Home() {
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   
   // Ensure scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Subtle Mouse Parallax on Desktop
+  useEffect(() => {
+    const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+    if (!isFinePointer) return;
+
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePos({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
-    <div className="bg-ivory min-h-screen pt-16 md:pt-20 font-sans text-charcoal selection:bg-champagne selection:text-white overflow-x-hidden">
+    <div className="bg-[#FBF9F5] min-h-screen pt-16 md:pt-20 font-sans text-[#242321] selection:bg-[#C8A66A] selection:text-white overflow-x-hidden">
       
-      <section className="relative py-8 sm:py-12 lg:py-16 min-h-[calc(100vh-5rem)] px-4 md:px-8 lg:px-12 w-full flex items-center justify-center">
+      {/* 1. HERO SECTION */}
+      <section className="relative py-6 sm:py-10 lg:py-14 min-h-[calc(100vh-5rem)] px-4 sm:px-6 md:px-8 lg:px-12 w-full flex items-center justify-center">
         
-        {/* Soft background gradient & Left Floral Frame */}
+        {/* Soft luxury ambient background gradient & Left Floral Frame */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-ivory via-[#faf8f5] to-sand/30" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#FBF9F5] via-[#FAF7F2] to-[#F5F0E6]/50" />
           
-          {/* Ambient Left Floral Bouquet */}
-          <img 
+          {/* Subtle Ambient Glow */}
+          <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#C8A66A]/8 rounded-full blur-[140px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#DCC59B]/10 rounded-full blur-[160px]" />
+
+          {/* Ambient Left Floral Bouquet & Silk Drapery */}
+          <motion.img 
             src="/assets/landing/hero-bg-left.png" 
             alt="" 
-            className="absolute left-0 top-0 h-full max-h-[850px] w-auto max-w-[280px] lg:max-w-[400px] object-contain -translate-x-[20%] lg:-translate-x-[15%] pointer-events-none opacity-40 lg:opacity-70 mix-blend-multiply" 
+            style={{
+              transform: `translate(${mousePos.x * -10}px, ${mousePos.y * -6}px)`
+            }}
+            transition={{ type: 'spring', damping: 30, stiffness: 100 }}
+            className="absolute left-0 top-0 h-full max-h-[850px] w-auto max-w-[280px] lg:max-w-[420px] object-contain -translate-x-[20%] lg:-translate-x-[16%] pointer-events-none opacity-40 lg:opacity-75 mix-blend-multiply" 
           />
         </div>
 
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16 relative z-10 w-full">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-14 relative z-10 w-full">
+          
           {/* Left Content */}
-          <div className="flex-1 text-center lg:text-left w-full block">
+          <div 
+            className="flex-1 text-center lg:text-left w-full block"
+            style={{
+              transform: `translate(${mousePos.x * -2}px, ${mousePos.y * -2}px)`
+            }}
+          >
             <FadeIn delay={0.1}>
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.2em] text-champagne uppercase rounded-full mb-4 bg-white/60 backdrop-blur-md shadow-sm">
-                <Heart size={12} className="text-champagne" /> {t('home.hero.badge')}
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#C8A66A]/40 text-[10px] md:text-[11px] font-semibold tracking-[0.18em] text-[#C8A66A] uppercase rounded-full mb-4 bg-white/60 backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                <Heart size={11} className="text-[#C8A66A] fill-[#C8A66A]/20" /> {t('home.hero.badge')}
               </span>
             </FadeIn>
             
-            <FadeIn delay={0.3}>
-              <h1 className="text-[2.5rem] leading-[1.08] sm:text-5xl lg:text-[clamp(3.2rem,4.5vw,4.8rem)] font-serif font-normal mb-3 text-charcoal tracking-tight">
+            <FadeIn delay={0.25}>
+              <h1 className="text-[2.6rem] leading-[0.95] sm:text-5xl lg:text-[clamp(3.5rem,5.2vw,5.5rem)] font-serif font-normal mb-3 text-[#242321] tracking-[-0.015em]">
                 {t('home.hero.titlePart1')} <br />
-                <span className="italic text-champagne font-light drop-shadow-sm">{t('home.hero.titlePart2')}</span> <br />
+                <span className="gold-foil-text font-light italic drop-shadow-sm">
+                  {t('home.hero.titlePart2')}
+                </span> <br />
                 {t('home.hero.titlePart3')} <br className="hidden lg:block"/> {t('home.hero.titlePart4')}
               </h1>
             </FadeIn>
             
-            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-2 sm:my-3">
-              <img src="/assets/landing/divider.png" alt="Divider" className="w-[160px] sm:w-[200px] md:w-[240px] h-auto object-contain opacity-85 pointer-events-none" />
+            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-2.5 sm:my-3.5">
+              <img 
+                src="/assets/landing/divider.png" 
+                alt="Divider" 
+                className="w-[170px] sm:w-[210px] md:w-[250px] h-auto object-contain opacity-80 pointer-events-none" 
+              />
             </FadeIn>
 
             <FadeIn delay={0.5}>
-              <p className="text-[15px] md:text-base text-charcoal-light/80 mb-6 lg:mb-8 max-w-[22rem] sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
+              <p className="text-[15px] md:text-[16px] text-[#66625B] leading-[1.7] mb-6 lg:mb-8 max-w-[22rem] sm:max-w-md lg:max-w-[430px] mx-auto lg:mx-0 font-light">
                 {t('home.hero.desc')}
               </p>
             </FadeIn>
             
-            <FadeIn delay={0.7} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 px-4 sm:px-0">
-              <Link to={user ? "/dashboard" : "/register"} className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3.5 bg-charcoal text-white rounded-full font-medium hover:bg-black transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] hover:-translate-y-0.5 duration-300">
-                <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert object-contain opacity-90" />
-                {user ? t('home.hero.goToDashboard') : t('home.hero.createBtn')}
+            <FadeIn delay={0.65} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 px-4 sm:px-0">
+              <Link 
+                to={user ? "/dashboard" : "/register"} 
+                className="w-full sm:w-auto h-[52px] flex items-center justify-center gap-3 px-8 bg-[#242321] text-[#FBF9F5] text-xs uppercase tracking-[0.1em] font-medium rounded-full hover:bg-black transition-all shadow-[0_8px_25px_rgba(36,35,33,0.14)] hover:shadow-[0_12px_35px_rgba(36,35,33,0.22)] hover:-translate-y-0.5 duration-300"
+              >
+                <img src="/assets/landing/rings.png" alt="" className="w-4 h-4 brightness-0 invert object-contain opacity-90" />
+                <span>{user ? t('home.hero.goToDashboard') : t('home.hero.createBtn')}</span>
               </Link>
-              <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3.5 bg-white/70 border border-champagne/60 text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-sm">
-                {t('home.hero.seeExamples')}
+              <a 
+                href="#templates" 
+                className="w-full sm:w-auto h-[52px] flex items-center justify-center gap-3 px-8 bg-white/80 border border-[#C8A66A]/50 text-[#242321] text-xs uppercase tracking-[0.1em] font-medium rounded-full hover:bg-[#F0E8D9]/60 transition-all duration-300 backdrop-blur-sm shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:-translate-y-0.5"
+              >
+                <span>{t('home.hero.seeExamples')}</span>
               </a>
             </FadeIn>
           </div>
 
           {/* Right Mockup */}
-          <div className="flex-1 w-full flex justify-center relative mt-6 lg:mt-0">
+          <div 
+            className="flex-1 w-full flex justify-center relative mt-4 lg:mt-0"
+            style={{
+              transform: `translate(${mousePos.x * 6}px, ${mousePos.y * 6}px)`
+            }}
+          >
             
             {/* Floral Backdrop behind Phone */}
-            <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-x-[6%] lg:translate-x-[12%]">
+            <motion.div 
+              style={{
+                transform: `translate(${mousePos.x * 10}px, ${mousePos.y * 8}px)`
+              }}
+              className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-x-[6%] lg:translate-x-[12%]"
+            >
               <img 
                 src="/assets/landing/flower-left.png" 
                 alt="" 
-                className="w-[110%] md:w-[130%] max-w-[520px] object-contain opacity-70 lg:opacity-85 scale-x-[-1]" 
+                className="w-[110%] md:w-[130%] max-w-[500px] object-contain opacity-70 lg:opacity-85 scale-x-[-1]" 
               />
-            </div>
+            </motion.div>
 
-            <FadeIn delay={0.8} direction="up" className="relative z-10 w-full max-w-[280px] md:max-w-[320px]">
-              <PhoneMockup className="relative transform lg:rotate-[1.5deg] hover:rotate-0 transition-transform duration-700 shadow-[0_25px_60px_rgba(0,0,0,0.12)]">
-                <div className="h-full w-full bg-ivory flex flex-col items-center justify-center relative overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=400&h=800&q=80" 
-                    alt="Wedding Couple" 
-                    className="absolute inset-0 w-full h-full object-cover opacity-90"
-                    loading="lazy"
-                  />
-                  
-                  {/* Overlay Content */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent flex flex-col justify-end p-8 pb-14 text-white">
-                    <FadeIn delay={0.8} className="text-center w-full">
-                      <p className="text-[11px] uppercase tracking-[0.4em] font-semibold mb-4 text-white/90 drop-shadow-md">
-                        {t('home.hero.mockupBadge')}
-                      </p>
-                      <div className="flex items-center justify-center gap-4 mb-6">
-                        <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-champagne/80"></div>
-                        <Heart size={14} className="text-champagne drop-shadow-md" />
-                        <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-champagne/80"></div>
+            <FadeIn delay={0.7} direction="up" className="relative z-10 w-full max-w-[280px] md:max-w-[310px]">
+              <motion.div
+                animate={{ 
+                  y: [-3, 3, -3],
+                  rotate: [1.2, 1.8, 1.2]
+                }}
+                transition={{ 
+                  duration: 6, 
+                  repeat: Infinity, 
+                  ease: 'easeInOut' 
+                }}
+              >
+                <PhoneMockup className="relative">
+                  <div className="h-full w-full bg-[#1E1D1B] flex flex-col items-center justify-center relative overflow-hidden">
+                    <img 
+                      src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=400&h=800&q=80" 
+                      alt="Wedding Couple" 
+                      className="absolute inset-0 w-full h-full object-cover opacity-90"
+                      loading="lazy"
+                    />
+                    
+                    {/* Overlay Content */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent flex flex-col justify-end p-7 pb-12 text-white">
+                      <div className="text-center w-full">
+                        <p className="text-[10px] uppercase tracking-[0.35em] font-semibold mb-3 text-white/90 drop-shadow-md">
+                          {t('home.hero.mockupBadge')}
+                        </p>
+                        <div className="flex items-center justify-center gap-3 mb-5">
+                          <div className="h-[1px] w-7 bg-gradient-to-r from-transparent to-[#C8A66A]/80" />
+                          <Heart size={13} className="text-[#C8A66A] drop-shadow-md fill-[#C8A66A]/30" />
+                          <div className="h-[1px] w-7 bg-gradient-to-l from-transparent to-[#C8A66A]/80" />
+                        </div>
+                        <h3 className="text-[2.5rem] leading-[1.05] font-serif mb-1 font-normal text-white drop-shadow-lg">
+                          Азамат <br />
+                          <span className="text-[1.8rem] text-[#C8A66A] italic font-light my-1 block">&</span> 
+                          Мадина
+                        </h3>
+                        <p className="text-[11px] uppercase tracking-[0.25em] mt-6 text-white/90 font-medium drop-shadow-md">
+                          24 Сентября 2026
+                        </p>
+                        <p className="text-[9px] uppercase tracking-widest mt-2 text-white/70 font-light">
+                          Ташкент, Узбекистан
+                        </p>
                       </div>
-                      <h3 className="text-[2.75rem] leading-[1.1] font-serif mb-2 font-medium text-white drop-shadow-lg">
-                        Азамат <br />
-                        <span className="text-[2rem] text-champagne italic font-light my-2 block">&</span> 
-                        Мадина
-                      </h3>
-                      <p className="text-xs uppercase tracking-[0.3em] mt-8 text-white/90 font-medium drop-shadow-md">
-                        24 Сентября 2026
-                      </p>
-                      <p className="text-[10px] uppercase tracking-widest mt-3 text-white/70 font-light">
-                        Ташкент, Узбекистан
-                      </p>
-                    </FadeIn>
+                    </div>
                   </div>
-                </div>
-              </PhoneMockup>
+                </PhoneMockup>
+              </motion.div>
             </FadeIn>
           </div>
         </div>

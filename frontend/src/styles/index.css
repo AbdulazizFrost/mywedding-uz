@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ivory: #FCFAF8;
-  --color-champagne: #D4C3A3;
+  --color-ivory: #FBF9F5;
+  --color-champagne: #C8A66A;
   --color-champagne-light: #F0E8D9;
   --color-sand: #EFEBE4;
-  --color-charcoal: #2A2A2A;
-  --color-charcoal-light: #4A4A4A;
+  --color-charcoal: #242321;
+  --color-charcoal-light: #66625B;
   
   --font-serif: 'Cormorant Garamond', ui-serif, Georgia, serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -19,6 +19,13 @@ body {
   color: var(--color-charcoal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Gold Champagne Gradient Text */
+.gold-foil-text {
+  background: linear-gradient(90deg, #B9975B 0%, #E2CC9C 50%, #B9975B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Custom hide scrollbar for horizontal carousels */
@@ -48,11 +55,21 @@ html {
   padding-top: env(safe-area-inset-top, 20px);
 }
 
-/* Custom scrollbar hiding (used in EditorPage) */
+/* Custom scrollbar hiding */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
