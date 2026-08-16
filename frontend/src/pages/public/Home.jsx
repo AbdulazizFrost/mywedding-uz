@@ -103,15 +103,17 @@ export default function Home() {
           <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#C8A66A]/8 rounded-full blur-[140px]" />
           <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#DCC59B]/10 rounded-full blur-[160px]" />
 
-          {/* Ambient Left Floral Bouquet & Silk Drapery */}
+          {/* Ambient Left Floral Bouquet & Silk Drapery with seamless vertical fade */}
           <motion.img 
             src="/assets/landing/hero-bg-left.png" 
             alt="" 
             style={{
+              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 98%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 98%)',
               transform: `translate(${mousePos.x * -10}px, ${mousePos.y * -6}px)`
             }}
             transition={{ type: 'spring', damping: 30, stiffness: 100 }}
-            className="absolute left-0 top-0 h-full max-h-[850px] w-auto max-w-[280px] lg:max-w-[420px] object-contain -translate-x-[20%] lg:-translate-x-[16%] pointer-events-none opacity-40 lg:opacity-75 mix-blend-multiply" 
+            className="absolute left-0 top-0 h-[105%] max-h-[920px] w-auto max-w-[300px] lg:max-w-[440px] object-contain -translate-x-[22%] lg:-translate-x-[18%] pointer-events-none opacity-45 lg:opacity-75 mix-blend-multiply" 
           />
         </div>
 
@@ -136,7 +138,7 @@ export default function Home() {
                 <span className="gold-foil-text font-light italic drop-shadow-sm">
                   {t('home.hero.titlePart2')}
                 </span> <br />
-                {t('home.hero.titlePart3')} <br className="hidden lg:block"/> {t('home.hero.titlePart4')}
+                {t('home.hero.titlePart3')} {t('home.hero.titlePart4') && <><br className="hidden lg:block"/> {t('home.hero.titlePart4')}</>}
               </h1>
             </FadeIn>
             
@@ -179,17 +181,17 @@ export default function Home() {
             }}
           >
             
-            {/* Floral Backdrop behind Phone */}
+            {/* Floral Backdrop behind Phone (Lush and beautifully framed) */}
             <motion.div 
               style={{
                 transform: `translate(${mousePos.x * 10}px, ${mousePos.y * 8}px)`
               }}
-              className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-x-[6%] lg:translate-x-[12%]"
+              className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-x-[4%] lg:translate-x-[6%] -translate-y-[2%]"
             >
               <img 
                 src="/assets/landing/flower-left.png" 
                 alt="" 
-                className="w-[110%] md:w-[130%] max-w-[500px] object-contain opacity-70 lg:opacity-85 scale-x-[-1]" 
+                className="w-[130%] sm:w-[155%] md:w-[170%] max-w-[620px] object-contain opacity-85 lg:opacity-95 scale-x-[-1]" 
               />
             </motion.div>
 
