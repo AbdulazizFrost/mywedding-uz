@@ -7,15 +7,15 @@
     "dashboard": "Личный кабинет",
     "login": "Войти",
     "createInvitation": "Создать приглашение",
-    "admin": "Admin"
+    "admin": "Админ"
   },
   "home": {
     "hero": {
       "badge": "Digital Wedding Invitation",
       "titlePart1": "Ваше свадебное",
       "titlePart2": "приглашение",
-      "titlePart3": "в цифровом",
-      "titlePart4": "формате",
+      "titlePart3": "в цифровом формате",
+      "titlePart4": "",
       "desc": "Создайте красивое персональное приглашение на свадьбу за несколько минут и отправьте его гостям одной ссылкой.",
       "goToDashboard": "Перейти в кабинет",
       "createBtn": "Создать приглашение",
@@ -97,7 +97,8 @@
     "liveDemo": "Живой показ",
     "preview": "Демо",
     "select": "Выбрать",
-    "useDesign": "Выбрать дизайн"
+    "useDesign": "Выбрать дизайн",
+    "demoAlert": "Это демонстрационный режим. Ответы сохраняются на опубликованном сайте."
   },
   "countdown": {
     "title": "До торжества осталось",
@@ -203,6 +204,7 @@
     "dateAndTime": "Дата и Время",
     "location": "Место проведения",
     "design": "Дизайн",
+    "templateDesign": "Стиль шаблона",
     "media": "Медиа",
     "gallery": "Галерея фото",
     "music": "Музыка",
@@ -298,14 +300,21 @@
     "submit": "Подтвердить"
   },
   "userDashboard": {
-    "loading": "Загрузка студии...",
+    "loading": "Загрузка кабинета...",
+    "personalCabinet": "Личный кабинет",
     "title": "Личный кабинет",
+    "dearUser": "Дорогой пользователь",
+    "adminPanel": "Панель администратора",
     "logout": "Выйти",
     "create": "Создать",
     "myInvitations": "Мои приглашения",
+    "newInvitation": "Создать приглашение",
+    "noInvitations": "У вас пока нет созданных приглашений.",
     "noInvitationsTitle": "У вас пока нет приглашений",
     "noInvitationsDesc": "Создайте свое первое цифровое свадебное приглашение и поделитесь им с гостями.",
+    "chooseTemplate": "Выбрать шаблон",
     "selectDesign": "Выбрать дизайн",
+    "noPreview": "Нет превью",
     "preview": "Превью",
     "published": "Опубликовано",
     "draft": "Черновик",
@@ -316,10 +325,13 @@
     "previewBtn": "Предпросмотр",
     "billsAndOrders": "Счета и заказы",
     "noOrders": "У вас нет активных заказов.",
+    "orderTemplate": "Свадебный шаблон",
     "paid": "Оплачен",
-    "pending": "Ожидает",
+    "awaitingPayment": "Ожидает оплаты",
+    "pending": "Ожидает оплаты",
     "pay": "Оплатить",
-    "guestsRsvp": "Гости (RSVP)"
+    "guestsRsvp": "Гости (RSVP)",
+    "guestsResponses": "Ответы гостей"
   },
   "templateDetail": {
     "notFound": "Шаблон не найден",
@@ -394,5 +406,16 @@
     "publishedBadge": "Опубликован",
     "draftBadge": "Черновик",
     "archivedBadge": "Архив"
+  },
+  "common": {
+    "close": "Закрыть",
+    "back": "Назад",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "loading": "Загрузка...",
+    "mobile": "Телефон",
+    "desktop": "Полный экран"
   }
 }

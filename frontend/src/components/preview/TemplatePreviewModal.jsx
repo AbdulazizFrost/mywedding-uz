@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Smartphone, Monitor, Sparkles, ArrowRight } from 'lucide-react';
+import { X, Smartphone, Monitor, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import TemplateRenderer from '../../templates/TemplateRenderer.jsx';
 
@@ -26,6 +26,10 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
 
   // Rich Demo Schema for the template preview
   const demoData = template.schema || {};
+
+  const handleDemoRsvp = () => {
+    alert(t('catalog.demoAlert') || 'Это демонстрационный режим.');
+  };
 
   return (
     <AnimatePresence>
@@ -57,7 +61,7 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
               }`}
             >
               <Smartphone size={14} />
-              <span>Mobile</span>
+              <span>{t('common.mobile')}</span>
             </button>
             <button
               onClick={() => setViewMode('desktop')}
@@ -66,7 +70,7 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
               }`}
             >
               <Monitor size={14} />
-              <span>Full Screen</span>
+              <span>{t('common.desktop')}</span>
             </button>
           </div>
 
@@ -80,7 +84,7 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
                 }}
                 className="px-4 sm:px-6 py-2 bg-[#d4af37] text-black font-sans text-xs uppercase tracking-widest font-semibold rounded-full hover:bg-white transition-all shadow-lg flex items-center gap-2"
               >
-                <span>{t('catalog.useDesign') || 'Выбрать дизайн'}</span>
+                <span>{t('catalog.useDesign')}</span>
                 <ArrowRight size={14} />
               </button>
             )}
@@ -88,7 +92,7 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
             <button
               onClick={onClose}
               className="p-2 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-              title="Закрыть"
+              title={t('common.close')}
             >
               <X size={20} />
             </button>
@@ -103,9 +107,7 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
                 templateSlug={template.slug} 
                 data={demoData} 
                 media={[]} 
-                onSubmitRsvp={async () => {
-                  alert('Это демонстрационный режим. Ответы сохраняются на опубликованном сайте.');
-                }} 
+                onSubmitRsvp={async () => handleDemoRsvp()} 
               />
             </div>
           ) : (
@@ -114,9 +116,7 @@ export default function TemplatePreviewModal({ isOpen, onClose, template, onSele
                 templateSlug={template.slug} 
                 data={demoData} 
                 media={[]} 
-                onSubmitRsvp={async () => {
-                  alert('Это демонстрационный режим. Ответы сохраняются на опубликованном сайте.');
-                }} 
+                onSubmitRsvp={async () => handleDemoRsvp()} 
               />
             </div>
           )}
