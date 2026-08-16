@@ -184,6 +184,16 @@ function EditorForm({
             ]} 
           />
           <Select 
+            label={t('editor.invitationLanguage') || 'Язык сайта приглашения'} 
+            value={data.design?.language || 'ru'} 
+            onChange={e => handleChange('design', 'language', e.target.value)} 
+            selectOptionText={t('editor.selectOption')}
+            options={[
+              { value: 'ru', label: `🇷🇺 ${t('editor.langRu') || 'Русский (RU)'}` },
+              { value: 'uz', label: `🇺🇿 ${t('editor.langUz') || "O'zbekcha (UZ)"}` }
+            ]} 
+          />
+          <Select 
             label={t('editor.theme')} 
             value={data.design?.theme} 
             onChange={e => handleChange('design', 'theme', e.target.value)} 

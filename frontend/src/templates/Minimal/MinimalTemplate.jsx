@@ -33,40 +33,47 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
   
   const audioRef = useRef(null);
 
+  // Determine active invitation language (chosen by user in Editor or falling back to current locale)
+  const lang = data.design?.language || (i18n.language === 'uz' ? 'uz' : 'ru');
+  const isUz = lang === 'uz';
+
   // Dynamic user data mapping with quiet luxury defaults
-  const groom = data.groom_name || 'Азамат';
-  const bride = data.bride_name || 'Мадина';
+  const groom = data.groom_name || (isUz ? 'Azamat' : 'Азамат');
+  const bride = data.bride_name || (isUz ? 'Madina' : 'Мадина');
   const weddingDate = data.wedding_date || '2026-09-24';
   const weddingTime = data.wedding_time || '17:00';
   const ceremonyTime = data.ceremony_time || '18:00';
   const receptionTime = data.reception_time || '19:30';
-  const venueName = data.venue_name || 'Versal Palace';
-  const address = data.address || 'г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1';
+  const venueName = data.venue_name || (isUz ? 'Versal Palace restorani' : 'Ресторан «Versal Palace»');
+  const address = data.address || (isUz ? 'Toshkent sh., Mirzo Ulug‘bek tumani, Niyozbek Yo‘li ko‘chasi, 1' : 'г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1');
   const mapUrl = data.map_url || 'https://maps.yandex.ru';
-  const quote = data.quote || 'Два сердца — одна история, два пути — одна судьба.';
+  const defaultQuote = isUz 
+    ? 'Ikki qalb — bitta sevgi qissasi, ikki yo‘l — bitta taqdir.' 
+    : 'Два сердца — одна история, два пути — одна судьба.';
+  const quote = data.quote || defaultQuote;
 
   const musicUrl = data.music?.url || 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-114429.mp3';
   const musicEnabled = data.music?.enabled !== false;
 
-  // Design tokens & palettes
+  // Design tokens
   const design = data.design || {};
   const primaryColor = design.primary_color || '#1F1E1D';
   const secondaryColor = design.secondary_color || '#C8A66A'; // Champagne Gold
 
   // Formatted date
   const dateObj = weddingDate ? new Date(weddingDate) : new Date('2026-09-24');
-  const formattedDate = dateObj.toLocaleDateString(
-    i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU', 
-    { day: 'numeric', month: 'long', year: 'numeric' }
-  );
-  const formattedDateUpper = formattedDate.toUpperCase();
-
-  const weddingDayNumber = dateObj.getDate();
-  const weddingMonthName = dateObj.toLocaleDateString(
-    i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU', 
-    { month: 'long' }
-  ).toUpperCase();
-  const weddingYearNumber = dateObj.getFullYear();
+  const monthNamesRu = ['ЯНВАРЯ', 'ФЕВРАЛЯ', 'МАРТА', 'АПРЕЛЯ', 'МАЯ', 'ИЮНЯ', 'ИЮЛЯ', 'АВГУСТА', 'СЕНТЯБРЯ', 'ОКТЯБРЯ', 'НОЯБРЯ', 'ДЕКАБРЯ'];
+  const monthNamesUz = ['YANVAR', 'FEVRAL', 'MART', 'APREL', 'MAY', 'IYUN', 'IYUL', 'AVGUST', 'SENTYABR', 'OKTYABR', 'NOYABR', 'DEKABR'];
+  
+  const dayNum = dateObj.getDate();
+  const monthNum = dateObj.getMonth();
+  const yearNum = dateObj.getFullYear();
+  
+  const formattedDateUpper = isUz 
+    ? `${dayNum} ${monthNamesUz[monthNum]} ${yearNum}`
+    : `${dayNum} ${monthNamesRu[monthNum]} ${yearNum}`;
+    
+  const weddingMonthName = isUz ? monthNamesUz[monthNum] : monthNamesRu[monthNum];
 
   const galleryImages = media.filter(m => m.type !== 'music');
   const coverPhoto = galleryImages[0]?.url || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=85';
@@ -101,8 +108,8 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
   };
 
   const handleAddToCalendar = () => {
-    const title = encodeURIComponent(`Свадьба: ${groom} & ${bride}`);
-    const details = encodeURIComponent(`Свадебное торжество ${groom} и ${bride}. ${venueName}, ${address}.`);
+    const title = encodeURIComponent(isUz ? `To‘y: ${groom} & ${bride}` : `Свадьба: ${groom} & ${bride}`);
+    const details = encodeURIComponent(isUz ? `${groom} va ${bride} nikoh to‘yi. ${venueName}, ${address}.` : `Свадебное торжество ${groom} и ${bride}. ${venueName}, ${address}.`);
     const location = encodeURIComponent(`${venueName}, ${address}`);
     const dateFormatted = weddingDate.replace(/-/g, '');
     const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T120000Z/${dateFormatted}T180000Z`;
@@ -110,7 +117,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F5EE] text-[#1F1E1D] font-sans selection:bg-[#C8A66A]/25 selection:text-[#1F1E1D] relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#FBF9F5] text-[#1F1E1D] font-sans selection:bg-[#C8A66A]/25 selection:text-[#1F1E1D] relative overflow-x-hidden">
       
       {/* Hidden Audio Element */}
       {musicEnabled && (
@@ -130,15 +137,15 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           onClick={togglePlayMusic}
-          className="fixed top-4 right-4 z-40 flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#C8A66A]/30 shadow-md text-xs font-medium text-[#1F1E1D] hover:bg-white hover:border-[#C8A66A] transition-all"
-          aria-label={isPlaying ? "Выключить музыку" : "Включить музыку"}
+          className="fixed top-4 right-4 z-40 flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#C8A66A]/35 shadow-md text-xs font-medium text-[#1F1E1D] hover:bg-white hover:border-[#C8A66A] transition-all"
+          aria-label={isPlaying ? "Musiqani to'xtatish" : "Musiqani yoqish"}
         >
           <div className="flex items-center gap-0.5 h-3">
             <span className={`w-0.5 bg-[#C8A66A] rounded-full transition-all ${isPlaying ? 'h-3 animate-pulse' : 'h-1'}`} />
             <span className={`w-0.5 bg-[#C8A66A] rounded-full transition-all ${isPlaying ? 'h-2.5 animate-pulse delay-75' : 'h-1'}`} />
             <span className={`w-0.5 bg-[#C8A66A] rounded-full transition-all ${isPlaying ? 'h-3.5 animate-pulse delay-150' : 'h-1'}`} />
           </div>
-          <span className="text-[11px] uppercase tracking-wider">{isPlaying ? t('common.musicPlaying') || 'Музыка' : t('common.music') || 'Музыка'}</span>
+          <span className="text-[11px] uppercase tracking-wider">{isUz ? 'Musiqa' : 'Музыка'}</span>
         </motion.button>
       )}
 
@@ -159,13 +166,11 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
             initial={{ opacity: 1 }}
             exit={{ y: '-100%', opacity: 0 }}
             transition={{ duration: 0.9, ease: [0.77, 0, 0.175, 1] }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_30%,#FAF7F0_0%,#F5F0E5_100%)] p-4 sm:p-6 overflow-hidden select-none"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF7F0] p-4 sm:p-6 overflow-hidden select-none"
           >
-            {/* Top-Left Ambient Shadow Drapery */}
-            <div className="absolute -top-16 -left-16 w-80 h-96 bg-[radial-gradient(ellipse_at_center,rgba(120,110,95,0.09)_0%,transparent_70%)] blur-2xl -rotate-12 pointer-events-none" />
-
-            {/* Right Side Baby's Breath Floral Ambient Aura */}
-            <div className="absolute top-[10%] -right-12 bottom-0 w-64 bg-[radial-gradient(circle_at_75%_30%,rgba(200,166,106,0.14)_0%,transparent_60%),radial-gradient(circle_at_85%_70%,rgba(200,166,106,0.18)_0%,transparent_60%)] pointer-events-none" />
+            {/* Seamless Ambient Background Overlays (Full Bleed, No Cutoff Edges) */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(120,110,95,0.07)_0%,transparent_60%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(200,166,106,0.12)_0%,transparent_60%)] pointer-events-none" />
 
             <div className="relative z-10 w-full max-w-sm flex flex-col items-center text-center my-auto">
               
@@ -185,9 +190,9 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.15 }}
-                className="text-[9.5px] uppercase tracking-[0.28em] font-semibold text-[#C8A66A] mb-4"
+                className="text-[9.5px] uppercase tracking-[0.28em] font-semibold text-[#C8A66A] mb-3"
               >
-                DIGITAL WEDDING INVITATION
+                {isUz ? "RAQAMLI TO'Y TAKLIFNOMASI" : "DIGITAL WEDDING INVITATION"}
               </motion.div>
 
               {/* Tag */}
@@ -197,7 +202,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
                 transition={{ duration: 0.8, delay: 0.25 }}
                 className="font-serif text-xs uppercase tracking-[0.35em] text-[#9F824F] font-medium mb-3"
               >
-                С В А Д Ь Б А
+                {isUz ? "T O ' Y" : "С В А Д Ь Б А"}
               </motion.div>
 
               {/* Couple Names in Large Elegant Serif */}
@@ -238,7 +243,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
                     {formattedDateUpper}
                   </span>
                   <span className="text-[9.5px] uppercase tracking-widest text-[#726E65] font-medium mt-0.5">
-                    {venueName.toUpperCase()}
+                    {isUz ? "TOSHKENT, O'ZBEKISTON" : "ТАШКЕНТ, УЗБЕКИСТАН"}
                   </span>
                 </div>
               </motion.div>
@@ -272,7 +277,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               >
                 <Mail size={18} className="text-[#E2CCA0] transition-transform group-hover:scale-110" />
                 <span className="text-xs font-semibold uppercase tracking-[0.12em]">
-                  {t('previewComponent.openInvitation') || 'ОТКРЫТЬ ПРИГЛАШЕНИЕ'}
+                  {isUz ? 'TAKLIFNOMANI OCHISH' : 'ОТКРЫТЬ ПРИГЛАШЕНИЕ'}
                 </span>
               </motion.button>
 
@@ -315,7 +320,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
               <p className="font-serif italic text-white text-base sm:text-lg drop-shadow-md">
-                «С этого дня и навсегда...»
+                {isUz ? "«Ushbu kundan boshlab butun umrga...»" : "«С этого дня и навсегда...»"}
               </p>
             </div>
           </div>
@@ -324,10 +329,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
         {/* 2. INVITATION LETTER / MESSAGE */}
         <section id="letter" className="bg-white border border-[#C8A66A]/25 rounded-3xl p-8 sm:p-10 text-center shadow-sm">
           <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C8A66A] block mb-2">
-            {t('previewComponent.dearGuests') || 'ДОРОГИЕ ГОСТИ'}
+            {isUz ? "AZIZ VA QADRLI MEHMONLARIMIZ" : "ДОРОГИЕ РОДНЫЕ И ДРУЗЬЯ"}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl text-[#1F1E1D] font-normal mb-3">
-            {t('previewComponent.weGetMarried') || 'Мы женимся!'}
+            {isUz ? "Biz turmush quryapmiz!" : "Мы женимся!"}
           </h2>
           
           <div className="flex items-center justify-center gap-3 my-4 text-[#C8A66A]">
@@ -337,13 +342,14 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
           </div>
 
           <p className="text-sm sm:text-base text-[#726E65] leading-relaxed font-light max-w-md mx-auto mb-4">
-            В нашей жизни наступает особенный день — день создания нашей семьи. 
-            Мы будем счастливы разделить этот радостный и незабываемый праздник 
-            вместе с нашими самыми дорогими и близкими людьми.
+            {isUz 
+              ? "Hayotimizda eng baxtli va unutilmas kun — oilamiz quriladigan kun keldi. Ushbu quvonchli lahzalarni eng yaqin insonlarimiz davrasida birga nishonlashdan behad mamnun bo'lamiz."
+              : "В нашей жизни наступает особенный день — день создания нашей семьи. Мы будем счастливы разделить этот радостный и незабываемый праздник вместе с нашими самыми дорогими и близкими людьми."
+            }
           </p>
 
           <div className="mt-8 flex flex-col items-center">
-            <span className="font-serif italic text-sm text-[#C8A66A]">{t('previewComponent.withLove') || 'С любовью,'}</span>
+            <span className="font-serif italic text-sm text-[#C8A66A]">{isUz ? "Cheksiz mehr bilan," : "С любовью,"}</span>
             <strong className="font-serif text-xl sm:text-2xl text-[#1F1E1D] font-medium mt-1">
               {groom} & {bride}
             </strong>
@@ -357,12 +363,18 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
           <div className="bg-white border border-[#C8A66A]/25 rounded-3xl p-6 shadow-sm flex flex-col justify-between text-center">
             <div>
               <div className="flex justify-between items-center border-b border-[#EAE4D8] pb-2.5 mb-3 text-[10px] font-bold tracking-wider">
-                <span className="text-[#1F1E1D]">{weddingMonthName} {weddingYearNumber}</span>
-                <span className="text-[#C8A66A]">{venueName.split(' ')[0] || 'ТАШКЕНТ'}</span>
+                <span className="text-[#1F1E1D]">{weddingMonthName} {yearNum}</span>
+                <span className="text-[#C8A66A]">{venueName.split(' ')[0] || (isUz ? 'TOSHKENT' : 'ТАШКЕНТ')}</span>
               </div>
 
               <div className="grid grid-cols-7 text-[10px] font-semibold text-[#C8A66A] mb-2">
-                <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                <span>{isUz ? 'Du' : 'Пн'}</span>
+                <span>{isUz ? 'Se' : 'Вт'}</span>
+                <span>{isUz ? 'Ch' : 'Ср'}</span>
+                <span>{isUz ? 'Pa' : 'Чт'}</span>
+                <span>{isUz ? 'Ju' : 'Пт'}</span>
+                <span>{isUz ? 'Sh' : 'Сб'}</span>
+                <span>{isUz ? 'Ya' : 'Вс'}</span>
               </div>
 
               <div className="grid grid-cols-7 gap-y-1 text-xs text-[#726E65] mb-5">
@@ -372,7 +384,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
                 <span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span>
                 <span>20</span><span>21</span><span>22</span><span>23</span>
                 <span className="relative flex items-center justify-center w-6 h-6 mx-auto rounded-full bg-[#1F1E1D] text-white font-bold shadow-md">
-                  {weddingDayNumber}
+                  {dayNum}
                   <span className="absolute -top-2 -right-1 text-[8px] text-[#C8A66A]">♡</span>
                 </span>
                 <span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span>
@@ -384,7 +396,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               className="w-full py-2.5 px-4 rounded-full bg-[#F3EFE6] border border-[#C8A66A]/30 text-[11px] font-semibold uppercase tracking-wider text-[#1F1E1D] hover:bg-white hover:border-[#C8A66A] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <CalendarIcon size={13} />
-              <span>{t('previewComponent.addToCalendar') || 'В календарь'}</span>
+              <span>{isUz ? "Taqvimga qo'shish" : "В календарь"}</span>
             </button>
           </div>
 
@@ -392,10 +404,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
           <div className="bg-white border border-[#C8A66A]/25 rounded-3xl p-6 shadow-sm flex flex-col justify-between text-center">
             <div>
               <span className="text-[10px] uppercase tracking-[0.22em] font-bold text-[#C8A66A] block mb-1">
-                {t('previewComponent.countdownBadge') || 'ОБРАТНЫЙ ОТСЧЁТ'}
+                {isUz ? "TO'YGACHA QOLGAN VAQT" : "ОБРАТНЫЙ ОТСЧЁТ"}
               </span>
               <h3 className="font-serif text-lg text-[#1F1E1D] font-medium mb-4">
-                {t('previewComponent.timeUntil') || 'До нашей свадьбы:'}
+                {isUz ? "To'yimiz boshlanishiga:" : "До нашей свадьбы:"}
               </h3>
               
               <div className="py-2">
@@ -404,7 +416,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
             </div>
 
             <p className="font-serif italic text-xs text-[#726E65] mt-3">
-              Ждём встречи с вами!
+              {isUz ? "Siz bilan ko'rishishni intiqlik bilan kutamiz!" : "Ждём встречи с вами!"}
             </p>
           </div>
 
@@ -414,10 +426,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
         <section id="schedule" className="bg-white border border-[#C8A66A]/25 rounded-3xl p-6 sm:p-8 shadow-sm">
           <div className="text-center mb-6">
             <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C8A66A] block mb-1">
-              {t('previewComponent.programBadge') || 'ПРОГРАММА ДНЯ'}
+              {isUz ? "KUN TARTIBI" : "ПРОГРАММА ДНЯ"}
             </span>
             <h2 className="font-serif text-3xl text-[#1F1E1D] font-normal">
-              {t('previewComponent.program') || 'Расписание'}
+              {isUz ? "Dastur" : "Расписание"}
             </h2>
             <div className="flex items-center justify-center gap-3 my-2 text-[#C8A66A]">
               <span className="h-px w-6 bg-[#C8A66A]/40" />
@@ -435,10 +447,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               </span>
               <div>
                 <h4 className="font-serif text-lg font-semibold text-[#1F1E1D]">
-                  {t('previewComponent.gathering') || 'Сбор гостей & Welcome'}
+                  {isUz ? "Mehmonlarni kutib olish & Welcome" : "Сбор гостей & Welcome"}
                 </h4>
                 <p className="text-xs text-[#726E65] mt-1 leading-relaxed">
-                  Встреча гостей, легкие напитки, живая музыка и праздничная фотозона.
+                  {isUz ? "Mehmonlarni kutib olish, yengil ichimliklar, jonli musiqa va fotozona." : "Встреча гостей, легкие напитки, живая музыка и праздничная фотозона."}
                 </p>
               </div>
             </div>
@@ -450,10 +462,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               </span>
               <div>
                 <h4 className="font-serif text-lg font-semibold text-[#1F1E1D]">
-                  {t('previewComponent.ceremony') || 'Торжественная церемония'}
+                  {isUz ? "Nikoh marosimi" : "Торжественная церемония"}
                 </h4>
                 <p className="text-xs text-[#726E65] mt-1 leading-relaxed">
-                  Обмен кольцами, свадебными клятвами и поздравления молодоженов.
+                  {isUz ? "Uzuklar almashinuvi, qasamyod va yoshlarni qutlash." : "Обмен кольцами, свадебными клятвами и поздравления молодоженов."}
                 </p>
               </div>
             </div>
@@ -465,10 +477,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               </span>
               <div>
                 <h4 className="font-serif text-lg font-semibold text-[#1F1E1D]">
-                  {t('previewComponent.reception') || 'Праздничный банкет'}
+                  {isUz ? "To'y oqshomi" : "Праздничный банкет"}
                 </h4>
                 <p className="text-xs text-[#726E65] mt-1 leading-relaxed">
-                  Изысканный ужин, поздравления от близких, первый танец и шоу-программа.
+                  {isUz ? "Mazali taomlar, samimiy tilaklar, kelin-kuyov raqsi va shou-dastur." : "Изысканный ужин, поздравления от близких, первый танец и шоу-программа."}
                 </p>
               </div>
             </div>
@@ -480,10 +492,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               </span>
               <div>
                 <h4 className="font-serif text-lg font-semibold text-[#1F1E1D]">
-                  {t('previewComponent.cake') || 'Свадебный торт & Салют'}
+                  {isUz ? "To'y torti & Mushakbozlik" : "Свадебный торт & Салют"}
                 </h4>
                 <p className="text-xs text-[#726E65] mt-1 leading-relaxed">
-                  Торжественное разрезание торта и кульминация вечера праздничными огнями.
+                  {isUz ? "To'y tortini kesish va oqshomni yorqin mushakbozlik bilan yakunlash." : "Торжественное разрезание торта и кульминация вечера праздничными огнями."}
                 </p>
               </div>
             </div>
@@ -495,10 +507,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
         {data.story?.enabled && data.story?.story && (
           <section className="bg-white border border-[#C8A66A]/25 rounded-3xl p-8 text-center shadow-sm">
             <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C8A66A] block mb-1">
-              {t('previewComponent.ourStory') || 'ИСТОРИЯ ЛЮБВИ'}
+              {isUz ? "SEVGI QISSASI" : "ИСТОРИЯ ЛЮБВИ"}
             </span>
             <h2 className="font-serif text-3xl text-[#1F1E1D] font-normal mb-3">
-              {data.story?.story_title || 'Как всё начиналось'}
+              {data.story?.story_title || (isUz ? "Barchasi qanday boshlangan edi" : "Как всё начиналось")}
             </h2>
             <div className="flex items-center justify-center gap-3 my-3 text-[#C8A66A]">
               <span className="h-px w-6 bg-[#C8A66A]/40" />
@@ -516,10 +528,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
           <section className="bg-white border border-[#C8A66A]/25 rounded-3xl p-6 sm:p-8 shadow-sm">
             <div className="text-center mb-6">
               <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C8A66A] block mb-1">
-                {t('previewComponent.gallery') || 'ГАЛЕРЕЯ'}
+                {isUz ? "FOTOGALEREYA" : "ГАЛЕРЕЯ"}
               </span>
               <h2 className="font-serif text-3xl text-[#1F1E1D] font-normal">
-                {t('previewComponent.moments') || 'Наши моменты'}
+                {isUz ? "Baxtli onlarimiz" : "Наши моменты"}
               </h2>
             </div>
 
@@ -551,13 +563,13 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               className="w-full h-full object-cover"
             />
             <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-semibold uppercase tracking-wider">
-              {t('previewComponent.venue') || 'Банкетный зал'}
+              {isUz ? "To'yxona" : "Банкетный зал"}
             </div>
           </div>
 
           <div className="p-6 sm:p-8 text-center">
             <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#C8A66A] block mb-1">
-              {t('previewComponent.location') || 'ЛОКАЦИЯ'}
+              {isUz ? "MANZIL" : "ЛОКАЦИЯ"}
             </span>
             <h3 className="font-serif text-2xl sm:text-3xl text-[#1F1E1D] font-medium mb-2">
               {venueName}
@@ -575,7 +587,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
                   className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#1F1E1D] text-white text-xs font-semibold uppercase tracking-wider hover:bg-black transition-all flex items-center justify-center gap-2"
                 >
                   <Navigation size={14} />
-                  <span>{t('previewComponent.openMap') || 'Открыть в картах'}</span>
+                  <span>{isUz ? "Xaritada ochish" : "Открыть в картах"}</span>
                 </a>
               )}
               
@@ -584,7 +596,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
                 className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#F3EFE6] border border-[#C8A66A]/30 text-xs font-semibold uppercase tracking-wider text-[#1F1E1D] hover:bg-white hover:border-[#C8A66A] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {copied ? <Check size={14} className="text-green-600" /> : <Copy size={14} />}
-                <span>{copied ? t('common.copied') || 'Скопировано!' : t('common.copyAddress') || 'Скопировать адрес'}</span>
+                <span>{copied ? (isUz ? "Nusxalandi!" : "Скопировано!") : (isUz ? "Manzilni nusxalash" : "Скопировать адрес")}</span>
               </button>
             </div>
           </div>
@@ -596,7 +608,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
             DRESS CODE
           </span>
           <h2 className="font-serif text-3xl text-[#1F1E1D] font-normal mb-2">
-            {t('previewComponent.dressCode') || 'Пожелания по стилю'}
+            {isUz ? "Kiyim uslubi bo'yicha tavsiyalar" : "Пожелания по стилю"}
           </h2>
           <div className="flex items-center justify-center gap-3 my-2 text-[#C8A66A]">
             <span className="h-px w-6 bg-[#C8A66A]/40" />
@@ -605,7 +617,10 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
           </div>
 
           <p className="text-xs sm:text-sm text-[#726E65] max-w-sm mx-auto mb-6">
-            Будем благодарны, если вы поддержите цветовую гамму нашего праздника в своих нарядах:
+            {isUz 
+              ? "To'yimizning ranglar palitrasini o'z liboslaringizda qo'llab-quvvatlasangiz behad minnatdor bo'lamiz:"
+              : "Будем благодарны, если вы поддержите цветовую гамму нашего праздника в своих нарядах:"
+            }
           </p>
 
           <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
@@ -657,7 +672,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
             {formattedDateUpper} · {venueName.toUpperCase()}
           </p>
           <div className="text-[10px] uppercase tracking-[0.18em] text-[#C8A66A]/80">
-            BizningToy.uz — Цифровые свадебные приглашения
+            BizningToy.uz — {isUz ? "Raqamli to'y taklifnomalari" : "Цифровые свадебные приглашения"}
           </div>
         </footer>
 
@@ -672,15 +687,15 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
         >
           <a href="#letter" className="flex flex-col items-center gap-0.5 hover:text-[#1F1E1D] transition-colors">
             <BookOpen size={14} className="text-[#C8A66A]" />
-            <span className="text-[9px] uppercase tracking-wider">{t('previewComponent.navLetter') || 'Письмо'}</span>
+            <span className="text-[9px] uppercase tracking-wider">{isUz ? 'Xat' : 'Письмо'}</span>
           </a>
           <a href="#schedule" className="flex flex-col items-center gap-0.5 hover:text-[#1F1E1D] transition-colors">
             <Clock size={14} className="text-[#C8A66A]" />
-            <span className="text-[9px] uppercase tracking-wider">{t('previewComponent.navProgram') || 'Программа'}</span>
+            <span className="text-[9px] uppercase tracking-wider">{isUz ? 'Dastur' : 'Программа'}</span>
           </a>
           <a href="#venue" className="flex flex-col items-center gap-0.5 hover:text-[#1F1E1D] transition-colors">
             <MapPin size={14} className="text-[#C8A66A]" />
-            <span className="text-[9px] uppercase tracking-wider">{t('previewComponent.navLocation') || 'Место'}</span>
+            <span className="text-[9px] uppercase tracking-wider">{isUz ? 'Manzil' : 'Место'}</span>
           </a>
           <a href="#rsvp" className="flex flex-col items-center gap-0.5 hover:text-[#1F1E1D] transition-colors">
             <UserCheck size={14} className="text-[#C8A66A]" />
