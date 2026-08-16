@@ -178,7 +178,7 @@ function EditorForm({
               {value: 'romantic-blush', label: 'Romantic Blush (Rose Gold)'},
               {value: 'editorial', label: 'Editorial Vogue (Magazine)'},
               {value: 'botanical', label: 'Botanical Garden (Stationery)'},
-              {value: 'minimal', label: 'Ultra Minimal (Pure Whitespace)'},
+              {value: 'minimal', label: 'Minimal Luxury (Warm Ivory & Gold)'},
               {value: 'silk', label: 'Silk Luxury (Soft Champagne)'},
               {value: 'uzbek-luxury', label: 'Modern Uzbek Luxury (Emerald & Gold)'}
             ]} 

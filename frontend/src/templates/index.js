@@ -66,12 +66,12 @@ export const TEMPLATES_REGISTRY = {
   },
   'minimal': {
     id: 'minimal',
-    name: 'Ultra Minimal',
+    name: 'Minimal Luxury',
     category: 'Minimal',
-    description: 'Абсолютная чистота и воздух. Теплый белый фон, идеальные пропорции, типографика первого плана в стиле Apple-дизайна.',
+    description: 'Минималистичная свадебная полиграфия. Тёплый айвори, арабская каллиграфия, журнальная типографика, золотые акценты и открывающееся приглашение.',
     component: MinimalTemplate,
     preview_image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=800',
-    tags: ['Minimal', 'Modern', 'Clean', 'Whitespace']
+    tags: ['Minimal', 'Luxury', 'Editorial', 'Gold', 'Stationery']
   },
   'silk': {
     id: 'silk',
