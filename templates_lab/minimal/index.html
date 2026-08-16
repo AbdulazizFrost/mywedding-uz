@@ -12,373 +12,380 @@
   
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="is-locked">
 
-  <!-- Floating Audio Player Pill -->
-  <button id="musicToggle" class="music-pill" aria-label="Включить музыку">
+  <!-- Floating Audio Player Pill (Appears after invitation is opened) -->
+  <button id="musicToggle" class="music-pill hidden-on-cover" aria-label="Управление музыкой">
     <div class="sound-wave">
       <span></span><span></span><span></span><span></span>
     </div>
-    <span id="musicStatusText">Включить музыку</span>
+    <span id="musicStatusText">Музыка</span>
   </button>
   <audio id="bgAudio" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-114429.mp3"></audio>
 
-  <!-- MAIN WRAPPER -->
-  <div class="main-screen">
+  <!-- ==========================================================================
+       0. FULLSCREEN COVER SCREEN (STANDALONE WINDOW UNTIL BUTTON IS PRESSED)
+       ========================================================================== -->
+  <div id="coverOverlay" class="cover-overlay">
+    
+    <!-- Atmospheric Floral & Shadow Overlay Layers -->
+    <div class="hero-bg-drape"></div>
+    <div class="hero-bg-flowers"></div>
 
-    <!-- 1. FULLSCREEN HERO SCREEN (EXACT REFERENCE DESIGN) -->
-    <header class="cover-hero">
+    <div class="cover-card">
       
-      <!-- Atmospheric Floral & Shadow Overlay Layers -->
-      <div class="hero-bg-drape"></div>
-      <div class="hero-bg-flowers"></div>
+      <!-- Bismillah Calligraphy -->
+      <div class="bismillah-text">
+        بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+      </div>
 
-      <div class="cover-content">
-        
-        <!-- Bismillah Calligraphy -->
-        <div class="bismillah-text">
-          بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+      <!-- Eyebrow Subtitle -->
+      <div class="cover-eyebrow">
+        DIGITAL WEDDING INVITATION
+      </div>
+
+      <!-- Section Tag -->
+      <div class="cover-tag">
+        С В А Д Ь Б А
+      </div>
+
+      <!-- Couple Names -->
+      <h1 class="cover-names">
+        <span class="cname">Азамат</span>
+        <div class="cover-ampersand-divider">
+          <span class="amp-line"></span>
+          <span class="amp-symbol">&</span>
+          <span class="amp-line"></span>
         </div>
+        <span class="cname">Мадина</span>
+      </h1>
 
-        <!-- Eyebrow Subtitle -->
-        <div class="cover-eyebrow">
-          DIGITAL WEDDING INVITATION
-        </div>
-
-        <!-- Section Tag -->
-        <div class="cover-tag">
-          С В А Д Ь Б А
-        </div>
-
-        <!-- Couple Names -->
-        <h1 class="cover-names">
-          <span class="cname">Азамат</span>
-          <div class="cover-ampersand-divider">
-            <span class="amp-line"></span>
-            <span class="amp-symbol">&</span>
-            <span class="amp-line"></span>
-          </div>
-          <span class="cname">Мадина</span>
-        </h1>
-
-        <!-- Date & Location Badge -->
-        <div class="cover-date-badge">
-          <div class="cal-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C8A66A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-              <circle cx="8" cy="14" r="1" fill="#C8A66A"></circle>
-              <circle cx="12" cy="14" r="1" fill="#C8A66A"></circle>
-              <circle cx="16" cy="14" r="1" fill="#C8A66A"></circle>
-              <circle cx="8" cy="18" r="1" fill="#C8A66A"></circle>
-              <circle cx="12" cy="18" r="1" fill="#C8A66A"></circle>
-            </svg>
-          </div>
-          <div class="badge-divider"></div>
-          <div class="badge-info">
-            <span class="badge-main-date">24 СЕНТЯБРЯ 2026</span>
-            <span class="badge-sub-city">ТАШКЕНТ, УЗБЕКИСТАН</span>
-          </div>
-        </div>
-
-        <!-- Romantic Quote -->
-        <p class="cover-quote">
-          Два сердца — одна история,<br />
-          два пути — одна судьба.
-        </p>
-
-        <!-- Gold Heart Divider Line -->
-        <div class="cover-heart-line">
-          <span class="hl-bar"></span>
-          <span class="hl-icon">♡</span>
-          <span class="hl-bar"></span>
-        </div>
-
-        <!-- Open Invitation CTA Button -->
-        <button id="openInvitationBtn" class="btn-open-invitation" aria-label="Открыть приглашение">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E2CCA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-            <polyline points="22,6 12,13 2,6"></polyline>
-            <path d="M12 11l-2-2a1.4 1.4 0 0 1 2-2 1.4 1.4 0 0 1 2 2z" fill="#E2CCA0" stroke="none"></path>
+      <!-- Date & Location Badge -->
+      <div class="cover-date-badge">
+        <div class="cal-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8A66A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <circle cx="8" cy="14" r="1" fill="#C8A66A"></circle>
+            <circle cx="12" cy="14" r="1" fill="#C8A66A"></circle>
+            <circle cx="16" cy="14" r="1" fill="#C8A66A"></circle>
+            <circle cx="8" cy="18" r="1" fill="#C8A66A"></circle>
+            <circle cx="12" cy="18" r="1" fill="#C8A66A"></circle>
           </svg>
-          <span>ОТКРЫТЬ ПРИГЛАШЕНИЕ</span>
-        </button>
+        </div>
+        <div class="badge-divider"></div>
+        <div class="badge-info">
+          <span class="badge-main-date">24 СЕНТЯБРЯ 2026</span>
+          <span class="badge-sub-city">ТАШКЕНТ, УЗБЕКИСТАН</span>
+        </div>
+      </div>
 
-        <!-- Down Chevron -->
-        <div class="cover-chevrons">
-          <span></span>
-          <span></span>
+      <!-- Romantic Quote -->
+      <p class="cover-quote">
+        Два сердца — одна история,<br />
+        два пути — одна судьба.
+      </p>
+
+      <!-- Gold Heart Divider Line -->
+      <div class="cover-heart-line">
+        <span class="hl-bar"></span>
+        <span class="hl-icon">♡</span>
+        <span class="hl-bar"></span>
+      </div>
+
+      <!-- Open Invitation CTA Button -->
+      <button id="openInvitationBtn" class="btn-open-invitation" aria-label="Открыть приглашение">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E2CCA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+          <path d="M12 11l-2-2a1.4 1.4 0 0 1 2-2 1.4 1.4 0 0 1 2 2z" fill="#E2CCA0" stroke="none"></path>
+        </svg>
+        <span>ОТКРЫТЬ ПРИГЛАШЕНИЕ</span>
+      </button>
+
+      <!-- Down Chevrons -->
+      <div class="cover-chevrons">
+        <span></span>
+        <span></span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ==========================================================================
+       MAIN INVITATION WEBSITE (Unfolds when opened)
+       ========================================================================== -->
+  <main id="mainWebsite" class="main-website">
+
+    <!-- Top Mini Brand Bar -->
+    <div class="top-nav-brand">
+      <span>A & M</span>
+      <span class="nav-sep">·</span>
+      <span>24.09.2026</span>
+    </div>
+
+    <!-- 1. PHOTO COVER SECTION -->
+    <section class="sec-box reveal">
+      <div class="photo-card">
+        <img 
+          src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=85" 
+          alt="Love Story" 
+          class="photo-img"
+          loading="lazy"
+        />
+        <div class="photo-caption">
+          <p>«Любовь — это когда два человека смотрят не друг на друга, а в одном направлении»</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. INVITATION LETTER -->
+    <section class="sec-box reveal">
+      <div class="letter-card">
+        <span class="sub-tag">ДОРОГИЕ ГОСТИ</span>
+        <h2 class="sec-title">Приглашаем на свадьбу</h2>
+        <div class="gold-decor">❖</div>
+        <p class="letter-para">
+          В нашей жизни наступает особенный день — день создания нашей семьи. 
+          Мы будем счастливы разделить этот радостный и незабываемый праздник 
+          вместе с нашими самыми дорогими и близкими людьми.
+        </p>
+        <div class="signature">
+          <span>С любовью,</span>
+          <strong>Азамат & Мадина</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. CALENDAR & COUNTDOWN -->
+    <section class="sec-box reveal">
+      <div class="dual-grid">
+        
+        <!-- Calendar Month View -->
+        <div class="cal-card">
+          <div class="cal-top">
+            <span class="cal-m">СЕНТЯБРЬ 2026</span>
+            <span class="cal-y">ТАШКЕНТ</span>
+          </div>
+          <div class="cal-week">
+            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+          </div>
+          <div class="cal-grid">
+            <span class="empty"></span><span class="empty"></span>
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+            <span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span>
+            <span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span>
+            <span>21</span><span>22</span><span>23</span><span class="active-day">24</span><span>25</span><span>26</span><span>27</span>
+            <span>28</span><span>29</span><span>30</span>
+          </div>
+          <button id="addToCalendarBtn" class="btn-cal">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>Добавить в календарь</span>
+          </button>
+        </div>
+
+        <!-- Countdown Widget -->
+        <div class="timer-card">
+          <span class="sub-tag">ОБРАТНЫЙ ОТСЧЁТ</span>
+          <h3 class="timer-head">До торжества осталось:</h3>
+          <div class="timer-flex" id="timer">
+            <div class="t-unit">
+              <span class="t-num" id="days">00</span>
+              <span class="t-lbl">дней</span>
+            </div>
+            <div class="t-unit">
+              <span class="t-num" id="hours">00</span>
+              <span class="t-lbl">часов</span>
+            </div>
+            <div class="t-unit">
+              <span class="t-num" id="minutes">00</span>
+              <span class="t-lbl">минут</span>
+            </div>
+            <div class="t-unit">
+              <span class="t-num" id="seconds">00</span>
+              <span class="t-lbl">секунд</span>
+            </div>
+          </div>
         </div>
 
       </div>
-    </header>
+    </section>
 
-    <!-- CONTENT BODY (Reveals smoothly) -->
-    <div id="invitationDetails" class="invitation-details">
+    <!-- 4. WEDDING TIMELINE / SCHEDULE -->
+    <section class="sec-box reveal">
+      <div class="schedule-box">
+        <span class="sub-tag">ПРОГРАММА ДНЯ</span>
+        <h2 class="sec-title">Расписание</h2>
+        <div class="gold-decor">❖</div>
 
-      <!-- 2. PHOTO SECTION -->
-      <section class="sec-box reveal">
-        <div class="photo-card">
+        <div class="timeline-stack">
+          <div class="timeline-row">
+            <div class="t-badge">17:00</div>
+            <div class="t-content">
+              <h4>Сбор гостей & Welcome</h4>
+              <p>Встреча гостей, легкие коктейли, живая музыка и фотозона.</p>
+            </div>
+          </div>
+
+          <div class="timeline-row">
+            <div class="t-badge">18:00</div>
+            <div class="t-content">
+              <h4>Торжественная церемония</h4>
+              <p>Трогательный обмен кольцами и поздравления.</p>
+            </div>
+          </div>
+
+          <div class="timeline-row">
+            <div class="t-badge">19:00</div>
+            <div class="t-content">
+              <h4>Праздничный банкет</h4>
+              <p>Ужин, тосты, первый танец молодоженов и шоу-программа.</p>
+            </div>
+          </div>
+
+          <div class="timeline-row">
+            <div class="t-badge">23:00</div>
+            <div class="t-content">
+              <h4>Свадебный торт & Салют</h4>
+              <p>Кульминация вечера и праздничный фейерверк.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. VENUE & LOCATION -->
+    <section class="sec-box reveal">
+      <div class="venue-card">
+        <div class="venue-img-box">
           <img 
-            src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=85" 
-            alt="Love Story" 
-            class="photo-img"
+            src="https://images.unsplash.com/photo-1545232979-fbf68fe9b1af?auto=format&fit=crop&w=1000&q=80" 
+            alt="Банкетный зал" 
             loading="lazy"
           />
-          <div class="photo-caption">
-            <p>«Любовь — это когда два человека смотрят не друг на друга, а в одном направлении»</p>
-          </div>
         </div>
-      </section>
-
-      <!-- 3. INVITATION LETTER -->
-      <section class="sec-box reveal">
-        <div class="letter-card">
-          <span class="sub-tag">ДОРОГИЕ ГОСТИ</span>
-          <h2 class="sec-title">Приглашаем на свадьбу</h2>
-          <div class="gold-decor">❖</div>
-          <p class="letter-para">
-            В нашей жизни наступает особенный день — день создания нашей семьи. 
-            Мы будем счастливы разделить этот радостный и незабываемый праздник 
-            вместе с нашими самыми дорогими и близкими людьми.
-          </p>
-          <div class="signature">
-            <span>С любовью,</span>
-            <strong>Азамат & Мадина</strong>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. CALENDAR & COUNTDOWN -->
-      <section class="sec-box reveal">
-        <div class="dual-grid">
-          
-          <!-- Calendar Month View -->
-          <div class="cal-card">
-            <div class="cal-top">
-              <span class="cal-m">СЕНТЯБРЬ 2026</span>
-              <span class="cal-y">ТАШКЕНТ</span>
-            </div>
-            <div class="cal-week">
-              <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
-            </div>
-            <div class="cal-grid">
-              <span class="empty"></span><span class="empty"></span>
-              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
-              <span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span>
-              <span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span>
-              <span>21</span><span>22</span><span>23</span><span class="active-day">24</span><span>25</span><span>26</span><span>27</span>
-              <span>28</span><span>29</span><span>30</span>
-            </div>
-            <button id="addToCalendarBtn" class="btn-cal">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-              <span>Добавить в календарь</span>
+        <div class="venue-info">
+          <span class="sub-tag">ЛОКАЦИЯ</span>
+          <h3 class="venue-title">Ресторан «Versal Palace»</h3>
+          <p class="venue-address">г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1</p>
+          <div class="venue-btns">
+            <a href="https://yandex.uz/maps" target="_blank" rel="noreferrer" class="btn-black">
+              Открыть в Яндекс.Картах
+            </a>
+            <button id="copyAddressBtn" class="btn-outline">
+              Скопировать адрес
             </button>
           </div>
-
-          <!-- Countdown Widget -->
-          <div class="timer-card">
-            <span class="sub-tag">ОБРАТНЫЙ ОТСЧЁТ</span>
-            <h3 class="timer-head">До торжества осталось:</h3>
-            <div class="timer-flex" id="timer">
-              <div class="t-unit">
-                <span class="t-num" id="days">00</span>
-                <span class="t-lbl">дней</span>
-              </div>
-              <div class="t-unit">
-                <span class="t-num" id="hours">00</span>
-                <span class="t-lbl">часов</span>
-              </div>
-              <div class="t-unit">
-                <span class="t-num" id="minutes">00</span>
-                <span class="t-lbl">минут</span>
-              </div>
-              <div class="t-unit">
-                <span class="t-num" id="seconds">00</span>
-                <span class="t-lbl">секунд</span>
-              </div>
-            </div>
-          </div>
-
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 5. WEDDING TIMELINE / SCHEDULE -->
-      <section class="sec-box reveal">
-        <div class="schedule-box">
-          <span class="sub-tag">ПРОГРАММА ДНЯ</span>
-          <h2 class="sec-title">Расписание</h2>
-          <div class="gold-decor">❖</div>
-
-          <div class="timeline-stack">
-            <div class="timeline-row">
-              <div class="t-badge">17:00</div>
-              <div class="t-content">
-                <h4>Сбор гостей & Welcome</h4>
-                <p>Встреча гостей, легкие коктейли, живая музыка и фотозона.</p>
-              </div>
-            </div>
-
-            <div class="timeline-row">
-              <div class="t-badge">18:00</div>
-              <div class="t-content">
-                <h4>Торжественная церемония</h4>
-                <p>Трогательный обмен кольцами и поздравления.</p>
-              </div>
-            </div>
-
-            <div class="timeline-row">
-              <div class="t-badge">19:00</div>
-              <div class="t-content">
-                <h4>Праздничный банкет</h4>
-                <p>Ужин, тосты, первый танец молодоженов и шоу-программа.</p>
-              </div>
-            </div>
-
-            <div class="timeline-row">
-              <div class="t-badge">23:00</div>
-              <div class="t-content">
-                <h4>Свадебный торт & Салют</h4>
-                <p>Кульминация вечера и праздничный фейерверк.</p>
-              </div>
-            </div>
+    <!-- 6. DRESS CODE -->
+    <section class="sec-box reveal">
+      <div class="dress-card">
+        <span class="sub-tag">DRESS CODE</span>
+        <h2 class="sec-title">Пожелания по стилю</h2>
+        <div class="gold-decor">❖</div>
+        <p class="dress-desc">
+          Будем признательны, если вы поддержите цветовую палитру нашей свадьбы:
+        </p>
+        <div class="swatches-flex">
+          <div class="swatch-item">
+            <div class="swatch-circle" style="background:#1F1E1D;"></div>
+            <span>Black</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch-circle" style="background:#8C7B6B;"></div>
+            <span>Taupe</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch-circle" style="background:#C8A66A;"></div>
+            <span>Gold</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch-circle" style="background:#E2DDD5;"></div>
+            <span>Sand</span>
+          </div>
+          <div class="swatch-item">
+            <div class="swatch-circle" style="background:#FAF8F2;"></div>
+            <span>Ivory</span>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 6. VENUE & LOCATION -->
-      <section class="sec-box reveal">
-        <div class="venue-card">
-          <div class="venue-img-box">
-            <img 
-              src="https://images.unsplash.com/photo-1545232979-fbf68fe9b1af?auto=format&fit=crop&w=1000&q=80" 
-              alt="Банкетный зал" 
-              loading="lazy"
-            />
+    <!-- 7. RSVP FORM -->
+    <section class="sec-box reveal">
+      <div class="rsvp-card">
+        <span class="sub-tag">ПОДТВЕРЖДЕНИЕ</span>
+        <h2 class="sec-title">Анкета гостя</h2>
+        <div class="gold-decor">❖</div>
+        <p class="rsvp-sub">Пожалуйста, подтвердите присутствие до 10 сентября 2026 года</p>
+
+        <form id="rsvpForm" class="rsvp-form">
+          <div class="f-group">
+            <label for="guestName">Ваше имя и фамилия *</label>
+            <input type="text" id="guestName" name="guestName" placeholder="Например: Сардор и Нигора" required />
           </div>
-          <div class="venue-info">
-            <span class="sub-tag">ЛОКАЦИЯ</span>
-            <h3 class="venue-title">Ресторан «Versal Palace»</h3>
-            <p class="venue-address">г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1</p>
-            <div class="venue-btns">
-              <a href="https://yandex.uz/maps" target="_blank" rel="noreferrer" class="btn-black">
-                Открыть в Яндекс.Картах
-              </a>
-              <button id="copyAddressBtn" class="btn-outline">
-                Скопировать адрес
-              </button>
+
+          <div class="f-group">
+            <label>Сможете ли вы присутствовать? *</label>
+            <div class="radios-row">
+              <label class="r-card">
+                <input type="radio" name="attendance" value="yes" checked />
+                <span class="r-circle"></span>
+                <span>С удовольствием приду</span>
+              </label>
+              <label class="r-card">
+                <input type="radio" name="attendance" value="no" />
+                <span class="r-circle"></span>
+                <span>К сожалению, не смогу</span>
+              </label>
             </div>
           </div>
+
+          <div class="f-group" id="guestsCountGroup">
+            <label for="guestsCount">Количество персон</label>
+            <select id="guestsCount" name="guestsCount">
+              <option value="1">1 персона</option>
+              <option value="2" selected>2 персоны</option>
+              <option value="3">3 персоны</option>
+              <option value="4">4+ персоны</option>
+            </select>
+          </div>
+
+          <div class="f-group">
+            <label for="guestNote">Пожелания или комментарии</label>
+            <textarea id="guestNote" name="guestNote" rows="2" placeholder="Напишите пару теплых слов..."></textarea>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn-submit">
+            Отправить подтверждение
+          </button>
+        </form>
+
+        <div id="rsvpSuccess" class="rsvp-success-box hidden">
+          <div class="s-icon">✓</div>
+          <h3>Спасибо за ваш ответ!</h3>
+          <p>Мы с нетерпением ждем встречи с вами на нашем празднике.</p>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 7. DRESS CODE -->
-      <section class="sec-box reveal">
-        <div class="dress-card">
-          <span class="sub-tag">DRESS CODE</span>
-          <h2 class="sec-title">Пожелания по стилю</h2>
-          <div class="gold-decor">❖</div>
-          <p class="dress-desc">
-            Будем признательны, если вы поддержите цветовую палитру нашей свадьбы:
-          </p>
-          <div class="swatches-flex">
-            <div class="swatch-item">
-              <div class="swatch-circle" style="background:#1F1E1D;"></div>
-              <span>Black</span>
-            </div>
-            <div class="swatch-item">
-              <div class="swatch-circle" style="background:#8C7B6B;"></div>
-              <span>Taupe</span>
-            </div>
-            <div class="swatch-item">
-              <div class="swatch-circle" style="background:#C8A66A;"></div>
-              <span>Gold</span>
-            </div>
-            <div class="swatch-item">
-              <div class="swatch-circle" style="background:#E2DDD5;"></div>
-              <span>Sand</span>
-            </div>
-            <div class="swatch-item">
-              <div class="swatch-circle" style="background:#FAF8F2;"></div>
-              <span>Ivory</span>
-            </div>
-          </div>
-        </div>
-      </section>
+    <!-- 8. FOOTER -->
+    <footer class="footer-box reveal">
+      <div class="f-monogram">A & M</div>
+      <p class="f-names">Азамат & Мадина</p>
+      <p class="f-date">24.09.2026 · ТАШКЕНТ</p>
+      <div class="f-brand">BizningToy.uz — Цифровые свадебные приглашения</div>
+    </footer>
 
-      <!-- 8. RSVP FORM -->
-      <section class="sec-box reveal">
-        <div class="rsvp-card">
-          <span class="sub-tag">ПОДТВЕРЖДЕНИЕ</span>
-          <h2 class="sec-title">Анкета гостя</h2>
-          <div class="gold-decor">❖</div>
-          <p class="rsvp-sub">Пожалуйста, подтвердите присутствие до 10 сентября 2026 года</p>
-
-          <form id="rsvpForm" class="rsvp-form">
-            <div class="f-group">
-              <label for="guestName">Ваше имя и фамилия *</label>
-              <input type="text" id="guestName" name="guestName" placeholder="Например: Сардор и Нигора" required />
-            </div>
-
-            <div class="f-group">
-              <label>Сможете ли вы присутствовать? *</label>
-              <div class="radios-row">
-                <label class="r-card">
-                  <input type="radio" name="attendance" value="yes" checked />
-                  <span class="r-circle"></span>
-                  <span>С удовольствием приду</span>
-                </label>
-                <label class="r-card">
-                  <input type="radio" name="attendance" value="no" />
-                  <span class="r-circle"></span>
-                  <span>К сожалению, не смогу</span>
-                </label>
-              </div>
-            </div>
-
-            <div class="f-group" id="guestsCountGroup">
-              <label for="guestsCount">Количество персон</label>
-              <select id="guestsCount" name="guestsCount">
-                <option value="1">1 персона</option>
-                <option value="2" selected>2 персоны</option>
-                <option value="3">3 персоны</option>
-                <option value="4">4+ персоны</option>
-              </select>
-            </div>
-
-            <div class="f-group">
-              <label for="guestNote">Пожелания или комментарии</label>
-              <textarea id="guestNote" name="guestNote" rows="2" placeholder="Напишите пару теплых слов..."></textarea>
-            </div>
-
-            <button type="submit" id="submitBtn" class="btn-submit">
-              Отправить подтверждение
-            </button>
-          </form>
-
-          <div id="rsvpSuccess" class="rsvp-success-box hidden">
-            <div class="s-icon">✓</div>
-            <h3>Спасибо за ваш ответ!</h3>
-            <p>Мы с нетерпением ждем встречи с вами на нашем празднике.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 9. FOOTER -->
-      <footer class="footer-box reveal">
-        <div class="f-monogram">A & M</div>
-        <p class="f-names">Азамат & Мадина</p>
-        <p class="f-date">24.09.2026 · ТАШКЕНТ</p>
-        <div class="f-brand">BizningToy.uz — Цифровые свадебные приглашения</div>
-      </footer>
-
-    </div>
-
-  </div>
+  </main>
 
   <script src="script.js"></script>
 </body>

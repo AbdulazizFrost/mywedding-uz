@@ -1,6 +1,6 @@
 /**
  * MINIMAL WEDDING INVITATION TEMPLATE — JS
- * Exact Match to Visual Reference
+ * Interactive Standalone Cover Overlay with Reveal
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,18 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   reveals.forEach(el => observer.observe(el));
 
-  // 2. AUDIO TOGGLE & AUTO-PLAY ON "ОТКРЫТЬ ПРИГЛАШЕНИЕ"
+  // 2. AUDIO & OPEN INVITATION LOGIC
+  const coverOverlay = document.getElementById('coverOverlay');
+  const openInvitationBtn = document.getElementById('openInvitationBtn');
   const musicToggle = document.getElementById('musicToggle');
   const musicStatusText = document.getElementById('musicStatusText');
   const bgAudio = document.getElementById('bgAudio');
-  const openInvitationBtn = document.getElementById('openInvitationBtn');
   let isPlaying = false;
 
   function playAudio() {
     if (!bgAudio) return;
     bgAudio.play().then(() => {
       if (musicToggle) musicToggle.classList.add('playing');
-      if (musicStatusText) musicStatusText.textContent = 'Музыка играет';
+      if (musicStatusText) musicStatusText.textContent = 'Музыка';
       isPlaying = true;
     }).catch(err => {
       console.log('Audio autoplay prevented:', err);
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!bgAudio) return;
     bgAudio.pause();
     if (musicToggle) musicToggle.classList.remove('playing');
-    if (musicStatusText) musicStatusText.textContent = 'Включить музыку';
+    if (musicStatusText) musicStatusText.textContent = 'Музыка';
     isPlaying = false;
   }
 
@@ -56,21 +57,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // "ОТКРЫТЬ ПРИГЛАШЕНИЕ" Button Click
+  // "ОТКРЫТЬ ПРИГЛАШЕНИЕ" Click Handler
   if (openInvitationBtn) {
     openInvitationBtn.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // Auto-start music if not playing
-      if (!isPlaying) {
-        playAudio();
+      // 1. Start background music
+      playAudio();
+
+      // 2. Animate cover opening upwards
+      if (coverOverlay) {
+        coverOverlay.classList.add('is-opened');
       }
 
-      // Smooth scroll to details
-      const detailsSection = document.getElementById('invitationDetails');
-      if (detailsSection) {
-        detailsSection.scrollIntoView({ behavior: 'smooth' });
+      // 3. Unlock document scrolling
+      document.body.classList.remove('is-locked');
+
+      // 4. Reveal music control pill on top right
+      if (musicToggle) {
+        musicToggle.classList.remove('hidden-on-cover');
+        musicToggle.classList.add('is-visible');
       }
+
+      // 5. Scroll to top of main website smoothly
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // 6. Trigger reveal animations
+      setTimeout(() => {
+        reveals.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight) {
+            el.classList.add('active');
+          }
+        });
+      }, 400);
     });
   }
 
