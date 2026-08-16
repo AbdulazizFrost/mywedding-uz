@@ -62,64 +62,70 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-ivory min-h-screen pt-20 md:pt-24 font-sans text-charcoal selection:bg-champagne selection:text-white overflow-x-hidden">
+    <div className="bg-ivory min-h-screen pt-16 md:pt-20 font-sans text-charcoal selection:bg-champagne selection:text-white overflow-x-hidden">
       
-      <section className="relative pt-24 pb-20 md:pt-32 md:pb-32 lg:pt-40 lg:pb-32 px-4 md:px-8 lg:px-12 w-full flex flex-col justify-center">
+      <section className="relative py-8 sm:py-12 lg:py-16 min-h-[calc(100vh-5rem)] px-4 md:px-8 lg:px-12 w-full flex items-center justify-center">
         
-        {/* Soft luxury ambient background gradient */}
+        {/* Soft background gradient & Left Floral Frame */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-br from-ivory via-[#faf8f5] to-sand/30" />
           
-          {/* Subtle Champagne Ambient Glow Orbs */}
-          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-champagne/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-champagne/15 rounded-full blur-[140px]" />
+          {/* Ambient Left Floral Bouquet */}
+          <img 
+            src="/assets/landing/hero-bg-left.png" 
+            alt="" 
+            className="absolute left-0 top-0 h-full max-h-[850px] w-auto max-w-[280px] lg:max-w-[400px] object-contain -translate-x-[20%] lg:-translate-x-[15%] pointer-events-none opacity-40 lg:opacity-70 mix-blend-multiply" 
+          />
         </div>
 
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10 w-full">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16 relative z-10 w-full">
           {/* Left Content */}
-          <div className="flex-1 text-center lg:text-left w-full mt-4 lg:mt-0 block">
+          <div className="flex-1 text-center lg:text-left w-full block">
             <FadeIn delay={0.1}>
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.2em] text-champagne uppercase rounded-full mb-8 bg-white/60 backdrop-blur-md shadow-sm">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-champagne/40 text-[10px] md:text-[11px] font-semibold tracking-[0.2em] text-champagne uppercase rounded-full mb-4 bg-white/60 backdrop-blur-md shadow-sm">
                 <Heart size={12} className="text-champagne" /> {t('home.hero.badge')}
               </span>
             </FadeIn>
             
             <FadeIn delay={0.3}>
-              <h1 className="text-[2.5rem] leading-[1.1] sm:text-5xl lg:text-[clamp(3.2rem,4.8vw,5rem)] font-serif font-normal mb-4 text-charcoal tracking-tight">
+              <h1 className="text-[2.5rem] leading-[1.08] sm:text-5xl lg:text-[clamp(3.2rem,4.5vw,4.8rem)] font-serif font-normal mb-3 text-charcoal tracking-tight">
                 {t('home.hero.titlePart1')} <br />
                 <span className="italic text-champagne font-light drop-shadow-sm">{t('home.hero.titlePart2')}</span> <br />
                 {t('home.hero.titlePart3')} <br className="hidden lg:block"/> {t('home.hero.titlePart4')}
               </h1>
             </FadeIn>
             
-            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-4">
-              <img src="/assets/landing/divider.png" alt="Divider" className="w-[180px] sm:w-[220px] md:w-[260px] h-auto object-contain opacity-85 pointer-events-none" />
+            <FadeIn delay={0.4} className="flex justify-center lg:justify-start z-0 relative my-2 sm:my-3">
+              <img src="/assets/landing/divider.png" alt="Divider" className="w-[160px] sm:w-[200px] md:w-[240px] h-auto object-contain opacity-85 pointer-events-none" />
             </FadeIn>
 
             <FadeIn delay={0.5}>
-              <p className="text-[15px] md:text-lg text-charcoal-light/80 mb-10 max-w-[22rem] sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
+              <p className="text-[15px] md:text-base text-charcoal-light/80 mb-6 lg:mb-8 max-w-[22rem] sm:max-w-md lg:max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
                 {t('home.hero.desc')}
               </p>
             </FadeIn>
             
             <FadeIn delay={0.7} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 px-4 sm:px-0">
-              <Link to={user ? "/dashboard" : "/register"} className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-charcoal text-white rounded-full font-medium hover:bg-black transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] hover:-translate-y-0.5 duration-300">
+              <Link to={user ? "/dashboard" : "/register"} className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3.5 bg-charcoal text-white rounded-full font-medium hover:bg-black transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)] hover:-translate-y-0.5 duration-300">
                 <img src="/assets/landing/rings.png" alt="" className="w-5 h-5 brightness-0 invert object-contain opacity-90" />
                 {user ? t('home.hero.goToDashboard') : t('home.hero.createBtn')}
               </Link>
-              <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-white/70 border border-champagne/60 text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-sm">
+              <a href="#templates" className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3.5 bg-white/70 border border-champagne/60 text-charcoal rounded-full font-medium hover:bg-champagne/10 transition-all duration-300 backdrop-blur-sm shadow-sm">
                 {t('home.hero.seeExamples')}
               </a>
             </FadeIn>
           </div>
 
           {/* Right Mockup */}
-          <div className="flex-1 w-full flex justify-center relative mt-8 lg:mt-0">
+          <div className="flex-1 w-full flex justify-center relative mt-6 lg:mt-0">
             
-            {/* Elegant Ambient Champagne Aura behind the Mockup */}
-            <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
-              <div className="w-[320px] sm:w-[420px] h-[320px] sm:h-[420px] bg-gradient-to-tr from-champagne/20 via-champagne-light/30 to-transparent rounded-full blur-3xl" />
-              <div className="absolute w-[360px] sm:w-[460px] h-[360px] sm:h-[460px] border border-champagne/20 rounded-full -rotate-6" />
+            {/* Floral Backdrop behind Phone */}
+            <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none translate-x-[6%] lg:translate-x-[12%]">
+              <img 
+                src="/assets/landing/flower-left.png" 
+                alt="" 
+                className="w-[110%] md:w-[130%] max-w-[520px] object-contain opacity-70 lg:opacity-85 scale-x-[-1]" 
+              />
             </div>
 
             <FadeIn delay={0.8} direction="up" className="relative z-10 w-full max-w-[280px] md:max-w-[320px]">
