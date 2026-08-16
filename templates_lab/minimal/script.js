@@ -1,6 +1,6 @@
 /**
- * MINIMAL EDITORIAL WEDDING TEMPLATE — JS
- * BizningToy.uz Standalone Prototype
+ * MINIMAL WEDDING INVITATION TEMPLATE — JS
+ * Exact Match to Visual Reference
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,32 +20,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   reveals.forEach(el => observer.observe(el));
 
-  // 2. FLOATING MUSIC TOGGLE WITH AUDIO ELEMENT
+  // 2. AUDIO TOGGLE & AUTO-PLAY ON "ОТКРЫТЬ ПРИГЛАШЕНИЕ"
   const musicToggle = document.getElementById('musicToggle');
   const musicStatusText = document.getElementById('musicStatusText');
   const bgAudio = document.getElementById('bgAudio');
+  const openInvitationBtn = document.getElementById('openInvitationBtn');
   let isPlaying = false;
 
-  if (musicToggle && bgAudio) {
+  function playAudio() {
+    if (!bgAudio) return;
+    bgAudio.play().then(() => {
+      if (musicToggle) musicToggle.classList.add('playing');
+      if (musicStatusText) musicStatusText.textContent = 'Музыка играет';
+      isPlaying = true;
+    }).catch(err => {
+      console.log('Audio autoplay prevented:', err);
+    });
+  }
+
+  function pauseAudio() {
+    if (!bgAudio) return;
+    bgAudio.pause();
+    if (musicToggle) musicToggle.classList.remove('playing');
+    if (musicStatusText) musicStatusText.textContent = 'Включить музыку';
+    isPlaying = false;
+  }
+
+  if (musicToggle) {
     musicToggle.addEventListener('click', () => {
       if (isPlaying) {
-        bgAudio.pause();
-        musicToggle.classList.remove('playing');
-        if (musicStatusText) musicStatusText.textContent = 'Включить музыку';
-        isPlaying = false;
+        pauseAudio();
       } else {
-        bgAudio.play().then(() => {
-          musicToggle.classList.add('playing');
-          if (musicStatusText) musicStatusText.textContent = 'Музыка играет';
-          isPlaying = true;
-        }).catch((err) => {
-          console.log('Audio autoplay prevented by browser policy:', err);
-        });
+        playAudio();
       }
     });
   }
 
-  // 3. REAL-TIME COUNTDOWN TIMER (Target: 24 September 2026, 17:00:00)
+  // "ОТКРЫТЬ ПРИГЛАШЕНИЕ" Button Click
+  if (openInvitationBtn) {
+    openInvitationBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Auto-start music if not playing
+      if (!isPlaying) {
+        playAudio();
+      }
+
+      // Smooth scroll to details
+      const detailsSection = document.getElementById('invitationDetails');
+      if (detailsSection) {
+        detailsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  // 3. REAL-TIME COUNTDOWN TIMER (24 September 2026, 17:00:00)
   const targetDate = new Date('2026-09-24T17:00:00+05:00').getTime();
 
   function updateCountdown() {
@@ -81,22 +110,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. COPY ADDRESS BUTTON
   const copyAddressBtn = document.getElementById('copyAddressBtn');
-  const copyBtnLabel = document.getElementById('copyBtnLabel');
   if (copyAddressBtn) {
     copyAddressBtn.addEventListener('click', () => {
       const address = 'г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1 (Ресторан Versal Palace)';
       navigator.clipboard.writeText(address).then(() => {
-        if (copyBtnLabel) {
-          const original = copyBtnLabel.textContent;
-          copyBtnLabel.textContent = 'Адрес скопирован!';
-          copyAddressBtn.style.borderColor = '#2E7D32';
-          copyAddressBtn.style.color = '#2E7D32';
-          setTimeout(() => {
-            copyBtnLabel.textContent = original;
-            copyAddressBtn.style.borderColor = '';
-            copyAddressBtn.style.color = '';
-          }, 2500);
-        }
+        const originalText = copyAddressBtn.textContent;
+        copyAddressBtn.textContent = '✓ Скопировано!';
+        copyAddressBtn.style.borderColor = '#2E7D32';
+        copyAddressBtn.style.color = '#2E7D32';
+        setTimeout(() => {
+          copyAddressBtn.textContent = originalText;
+          copyAddressBtn.style.borderColor = '';
+          copyAddressBtn.style.color = '';
+        }, 2500);
       });
     });
   }
@@ -104,20 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // 5. RSVP FORM INTERACTIONS
   const rsvpForm = document.getElementById('rsvpForm');
   const guestsCountGroup = document.getElementById('guestsCountGroup');
-  const drinkPreferenceGroup = document.getElementById('drinkPreferenceGroup');
   const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
   const rsvpSuccess = document.getElementById('rsvpSuccess');
   const submitBtn = document.getElementById('submitBtn');
 
-  // Toggle optional fields if guest cannot attend
   attendanceRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
       if (e.target.value === 'no') {
         if (guestsCountGroup) guestsCountGroup.style.display = 'none';
-        if (drinkPreferenceGroup) drinkPreferenceGroup.style.display = 'none';
       } else {
         if (guestsCountGroup) guestsCountGroup.style.display = 'flex';
-        if (drinkPreferenceGroup) drinkPreferenceGroup.style.display = 'flex';
       }
     });
   });
@@ -127,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       
       if (submitBtn) {
-        submitBtn.innerHTML = '<span>Отправляем...</span>';
+        submitBtn.textContent = 'Отправка...';
         submitBtn.disabled = true;
       }
 
@@ -138,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. ADD TO GOOGLE CALENDAR LINK
+  // 6. ADD TO GOOGLE CALENDAR
   const addToCalendarBtn = document.getElementById('addToCalendarBtn');
   if (addToCalendarBtn) {
     addToCalendarBtn.addEventListener('click', () => {
