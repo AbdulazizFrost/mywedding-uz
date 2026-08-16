@@ -15,19 +15,57 @@ class ErrorBoundary extends React.Component {
   }
   componentDidCatch(error, errorInfo) {
     console.error("ErrorBoundary caught an error", error, errorInfo);
+    
+    // Auto-reload on chunk mismatch after new deploy
+    const isChunkError = error?.message && (
+      error.message.includes('Failed to fetch dynamically imported module') ||
+      error.message.includes('error loading dynamically imported module') ||
+      error.message.includes('Loading chunk')
+    );
+
+    if (isChunkError) {
+      const storageKey = 'vite_chunk_reload_' + window.location.pathname;
+      const reloaded = sessionStorage.getItem(storageKey);
+      if (!reloaded) {
+        sessionStorage.setItem(storageKey, 'true');
+        window.location.reload();
+        return;
+      }
+    }
+
     this.setState({ errorInfo });
   }
+
+  handleManualReload = () => {
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
   render() {
     if (this.state.hasError) {
+      const isChunkError = this.state.error?.message && (
+        this.state.error.message.includes('Failed to fetch dynamically imported module') ||
+        this.state.error.message.includes('error loading dynamically imported module')
+      );
+
       return (
-        <div style={{ padding: '20px', background: '#fef2f2', color: '#991b1b', minHeight: '100vh', fontFamily: 'monospace' }}>
-          <h2>Упс! Критическая ошибка приложения.</h2>
-          <p>Сделайте скриншот этого экрана и отправьте его мне:</p>
-          <pre style={{ background: '#fee2e2', padding: '10px', overflowX: 'auto', marginTop: '10px' }}>
-            {this.state.error && this.state.error.toString()}
-            <br/>
-            {this.state.errorInfo && this.state.errorInfo.componentStack}
-          </pre>
+        <div className="min-h-screen bg-ivory flex flex-col items-center justify-center p-6 text-center font-sans">
+          <div className="max-w-md w-full bg-white border border-sand rounded-3xl p-8 shadow-xl">
+            <h2 className="font-serif text-2xl text-charcoal mb-3">
+              {isChunkError ? 'Доступно обновление сайта' : 'Упс! Произошла ошибка'}
+            </h2>
+            <p className="text-sm text-charcoal-light mb-6">
+              {isChunkError 
+                ? 'Была загружена новая версия приложения. Пожалуйста, обновите страницу для продолжения работы.' 
+                : 'Пожалуйста, попробуйте обновить страницу или вернуться на главную.'}
+            </p>
+            <button
+              onClick={this.handleManualReload}
+              className="w-full py-3.5 px-6 bg-charcoal text-ivory rounded-full text-xs font-semibold uppercase tracking-wider hover:bg-black transition-all shadow-md"
+            >
+              Обновить страницу
+            </button>
+          </div>
         </div>
       );
     }

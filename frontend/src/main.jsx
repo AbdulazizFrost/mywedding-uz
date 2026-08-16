@@ -3,6 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import './i18n'
 import App from './App.jsx'
+// Handle chunk load errors caused by new deployments automatically
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault();
+  window.location.reload();
+});
 
 // Intercept fetch to add Bearer token for Safari/mobile where cookies might be blocked
 const originalFetch = window.fetch;
