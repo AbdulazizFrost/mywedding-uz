@@ -86,6 +86,42 @@ function EditorForm({
       {/* MAIN - COUPLE */}
       {activeTab === 'couple' && (
         <div className="space-y-5">
+          {/* INVITATION LANGUAGE CARD */}
+          <div className="p-4 bg-sand/40 rounded-2xl border border-sand space-y-2">
+            <label className="block text-xs font-semibold text-charcoal uppercase tracking-wider">
+              {t('editor.invitationLanguage') || 'Язык сайта-приглашения'}
+            </label>
+            <p className="text-[11px] text-charcoal-light mb-2">
+              Выберите язык, на котором гости увидят ваше цифровое приглашение:
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => handleChange('design', 'language', 'ru')}
+                className={`py-2.5 px-3 rounded-xl text-xs font-medium border flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  (data.design?.language || 'ru') === 'ru'
+                    ? 'bg-charcoal text-white border-charcoal shadow-sm'
+                    : 'bg-white text-charcoal border-sand hover:bg-sand/60'
+                }`}
+              >
+                <span>🇷🇺</span>
+                <span>Русский (RU)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChange('design', 'language', 'uz')}
+                className={`py-2.5 px-3 rounded-xl text-xs font-medium border flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  data.design?.language === 'uz'
+                    ? 'bg-charcoal text-white border-charcoal shadow-sm'
+                    : 'bg-white text-charcoal border-sand hover:bg-sand/60'
+                }`}
+              >
+                <span>🇺🇿</span>
+                <span>O'zbekcha (UZ)</span>
+              </button>
+            </div>
+          </div>
+
           <Input 
             label={t('editor.groomName')} 
             placeholder={t('editor.groomPlaceholder')} 
@@ -161,108 +197,6 @@ function EditorForm({
             value={data.map_url} 
             onChange={e => handleChange(null, 'map_url', e.target.value)} 
           />
-        </div>
-      )}
-      
-      {/* MAIN - DESIGN */}
-      {activeTab === 'design' && (
-        <div className="space-y-6">
-          <Select 
-            label={t('editor.templateDesign') || 'Стиль шаблона'} 
-            value={data.design?.template || 'royal-ivory'} 
-            onChange={e => handleChange('design', 'template', e.target.value)} 
-            selectOptionText={t('editor.selectOption')}
-            options={[
-              {value: 'royal-ivory', label: 'Royal Ivory (Luxury European)'},
-              {value: 'dark-luxury', label: 'Dark Luxury (Cinematic Night)'},
-              {value: 'romantic-blush', label: 'Romantic Blush (Rose Gold)'},
-              {value: 'editorial', label: 'Editorial Vogue (Magazine)'},
-              {value: 'botanical', label: 'Botanical Garden (Stationery)'},
-              {value: 'minimal', label: 'Minimal Luxury (Warm Ivory & Gold)'},
-              {value: 'silk', label: 'Silk Luxury (Soft Champagne)'},
-              {value: 'uzbek-luxury', label: 'Modern Uzbek Luxury (Emerald & Gold)'}
-            ]} 
-          />
-          <Select 
-            label={t('editor.invitationLanguage') || 'Язык сайта приглашения'} 
-            value={data.design?.language || 'ru'} 
-            onChange={e => handleChange('design', 'language', e.target.value)} 
-            selectOptionText={t('editor.selectOption')}
-            options={[
-              { value: 'ru', label: `🇷🇺 ${t('editor.langRu') || 'Русский (RU)'}` },
-              { value: 'uz', label: `🇺🇿 ${t('editor.langUz') || "O'zbekcha (UZ)"}` }
-            ]} 
-          />
-          <Select 
-            label={t('editor.theme')} 
-            value={data.design?.theme || 'elegant'} 
-            onChange={e => {
-              const themeVal = e.target.value;
-              const themeMap = {
-                elegant: { primary_color: '#2c2c2c', secondary_color: '#d4af37' },
-                classic: { primary_color: '#1d1d1f', secondary_color: '#c8a66a' },
-                minimal: { primary_color: '#1F1E1D', secondary_color: '#C8A66A' },
-                dark: { primary_color: '#F4ECE0', secondary_color: '#C8A66A' },
-                rose: { primary_color: '#2c2c2c', secondary_color: '#e0a899' },
-                botanical: { primary_color: '#2e382d', secondary_color: '#7d8c7c' },
-                editorial: { primary_color: '#000000', secondary_color: '#666666' },
-                silk: { primary_color: '#242321', secondary_color: '#D4AF37' },
-                emerald: { primary_color: '#0d2818', secondary_color: '#d4af37' }
-              };
-              handleChange('design', 'theme', themeVal);
-              const p = themeMap[themeVal];
-              if (p) {
-                handleChange('design', 'primary_color', p.primary_color);
-                handleChange('design', 'secondary_color', p.secondary_color);
-              }
-            }} 
-            selectOptionText={t('editor.selectOption')}
-            options={[
-              {value: 'elegant', label: t('editor.themeElegant')},
-              {value: 'classic', label: t('editor.themeClassic')},
-              {value: 'minimal', label: t('editor.themeMinimal')},
-              {value: 'dark', label: t('editor.themeDark')},
-              {value: 'rose', label: 'Rose Gold'},
-              {value: 'botanical', label: 'Botanical Sage'},
-              {value: 'editorial', label: 'Editorial Black'},
-              {value: 'silk', label: 'Silk Champagne'},
-              {value: 'emerald', label: 'Uzbek Emerald'}
-            ]} 
-          />
-          <Select 
-            label={t('editor.font')} 
-            value={data.design?.font} 
-            onChange={e => handleChange('design', 'font', e.target.value)} 
-            selectOptionText={t('editor.selectOption')}
-            options={[
-              {value: 'serif', label: t('editor.fontSerif')},
-              {value: 'sans', label: t('editor.fontSans')},
-              {value: 'script', label: t('editor.fontScript')}
-            ]} 
-          />
-          <div className="p-4 bg-sand/30 rounded-xl space-y-4 border border-sand">
-            <p className="text-sm font-medium text-charcoal">{t('editor.customColors')}</p>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorBgText')}</label>
-                <input 
-                  type="color" 
-                  className="w-full h-10 rounded cursor-pointer border border-sand" 
-                  value={data.design?.primary_color || '#000000'} 
-                  onChange={e => handleChange('design', 'primary_color', e.target.value)} 
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs text-charcoal-light mb-1">{t('editor.colorAccent')}</label>
-                <input 
-                  type="color" 
-                  className="w-full h-10 rounded cursor-pointer border border-sand" 
-                  value={data.design?.secondary_color || '#d4af37'} 
-                  onChange={e => handleChange('design', 'secondary_color', e.target.value)} 
-                />
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
@@ -736,8 +670,7 @@ export default function EditorPage() {
       tabs: [
         { id: 'couple', label: t('editor.names'), icon: User },
         { id: 'date', label: t('editor.dateAndTime'), icon: Calendar },
-        { id: 'location', label: t('editor.location'), icon: MapPin },
-        { id: 'design', label: t('editor.design'), icon: Palette }
+        { id: 'location', label: t('editor.location'), icon: MapPin }
       ]
     },
     media: {
@@ -774,9 +707,35 @@ export default function EditorPage() {
             <ArrowLeft size={20} />
           </button>
           <div className="h-4 w-px bg-sand mx-1" />
-          <h1 className="font-serif text-sm sm:text-lg text-charcoal truncate max-w-[120px] sm:max-w-xs">
+          <h1 className="font-serif text-sm sm:text-lg text-charcoal truncate max-w-[100px] sm:max-w-xs">
             {invitation.template?.name || t('editor.titleEditor')}
           </h1>
+
+          {/* Invitation Language Quick Toggle */}
+          <div className="flex items-center gap-1 bg-sand/60 p-1 rounded-full border border-sand">
+            <button
+              type="button"
+              onClick={() => handleChange('design', 'language', 'ru')}
+              className={`px-2 sm:px-3 py-0.5 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+                (data?.design?.language || 'ru') === 'ru'
+                  ? 'bg-white text-charcoal shadow-xs font-semibold'
+                  : 'text-charcoal-light hover:text-charcoal'
+              }`}
+            >
+              🇷🇺 RU
+            </button>
+            <button
+              type="button"
+              onClick={() => handleChange('design', 'language', 'uz')}
+              className={`px-2 sm:px-3 py-0.5 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+                data?.design?.language === 'uz'
+                  ? 'bg-white text-charcoal shadow-xs font-semibold'
+                  : 'text-charcoal-light hover:text-charcoal'
+              }`}
+            >
+              🇺🇿 UZ
+            </button>
+          </div>
         </div>
         
         {/* Toast Notification (Floating above page, not blocking header buttons) */}

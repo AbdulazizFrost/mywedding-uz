@@ -411,7 +411,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               </h3>
               
               <div className="py-2">
-                <CountdownTimer targetDate={weddingDate} primaryColor="#1F1E1D" secondaryColor="#C8A66A" />
+                <CountdownTimer targetDate={weddingDate} primaryColor="#1F1E1D" secondaryColor="#C8A66A" lang={lang} />
               </div>
             </div>
 
@@ -656,6 +656,7 @@ export default function MinimalTemplate({ data = {}, media = [], onSubmitRsvp })
               theme="light" 
               primaryColor="#1F1E1D" 
               secondaryColor="#C8A66A" 
+              lang={lang}
             />
           </section>
         )}

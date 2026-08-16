@@ -8,9 +8,10 @@ export default function RsvpFormSection({
   onSubmitRsvp, 
   theme = 'light', // 'light', 'dark', 'blush', 'botanical', 'emerald'
   primaryColor = '#2c2c2c',
-  secondaryColor = '#d4af37'
+  secondaryColor = '#d4af37',
+  lang
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [name, setName] = useState('');
   const [attending, setAttending] = useState(true);
   const [guestsCount, setGuestsCount] = useState(1);
@@ -19,6 +20,9 @@ export default function RsvpFormSection({
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+
+  const effectiveLang = lang || i18n.language || 'ru';
+  const isUz = effectiveLang === 'uz';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +42,7 @@ export default function RsvpFormSection({
       }
       setSubmitted(true);
     } catch (err) {
-      setSubmitError(err.message || t('previewComponent.errorSubmit') || 'Произошла ошибка при отправке.');
+      setSubmitError(err.message || (isUz ? 'Yuborishda xatolik yuz berdi.' : 'Произошла ошибка при отправке.'));
     } finally {
       setSubmitting(false);
     }
@@ -67,12 +71,12 @@ export default function RsvpFormSection({
           </div>
           <h4 className="font-serif text-2xl sm:text-3xl font-medium">
             {attending 
-              ? (t('previewComponent.successAttending') || 'С нетерпением ждем вас!') 
-              : (t('previewComponent.successNotAttending') || 'Спасибо, что сообщили нам.')
+              ? (isUz ? 'Sizni intiqlik bilan kutib qolamiz!' : 'С нетерпением ждем вас!') 
+              : (isUz ? 'Xabardor qilganingiz uchun rahmat.' : 'Спасибо, что сообщили нам.')
             }
           </h4>
           <p className="text-sm opacity-70">
-            {t('rsvp.responseSaved') || 'Ваш ответ успешно сохранен.'}
+            {isUz ? 'Javobingiz muvaffaqiyatli saqlandi.' : 'Ваш ответ успешно сохранен.'}
           </p>
         </motion.div>
       ) : (
@@ -99,14 +103,14 @@ export default function RsvpFormSection({
           {/* Name input */}
           <div>
             <label className="block text-xs uppercase tracking-widest font-semibold mb-2 opacity-80">
-              {t('previewComponent.namePlaceholder') || 'Имя и Фамилия'}
+              {isUz ? 'Ism va Familiyangiz' : 'Имя и Фамилия'}
             </label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Тимур и Лейла"
+              placeholder={isUz ? "Ismingizni kiriting" : "Тимур и Лейла"}
               className={`w-full px-4 py-3 rounded-2xl text-[16px] outline-none transition-all border ${
                 isDark 
                   ? 'bg-white/10 border-white/10 text-white placeholder:text-white/30 focus:border-champagne' 
@@ -120,7 +124,7 @@ export default function RsvpFormSection({
             <button
               type="button"
               onClick={() => setAttending(true)}
-              className={`py-3 px-4 rounded-2xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border transition-all ${
+              className={`py-3 px-4 rounded-2xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border transition-all cursor-pointer ${
                 attending 
                   ? 'shadow-md scale-[1.02]' 
                   : 'opacity-50 hover:opacity-80'
@@ -132,13 +136,13 @@ export default function RsvpFormSection({
               }}
             >
               <Check size={16} />
-              <span>{t('previewComponent.willAttend') || 'Я приду'}</span>
+              <span>{isUz ? 'Albatta kelaman' : 'Я приду'}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setAttending(false)}
-              className={`py-3 px-4 rounded-2xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border transition-all ${
+              className={`py-3 px-4 rounded-2xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border transition-all cursor-pointer ${
                 !attending 
                   ? 'bg-black/20 shadow-md scale-[1.02] border-black/30' 
                   : 'opacity-50 hover:opacity-80'
@@ -149,7 +153,7 @@ export default function RsvpFormSection({
               }}
             >
               <X size={16} />
-              <span>{t('previewComponent.willNotAttend') || 'Не смогу'}</span>
+              <span>{isUz ? 'Kela olmayman' : 'Не смогу'}</span>
             </button>
           </div>
 
@@ -158,7 +162,7 @@ export default function RsvpFormSection({
             <div>
               <label className="block text-xs uppercase tracking-widest font-semibold mb-2 opacity-80 flex items-center gap-2">
                 <Users size={14} />
-                <span>{t('previewComponent.guestsCount') || 'Количество персон'}</span>
+                <span>{isUz ? 'Mehmonlar soni' : 'Количество персон'}</span>
               </label>
               <select
                 value={guestsCount}
@@ -169,10 +173,10 @@ export default function RsvpFormSection({
                     : 'bg-white border-black/10 text-charcoal focus:border-champagne'
                 }`}
               >
-                <option value={1}>1 {t('previewComponent.person1') || 'человек'}</option>
-                <option value={2}>2 {t('previewComponent.person234') || 'человека'}</option>
-                <option value={3}>3 {t('previewComponent.person234') || 'человека'}</option>
-                <option value={4}>4+ {t('previewComponent.personMany') || 'человек'}</option>
+                <option value={1}>{isUz ? '1 kishi' : '1 человек'}</option>
+                <option value={2}>{isUz ? '2 kishi' : '2 человека'}</option>
+                <option value={3}>{isUz ? '3 kishi' : '3 человека'}</option>
+                <option value={4}>{isUz ? '4+ kishi' : '4+ человек'}</option>
               </select>
             </div>
           )}
@@ -181,13 +185,13 @@ export default function RsvpFormSection({
           <div>
             <label className="block text-xs uppercase tracking-widest font-semibold mb-2 opacity-80 flex items-center gap-2">
               <MessageSquare size={14} />
-              <span>{t('previewComponent.commentPlaceholder') || 'Пожелание или комментарий'}</span>
+              <span>{isUz ? 'Tilak yoki sharh' : 'Пожелание или комментарий'}</span>
             </label>
             <textarea
               rows={3}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder={t('rsvp.wishPlaceholder') || 'Теплые слова для молодоженов...'}
+              placeholder={isUz ? "Kelin-kuyov uchun samimiy tilaklar..." : "Теплые слова для молодоженов..."}
               className={`w-full px-4 py-3 rounded-2xl text-[16px] outline-none transition-all resize-none border ${
                 isDark 
                   ? 'bg-white/10 border-white/10 text-white placeholder:text-white/30 focus:border-champagne' 
@@ -200,7 +204,7 @@ export default function RsvpFormSection({
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-4 rounded-full font-medium text-sm tracking-wide uppercase transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-full font-medium text-sm tracking-wide uppercase transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
             style={{
               backgroundColor: secondaryColor,
               color: '#ffffff'
@@ -209,10 +213,10 @@ export default function RsvpFormSection({
             {submitting ? (
               <>
                 <Loader2 size={18} className="animate-spin" />
-                <span>{t('previewComponent.submitting') || 'Отправка...'}</span>
+                <span>{isUz ? 'Yuborilmoqda...' : 'Отправка...'}</span>
               </>
             ) : (
-              <span>{rsvpData?.button_text || t('previewComponent.submit') || 'Подтвердить'}</span>
+              <span>{rsvpData?.button_text || (isUz ? 'Tashrifni tasdiqlash' : 'Подтвердить')}</span>
             )}
           </button>
         </form>

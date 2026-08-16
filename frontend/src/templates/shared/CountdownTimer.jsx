@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function CountdownTimer({ targetDate, theme = 'ivory', primaryColor, secondaryColor }) {
-  const { t } = useTranslation();
+export default function CountdownTimer({ targetDate, theme = 'ivory', primaryColor, secondaryColor, lang }) {
+  const { t, i18n } = useTranslation();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isExpired, setIsExpired] = useState(false);
+
+  const effectiveLang = lang || i18n.language || 'ru';
+  const isUz = effectiveLang === 'uz';
 
   useEffect(() => {
     if (!targetDate) return;
@@ -33,10 +36,10 @@ export default function CountdownTimer({ targetDate, theme = 'ivory', primaryCol
   if (!targetDate) return null;
 
   const items = [
-    { label: t('countdown.days') || 'Дней', value: timeLeft.days },
-    { label: t('countdown.hours') || 'Часов', value: timeLeft.hours },
-    { label: t('countdown.minutes') || 'Минут', value: timeLeft.minutes },
-    { label: t('countdown.seconds') || 'Секунд', value: timeLeft.seconds },
+    { label: isUz ? 'Kun' : 'Дней', value: timeLeft.days },
+    { label: isUz ? 'Soat' : 'Часов', value: timeLeft.hours },
+    { label: isUz ? 'Daqiqa' : 'Минут', value: timeLeft.minutes },
+    { label: isUz ? 'Soniya' : 'Секунд', value: timeLeft.seconds },
   ];
 
   return (

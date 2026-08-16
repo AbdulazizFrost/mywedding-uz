@@ -125,7 +125,7 @@ export default function RoyalIvoryTemplate({ data = {}, media = [], onSubmitRsvp
           <span className="text-xs uppercase tracking-[0.3em] text-[#8c827a] font-sans font-medium block mb-4">
             {t('countdown.title') || 'До торжества осталось'}
           </span>
-          <CountdownTimer targetDate={weddingDate} primaryColor="#2c2c2c" secondaryColor="#d4af37" />
+          <CountdownTimer targetDate={weddingDate} primaryColor="#2c2c2c" secondaryColor="#d4af37" lang={lang} />
         </section>
       )}
 
@@ -257,6 +257,7 @@ export default function RoyalIvoryTemplate({ data = {}, media = [], onSubmitRsvp
             theme="light" 
             primaryColor="#2c2c2c" 
             secondaryColor="#d4af37" 
+            lang={lang}
           />
         </section>
       )}
