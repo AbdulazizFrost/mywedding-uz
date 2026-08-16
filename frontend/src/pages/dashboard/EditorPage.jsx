@@ -195,8 +195,27 @@ function EditorForm({
           />
           <Select 
             label={t('editor.theme')} 
-            value={data.design?.theme} 
-            onChange={e => handleChange('design', 'theme', e.target.value)} 
+            value={data.design?.theme || 'elegant'} 
+            onChange={e => {
+              const themeVal = e.target.value;
+              const themeMap = {
+                elegant: { primary_color: '#2c2c2c', secondary_color: '#d4af37' },
+                classic: { primary_color: '#1d1d1f', secondary_color: '#c8a66a' },
+                minimal: { primary_color: '#1F1E1D', secondary_color: '#C8A66A' },
+                dark: { primary_color: '#F4ECE0', secondary_color: '#C8A66A' },
+                rose: { primary_color: '#2c2c2c', secondary_color: '#e0a899' },
+                botanical: { primary_color: '#2e382d', secondary_color: '#7d8c7c' },
+                editorial: { primary_color: '#000000', secondary_color: '#666666' },
+                silk: { primary_color: '#242321', secondary_color: '#D4AF37' },
+                emerald: { primary_color: '#0d2818', secondary_color: '#d4af37' }
+              };
+              handleChange('design', 'theme', themeVal);
+              const p = themeMap[themeVal];
+              if (p) {
+                handleChange('design', 'primary_color', p.primary_color);
+                handleChange('design', 'secondary_color', p.secondary_color);
+              }
+            }} 
             selectOptionText={t('editor.selectOption')}
             options={[
               {value: 'elegant', label: t('editor.themeElegant')},
@@ -498,6 +517,11 @@ export default function EditorPage() {
     if (user) fetchData();
   }, [id, user]);
 
+  const lastUpdatedRef = useRef(lastUpdated);
+  useEffect(() => {
+    lastUpdatedRef.current = lastUpdated;
+  }, [lastUpdated]);
+
   const saveToServer = async (dataToSave, isManual = false) => {
     if (!dataToSave || !invitation) return;
     if (isManual) setSaving(true);
@@ -507,26 +531,40 @@ export default function EditorPage() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ data: dataToSave, last_updated: lastUpdated })
+        body: JSON.stringify({ data: dataToSave, last_updated: lastUpdatedRef.current })
       });
       const resData = await res.json();
       
       if (!res.ok) {
         if (res.status === 409) {
+          if (resData.current_invitation?.updated_at) {
+            lastUpdatedRef.current = resData.current_invitation.updated_at;
+            setLastUpdated(resData.current_invitation.updated_at);
+            setTimeout(() => {
+              saveToServer(dataRef.current, false);
+            }, 300);
+            return;
+          }
           setError(t('editor.conflict'));
+          setTimeout(() => setError(null), 3500);
         } else {
           throw new Error(resData.error || 'Failed to save');
         }
         return;
       }
 
-      setLastUpdated(resData.invitation.updated_at);
+      if (resData.invitation?.updated_at) {
+        lastUpdatedRef.current = resData.invitation.updated_at;
+        setLastUpdated(resData.invitation.updated_at);
+      }
+      
       if (isManual) {
         setMessage(t('editor.saved'));
         setTimeout(() => setMessage(null), 2000);
       }
     } catch (err) {
       setError(err.message);
+      setTimeout(() => setError(null), 3500);
     } finally {
       if (isManual) setSaving(false);
     }
@@ -537,8 +575,8 @@ export default function EditorPage() {
     if (autosaveTimeout.current) clearTimeout(autosaveTimeout.current);
     autosaveTimeout.current = setTimeout(() => {
       saveToServer(dataRef.current);
-    }, 1500);
-  }, [lastUpdated]);
+    }, 1200);
+  }, []);
 
   const handleChange = useCallback((section, field, value) => {
     setData(prev => {
@@ -741,17 +779,23 @@ export default function EditorPage() {
           </h1>
         </div>
         
-        {/* Toast Notification */}
+        {/* Toast Notification (Floating above page, not blocking header buttons) */}
         <AnimatePresence>
           {(message || error) && (
             <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`absolute left-1/2 -translate-x-1/2 top-4 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg text-[10px] sm:text-xs font-medium tracking-wide z-50 flex items-center gap-2 whitespace-nowrap
-                ${error ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'}`}
+              initial={{ opacity: 0, y: -20, x: '-50%' }}
+              animate={{ opacity: 1, y: 0, x: '-50%' }}
+              exit={{ opacity: 0, y: -20, x: '-50%' }}
+              className={`fixed left-1/2 top-16 px-4 py-2 rounded-full shadow-2xl text-xs font-medium tracking-wide z-50 flex items-center gap-2 whitespace-nowrap pointer-events-auto border
+                ${error ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-800 border-green-200'}`}
             >
-              {error || message}
+              <span>{error || message}</span>
+              <button 
+                onClick={() => { setError(null); setMessage(null); }}
+                className="ml-1 text-xs opacity-60 hover:opacity-100 cursor-pointer"
+              >
+                ✕
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

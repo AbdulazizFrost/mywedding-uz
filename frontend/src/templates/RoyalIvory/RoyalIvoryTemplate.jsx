@@ -26,11 +26,14 @@ export default function RoyalIvoryTemplate({ data = {}, media = [], onSubmitRsvp
   const primaryColor = design.primary_color || '#2c2c2c';
   const secondaryColor = design.secondary_color || '#d4af37'; // Champagne Gold
 
+  const lang = design.language || (i18n.language === 'uz' ? 'uz' : 'ru');
+  const isUz = lang === 'uz';
+
   // Format Date
   const formattedDate = weddingDate ? new Date(weddingDate).toLocaleDateString(
-    i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU', 
+    isUz ? 'uz-UZ' : 'ru-RU', 
     { day: 'numeric', month: 'long', year: 'numeric' }
-  ) : '24 Сентября 2026';
+  ) : (isUz ? '24-Sentabr, 2026' : '24 Сентября 2026');
 
   const galleryImages = media.filter(m => m.type !== 'music');
 
