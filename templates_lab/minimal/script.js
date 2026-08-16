@@ -1,10 +1,11 @@
 /**
- * MINIMAL WEDDING INVITATION TEMPLATE — SCRIPT
+ * MINIMAL EDITORIAL WEDDING TEMPLATE — JS
  * BizningToy.uz Standalone Prototype
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. SCROLL REVEAL ANIMATION
+  
+  // 1. SCROLL REVEAL ANIMATIONS (IntersectionObserver)
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -13,14 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }, {
-    threshold: 0.12,
-    rootMargin: '0px 0px -40px 0px'
+    threshold: 0.08,
+    rootMargin: '0px 0px -30px 0px'
   });
 
   reveals.forEach(el => observer.observe(el));
 
-  // 2. AUDIO PLAYER TOGGLE
+  // 2. FLOATING MUSIC TOGGLE WITH AUDIO ELEMENT
   const musicToggle = document.getElementById('musicToggle');
+  const musicStatusText = document.getElementById('musicStatusText');
   const bgAudio = document.getElementById('bgAudio');
   let isPlaying = false;
 
@@ -29,24 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isPlaying) {
         bgAudio.pause();
         musicToggle.classList.remove('playing');
-        musicToggle.querySelector('.music-text').textContent = 'Музыка';
+        if (musicStatusText) musicStatusText.textContent = 'Включить музыку';
         isPlaying = false;
       } else {
         bgAudio.play().then(() => {
           musicToggle.classList.add('playing');
-          musicToggle.querySelector('.music-text').textContent = 'Играет';
+          if (musicStatusText) musicStatusText.textContent = 'Музыка играет';
           isPlaying = true;
-        }).catch(err => {
-          console.log('Audio playback prevented:', err);
+        }).catch((err) => {
+          console.log('Audio autoplay prevented by browser policy:', err);
         });
       }
     });
   }
 
-  // 3. REAL-TIME COUNTDOWN TIMER (24 September 2026, 17:00)
+  // 3. REAL-TIME COUNTDOWN TIMER (Target: 24 September 2026, 17:00:00)
   const targetDate = new Date('2026-09-24T17:00:00+05:00').getTime();
 
-  function updateTimer() {
+  function updateCountdown() {
     const now = new Date().getTime();
     const distance = targetDate - now;
 
@@ -63,48 +65,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    document.getElementById('days').textContent = String(days).padStart(2, '0');
-    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    const elDays = document.getElementById('days');
+    const elHours = document.getElementById('hours');
+    const elMinutes = document.getElementById('minutes');
+    const elSeconds = document.getElementById('seconds');
+
+    if (elDays) elDays.textContent = String(days).padStart(2, '0');
+    if (elHours) elHours.textContent = String(hours).padStart(2, '0');
+    if (elMinutes) elMinutes.textContent = String(minutes).padStart(2, '0');
+    if (elSeconds) elSeconds.textContent = String(seconds).padStart(2, '0');
   }
 
-  updateTimer();
-  setInterval(updateTimer, 1000);
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 
   // 4. COPY ADDRESS BUTTON
   const copyAddressBtn = document.getElementById('copyAddressBtn');
+  const copyBtnLabel = document.getElementById('copyBtnLabel');
   if (copyAddressBtn) {
     copyAddressBtn.addEventListener('click', () => {
-      const addressText = 'г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1 (Ресторан Versal Palace)';
-      navigator.clipboard.writeText(addressText).then(() => {
-        const originalText = copyAddressBtn.textContent;
-        copyAddressBtn.textContent = '✓ Скопировано!';
-        copyAddressBtn.style.borderColor = '#2E7D32';
-        copyAddressBtn.style.color = '#2E7D32';
-        setTimeout(() => {
-          copyAddressBtn.textContent = originalText;
-          copyAddressBtn.style.borderColor = '';
-          copyAddressBtn.style.color = '';
-        }, 2500);
+      const address = 'г. Ташкент, Мирзо-Улугбекский район, ул. Ниёзбек Йули, 1 (Ресторан Versal Palace)';
+      navigator.clipboard.writeText(address).then(() => {
+        if (copyBtnLabel) {
+          const original = copyBtnLabel.textContent;
+          copyBtnLabel.textContent = 'Адрес скопирован!';
+          copyAddressBtn.style.borderColor = '#2E7D32';
+          copyAddressBtn.style.color = '#2E7D32';
+          setTimeout(() => {
+            copyBtnLabel.textContent = original;
+            copyAddressBtn.style.borderColor = '';
+            copyAddressBtn.style.color = '';
+          }, 2500);
+        }
       });
     });
   }
 
-  // 5. RSVP FORM INTERACTION
+  // 5. RSVP FORM INTERACTIONS
   const rsvpForm = document.getElementById('rsvpForm');
   const guestsCountGroup = document.getElementById('guestsCountGroup');
+  const drinkPreferenceGroup = document.getElementById('drinkPreferenceGroup');
   const attendanceRadios = document.querySelectorAll('input[name="attendance"]');
   const rsvpSuccess = document.getElementById('rsvpSuccess');
   const submitBtn = document.getElementById('submitBtn');
 
-  // Toggle guest count dropdown based on attendance
+  // Toggle optional fields if guest cannot attend
   attendanceRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
       if (e.target.value === 'no') {
-        guestsCountGroup.style.display = 'none';
+        if (guestsCountGroup) guestsCountGroup.style.display = 'none';
+        if (drinkPreferenceGroup) drinkPreferenceGroup.style.display = 'none';
       } else {
-        guestsCountGroup.style.display = 'flex';
+        if (guestsCountGroup) guestsCountGroup.style.display = 'flex';
+        if (drinkPreferenceGroup) drinkPreferenceGroup.style.display = 'flex';
       }
     });
   });
@@ -113,27 +126,29 @@ document.addEventListener('DOMContentLoaded', () => {
     rsvpForm.addEventListener('submit', (e) => {
       e.preventDefault();
       
-      submitBtn.textContent = 'Отправка...';
-      submitBtn.disabled = true;
+      if (submitBtn) {
+        submitBtn.innerHTML = '<span>Отправляем...</span>';
+        submitBtn.disabled = true;
+      }
 
       setTimeout(() => {
         rsvpForm.style.display = 'none';
-        rsvpSuccess.classList.remove('hidden');
-      }, 700);
+        if (rsvpSuccess) rsvpSuccess.classList.remove('hidden');
+      }, 600);
     });
   }
 
-  // 6. ADD TO GOOGLE CALENDAR
+  // 6. ADD TO GOOGLE CALENDAR LINK
   const addToCalendarBtn = document.getElementById('addToCalendarBtn');
   if (addToCalendarBtn) {
     addToCalendarBtn.addEventListener('click', () => {
       const title = encodeURIComponent('Свадьба Азамата и Мадины');
-      const details = encodeURIComponent('Будем счастливы видеть вас на нашей свадьбе! Ресторан Versal Palace.');
+      const details = encodeURIComponent('Свадебное торжество Азамата и Мадины. Ресторан Versal Palace, Ташкент.');
       const location = encodeURIComponent('Ресторан Versal Palace, г. Ташкент, ул. Ниёзбек Йули, 1');
       const dates = '20260924T120000Z/20260924T180000Z'; // UTC
 
-      const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dates}`;
-      window.open(googleCalUrl, '_blank');
+      const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dates}`;
+      window.open(calUrl, '_blank');
     });
   }
 });
